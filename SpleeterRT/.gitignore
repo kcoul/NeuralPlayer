@@ -1,0 +1,15 @@
+/.idea
+/.vs
+.DS_Store
+/cmake-build-*
+/Builds
+/Executable/.idea
+/Executable/.vs
+/Executable/cmake-build-*
+/Executable/input.wav
+/Executable/input_*
+/Executable/model.c
+/Executable/x64
+/JuceLibraryCode
+/PlugIns/Builds
+/PlugIns/JuceLibraryCode

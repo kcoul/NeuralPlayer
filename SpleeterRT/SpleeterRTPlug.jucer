@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="bxzlY4" name="Spleeter4Stems" projectType="audioplug" pluginChannelConfigs="{2,8}"
+              pluginFormats="buildAU,buildVST3" displaySplashScreen="1" jucerFormatVersion="1"
+              companyName="james34602">
+  <MAINGROUP id="Cu4AfW" name="Spleeter4Stems">
+    <GROUP id="{7EAFACF6-5A38-1F10-043E-34E3E75DB818}" name="Source">
+      <FILE id="U1h7bW" name="codelet.c" compile="1" resource="0" file="VST/Source/codelet.c"/>
+      <FILE id="SsXiEg" name="codelet.h" compile="0" resource="0" file="VST/Source/codelet.h"/>
+      <FILE id="InArEW" name="conv_util.h" compile="0" resource="0" file="VST/Source/conv_util.h"/>
+      <FILE id="uTibe6" name="cpthread.c" compile="1" resource="0" file="VST/Source/cpthread.c"/>
+      <FILE id="dvo4lU" name="cpthread.h" compile="0" resource="0" file="VST/Source/cpthread.h"/>
+      <FILE id="JJIMdu" name="gemm.c" compile="1" resource="0" file="VST/Source/gemm.c"/>
+      <FILE id="bhsS7Q" name="im2col_dilated.c" compile="1" resource="0"
+            file="VST/Source/im2col_dilated.c"/>
+      <FILE id="vCGWaG" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="VST/Source/PluginProcessor.cpp"/>
+      <FILE id="RjaExw" name="spleeter.c" compile="1" resource="0" file="VST/Source/spleeter.c"/>
+      <FILE id="i3P1Mf" name="spleeter.h" compile="0" resource="0" file="VST/Source/spleeter.h"/>
+      <FILE id="s9FC8g" name="Spleeter4Stems.c" compile="1" resource="0"
+            file="VST/Source/Spleeter4Stems.c"/>
+      <FILE id="jTEZI2" name="Spleeter4Stems.h" compile="0" resource="0"
+            file="VST/Source/Spleeter4Stems.h"/>
+      <FILE id="sijmYd" name="stb_image_write.h" compile="0" resource="0"
+            file="VST/Source/stb_image_write.h"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <VS2022 targetFolder="Builds/VisualStudio2022" extraDefs="MSVC=TRUE"
+            extraCompilerFlags="-I&quot;%MKLROOT%&quot;\include" externalLibraries="userenv.lib&#10;mkl_core.lib&#10;mkl_intel_lp64.lib&#10;mkl_sequential.lib">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" headerPath="&quot;C:\Program Files (x86)\Intel\oneAPI\mkl\2023.1.0\include&quot;"
+                       libraryPath="&quot;C:\Program Files (x86)\Intel\oneAPI\mkl\latest\lib\intel64&quot;"
+                       enablePluginBinaryCopyStep="1"/>
+        <CONFIGURATION isDebug="0" name="Release" headerPath="&quot;C:\Program Files (x86)\Intel\oneAPI\mkl\2023.1.0\include&quot;"
+                       libraryPath="&quot;C:\Program Files (x86)\Intel\oneAPI\mkl\latest\lib\intel64&quot;"
+                       enablePluginBinaryCopyStep="1"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="C:\Users\zendev\repos\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_devices" path="C:\Users\zendev\repos\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_formats" path="C:\Users\zendev\repos\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="C:\Users\zendev\repos\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_processors" path="C:\Users\zendev\repos\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_utils" path="C:\Users\zendev\repos\JUCE\modules"/>
+        <MODULEPATH id="juce_core" path="C:\Users\zendev\repos\JUCE\modules"/>
+        <MODULEPATH id="juce_cryptography" path="C:\Users\zendev\repos\JUCE\modules"/>
+        <MODULEPATH id="juce_data_structures" path="C:\Users\zendev\repos\JUCE\modules"/>
+        <MODULEPATH id="juce_events" path="C:\Users\zendev\repos\JUCE\modules"/>
+        <MODULEPATH id="juce_graphics" path="C:\Users\zendev\repos\JUCE\modules"/>
+        <MODULEPATH id="juce_gui_basics" path="C:\Users\zendev\repos\JUCE\modules"/>
+        <MODULEPATH id="juce_gui_extra" path="C:\Users\zendev\repos\JUCE\modules"/>
+        <MODULEPATH id="juce_opengl" path="C:\Users\zendev\repos\JUCE\modules"/>
+      </MODULEPATHS>
+    </VS2022>
+    <XCODE_MAC targetFolder="Builds/MacOSX" externalLibraries="mkl_core&#10;mkl_intel_lp64&#10;mkl_sequential">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" libraryPath="/opt/intel/oneapi/mkl/latest/lib"
+                       headerPath="/opt/intel/oneapi/mkl/latest/include"/>
+        <CONFIGURATION isDebug="0" name="Release" libraryPath="/opt/intel/oneapi/mkl/latest/lib"
+                       headerPath="/opt/intel/oneapi/mkl/latest/include"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../juce"/>
+        <MODULEPATH id="juce_audio_devices" path="../../juce"/>
+        <MODULEPATH id="juce_audio_formats" path="../../juce"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../juce"/>
+        <MODULEPATH id="juce_audio_processors" path="../../juce"/>
+        <MODULEPATH id="juce_audio_utils" path="../../juce"/>
+        <MODULEPATH id="juce_core" path="../../juce"/>
+        <MODULEPATH id="juce_cryptography" path="../../juce"/>
+        <MODULEPATH id="juce_data_structures" path="../../juce"/>
+        <MODULEPATH id="juce_events" path="../../juce"/>
+        <MODULEPATH id="juce_graphics" path="../../juce"/>
+        <MODULEPATH id="juce_gui_basics" path="../../juce"/>
+        <MODULEPATH id="juce_gui_extra" path="../../juce"/>
+        <MODULEPATH id="juce_opengl" path="../../juce"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" externalLibraries="openblas&#10;mkl_intel_lp64&#10;mkl_core&#10;mkl_sequential">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" libraryPath="~/OpenBLAS/lib/&#10;~/intel/oneapi/mkl/latest/lib/intel64/"
+                       headerPath="~/intel/oneapi/mkl/latest/include/"/>
+        <CONFIGURATION isDebug="0" name="Release" headerPath="~/intel/oneapi/mkl/latest/include/"
+                       libraryPath="~/intel/oneapi/mkl/latest/lib/intel64/"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../juce"/>
+        <MODULEPATH id="juce_audio_devices" path="../../juce"/>
+        <MODULEPATH id="juce_audio_formats" path="../../juce"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../juce"/>
+        <MODULEPATH id="juce_audio_processors" path="../../juce"/>
+        <MODULEPATH id="juce_audio_utils" path="../../juce"/>
+        <MODULEPATH id="juce_core" path="../../juce"/>
+        <MODULEPATH id="juce_cryptography" path="../../juce"/>
+        <MODULEPATH id="juce_data_structures" path="../../juce"/>
+        <MODULEPATH id="juce_events" path="../../juce"/>
+        <MODULEPATH id="juce_graphics" path="../../juce"/>
+        <MODULEPATH id="juce_gui_basics" path="../../juce"/>
+        <MODULEPATH id="juce_gui_extra" path="../../juce"/>
+        <MODULEPATH id="juce_opengl" path="../../juce"/>
+      </MODULEPATHS>
+    </LINUX_MAKE>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <LIVE_SETTINGS>
+    <WINDOWS/>
+  </LIVE_SETTINGS>
+  <JUCEOPTIONS JUCE_VST3_CAN_REPLACE_VST2="0" JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
+</JUCERPROJECT>

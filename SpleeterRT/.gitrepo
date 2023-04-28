@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/ingydotnet/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/kcoul/SpleeterRT.git
+	branch = master
+	commit = fa1001b7ea441c983dc47563f839fdad66a5c284
+	parent = 4c460efe6c471be40dab87db509ee99d9adc93dd
+	method = merge
+	cmdver = 0.4.5
