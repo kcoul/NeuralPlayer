@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/kcoul/SpleeterRT.git
 	branch = master
-	commit = fa1001b7ea441c983dc47563f839fdad66a5c284
-	parent = 4c460efe6c471be40dab87db509ee99d9adc93dd
+	commit = bc31eaafaf3a50cf2eac352f7d8833c2700908b2
+	parent = d95414955520ff3ce967d47aac644a1be27c7083
 	method = merge
 	cmdver = 0.4.5

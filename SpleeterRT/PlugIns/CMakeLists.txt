@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.23.2)
+
 set(TargetName "SpleeterRTPlug")
 
 # Valid formats: AAX Unity VST AU AUv3 Standalone LV2
@@ -29,8 +31,7 @@ set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "Targets")
 # Create a /Modules directory in the IDE with the JUCE Module code
 option(JUCE_ENABLE_MODULE_SOURCE_GROUPS "Show all module sources in IDE projects" ON)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/PlugIns/CMake")
-
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 find_package(JUCE)
 
 # Check the readme at `docs/CMake API.md` in the JUCE repo for full config
