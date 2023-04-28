@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/ingydotnet/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/kcoul/NeuralNote.git
+	branch = master
+	commit = 0f79c3f735e71b4cd3e3bce004fcc82c8e13519d
+	parent = fc1aee9a35051ec7e623b1521f3c437692c6fad2
+	method = merge
+	cmdver = 0.4.5
