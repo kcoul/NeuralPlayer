@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="h8IpyS" name="AudioFilePlayer" projectType="audioplug" version="1.0.0"
+              bundleIdentifier="com.NTwelve.AudioFilePlayer" includeBinaryInAppConfig="1"
+              buildVST="0" buildVST3="1" buildAU="1" buildRTAS="0" buildAAX="0"
+              pluginName="AudioFilePlayer" pluginDesc="AudioFilePlayer" pluginManufacturer="NTwelve"
+              pluginManufacturerCode="NTlv" pluginCode="NTPl" pluginChannelConfigs=""
+              pluginIsSynth="1" pluginWantsMidiIn="0" pluginProducesMidiOut="0"
+              pluginSilenceInIsSilenceOut="0" pluginEditorRequiresKeys="0"
+              pluginAUExportPrefix="AudioFilePlayerAU" pluginRTASCategory=""
+              aaxIdentifier="com.NTwelve.AudioFilePlayer" pluginAAXCategory="2"
+              companyEmail="" companyName="NTwelve" buildAUv3="0" pluginIsMidiEffectPlugin="0"
+              buildStandalone="1" displaySplashScreen="1" reportAppUsage="1"
+              splashScreenColour="Dark" enableIAA="0" companyCopyright="NTwelve"
+              pluginFormats="buildAU,buildStandalone,buildVST3" pluginCharacteristicsValue="pluginIsSynth"
+              jucerFormatVersion="1">
+  <MAINGROUP id="tjuOXe" name="AudioFilePlayer">
+    <FILE id="lFuAFH" name="AudioThumbnailComp.cpp" compile="1" resource="0"
+          file="Source/AudioThumbnailComp.cpp"/>
+    <FILE id="MXkcJl" name="AudioThumbnailComp.h" compile="0" resource="0"
+          file="Source/AudioThumbnailComp.h"/>
+    <FILE id="Yabvca" name="PluginProcessor.cpp" compile="1" resource="0"
+          file="Source/PluginProcessor.cpp"/>
+    <FILE id="LW9She" name="PluginProcessor.h" compile="0" resource="0"
+          file="Source/PluginProcessor.h"/>
+    <FILE id="veOUqS" name="PluginEditor.cpp" compile="1" resource="0"
+          file="Source/PluginEditor.cpp"/>
+    <FILE id="unqOmz" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX" postbuildCommand="" vst3Folder=""
+               extraDefs="JUCE_MODAL_LOOPS_PERMITTED=1">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="default" isDebug="1"
+                       optimisation="1" targetName="AudioFilePlayer" enablePluginBinaryCopyStep="1"/>
+        <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="default" isDebug="0"
+                       optimisation="3" targetName="AudioFilePlayer" enablePluginBinaryCopyStep="1"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_gui_basics" path="~/repos/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="~/repos/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="~/repos/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="~/repos/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="~/repos/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="~/repos/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="~/repos/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="~/repos/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="~/repos/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="~/repos/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="~/repos/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="~/repos/JUCE/modules"/>
+        <MODULEPATH id="roli_blocks_basics" path="../../repos"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="roli_blocks_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_QUICKTIME="disabled" JUCE_USE_MP3AUDIOFORMAT="1"/>
+</JUCERPROJECT>

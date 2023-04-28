@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/ingydotnet/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/kcoul/AudioFilePlayerPlugin.git
+	branch = master
+	commit = 94581c62ed715a85e80b6aea8252e8320d74f164
+	parent = b08359b52f60d674a59458df96ea16f113dfdb93
+	method = merge
+	cmdver = 0.4.5
