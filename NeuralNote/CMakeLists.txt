@@ -22,8 +22,10 @@ endif ()
 #static linking in Windows
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
-add_subdirectory(ThirdParty/JUCE)
-add_subdirectory(ThirdParty/RTNeural)
+include(CMake/CPM.cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
+find_package(JUCE)
+find_package(RTNeural)
 
 set(BaseTargetName NeuralNote)
 
