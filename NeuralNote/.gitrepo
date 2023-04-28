@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/kcoul/NeuralNote.git
 	branch = master
-	commit = e8c544d0b954eed2fafba1d504a9d9b509b64892
-	parent = bd1fa0963711f8a62d8300cb1818199e27dfd36b
+	commit = 1050714524fa3169637e53faed4c8ad81abe916c
+	parent = fb4953989ed81257fff8a894b46a77e1d778d1fa
 	method = merge
 	cmdver = 0.4.5
