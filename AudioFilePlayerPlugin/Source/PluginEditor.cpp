@@ -34,7 +34,7 @@ AudioFilePlayerEditor::AudioFilePlayerEditor(AudioFilePlayerProcessor& p) :
             processor.loadMIDIFile(fileChooser.getResult());
         }
     };
-    
+
     thumbnail = std::make_unique<AudioThumbnailComp>(processor.formatManager,
                                                      processor.transportSource,
                                                      processor.thumbnailCache,
@@ -48,9 +48,12 @@ AudioFilePlayerEditor::AudioFilePlayerEditor(AudioFilePlayerProcessor& p) :
     startStopButton.addListener(this);
     startStopButton.setColour(TextButton::buttonColourId, Colour(0xff79ed7f));
 
+    abButton.onClick = [this] { processor.hearExtractedVocal = abButton.getToggleState(); };
+    addAndMakeVisible(abButton);
+
     setOpaque(true);
 
-    setSize(512, 270);
+    setSize(512, 302);
     
     // Register to receive topologyChanged() callbacks from pts.
     pts.addListener (this);
@@ -71,9 +74,9 @@ void AudioFilePlayerEditor::resized()
 {
     Rectangle<int> r(getLocalBounds().reduced(4));
 
-    Rectangle<int> controls(r.removeFromBottom(32));
+    abButton.setBounds(r.removeFromBottom(32));
 
-    startStopButton.setBounds(controls);
+    startStopButton.setBounds(r.removeFromBottom(32));
 
     r.removeFromBottom(6);
     thumbnail->setBounds(r.removeFromBottom(180));
@@ -89,7 +92,7 @@ void AudioFilePlayerEditor::buttonClicked (Button* buttonThatWasClicked)
         if (processor.transportSource.isPlaying())
         {
             processor.transportSource.stop();
-            processor.sendAllNotesOff();
+            processor.sendAllNotesOffToLumi();
         }
         else
         {

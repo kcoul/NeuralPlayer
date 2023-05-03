@@ -93,8 +93,6 @@ void AudioFilePlayerProcessor::changeProgramName(int index, const String& newNam
 void AudioFilePlayerProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
     transportSource.prepareToPlay(samplesPerBlock, sampleRate);
-    
-    nextStartTime = 0.0;
 }
 
 void AudioFilePlayerProcessor::releaseResources()
@@ -133,7 +131,12 @@ void AudioFilePlayerProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffe
         buffer.clear(i, 0, buffer.getNumSamples());
 
     transportSource.getNextAudioBlock(AudioSourceChannelInfo(buffer));
-    
+
+    if (hearExtractedVocal.load())
+        buffer.copyFrom(0, 0, buffer.getReadPointer(1), buffer.getNumSamples());
+    else
+        buffer.copyFrom(1, 0, buffer.getReadPointer(0), buffer.getNumSamples());
+
     const juce::ScopedTryLock myScopedLock(processLock);
 
     if (myScopedLock.isLocked())
@@ -144,26 +147,25 @@ void AudioFilePlayerProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffe
 
             auto startTime = transportSource.getCurrentPosition();
             auto endTime = startTime + buffer.getNumSamples() / getSampleRate();
-            auto sampleLength = 1.0 / getSampleRate();
 
-            nextStartTime = endTime;
-                        
             // If we've reached the end of the sequence
             if (isPlayingSomething && startTime >= midiSequence->getEndTime())
-                sendAllNotesOff();
-
+            {
+                sendAllNotesOffToLumi();
+                sendAllNotesOffToMIDIOut(midiMessages);
+            }
             else
             {
                 // Called when the user changes the track during playback
                 if (trackHasChanged)
                 {
                     trackHasChanged = false;
-                    sendAllNotesOff();
+                    sendAllNotesOffToLumi();
+                    sendAllNotesOffToMIDIOut(midiMessages);
                 }
                                 
                 // Iterating through the MIDI file contents and trying to find an event that
                 // needs to be called in the current time frame
-                
                 for (auto i = 0; i < midiSequence->getNumEvents(); i++)
                 {
                     juce::MidiMessageSequence::MidiEventHolder* event = midiSequence->getEventPointer(i);
@@ -174,8 +176,8 @@ void AudioFilePlayerProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffe
                         if (event->message.isNoteOn() || event->message.isNoteOff())
                         {
                             //auto noteNumber = event->message.getNoteNumber();
-                            //auto samplePosition = juce::roundToInt((event->message.getTimeStamp() - startTime) * getSampleRate());
-                            //midiMessages.addEvent(event->message, samplePosition);
+                            auto samplePosition = juce::roundToInt((event->message.getTimeStamp() - startTime) * getSampleRate());
+                            midiMessages.addEvent(event->message, samplePosition);
 
                             lumiMIDIEvent((void*)event->message.getRawData(), event->message.getRawDataSize());
                             
@@ -189,23 +191,41 @@ void AudioFilePlayerProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffe
         {
             // If the transport isn't active anymore
             if (isPlayingSomething)
-                sendAllNotesOff();
+            {
+                sendAllNotesOffToLumi();
+                sendAllNotesOffToMIDIOut(midiMessages);
+            }
         }
     }
     else
     {
         // If we have just opened a MIDI file with no content
         if (isPlayingSomething)
-            sendAllNotesOff();
+        {
+            sendAllNotesOffToLumi();
+            sendAllNotesOffToMIDIOut(midiMessages);
+        }
     }
 }
 
-void AudioFilePlayerProcessor::sendAllNotesOff()
+void AudioFilePlayerProcessor::sendAllNotesOffToLumi()
 {
     //Send to Lumi for 'stuck note' situations
     for(auto msg : noteOffMessages)
         lumiMIDIEvent(msg.data, msg.numBytes);
     
+    isPlayingSomething = false;
+}
+
+void AudioFilePlayerProcessor::sendAllNotesOffToMIDIOut(MidiBuffer& midiMessages)
+{
+    for (auto i = 1; i <= 16; i++)
+    {
+        midiMessages.addEvent(MidiMessage::allNotesOff(i), 0);
+        midiMessages.addEvent(MidiMessage::allSoundOff(i), 0);
+        midiMessages.addEvent(MidiMessage::allControllersOff(i), 0);
+    }
+
     isPlayingSomething = false;
 }
 

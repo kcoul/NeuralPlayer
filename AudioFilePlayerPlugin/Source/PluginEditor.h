@@ -38,11 +38,13 @@ public:
 private:
     AudioFilePlayerProcessor& processor;
 
-    std::function<void()> relayAllNotesOff = [this]() { processor.sendAllNotesOff(); };
+    std::function<void()> relayAllNotesOff = [this]() { processor.sendAllNotesOffToLumi(); };
     
     std::unique_ptr<juce::TextButton> buttonLoadMIDIFile;
     
     std::unique_ptr<AudioThumbnailComp> thumbnail;
+
+    juce::ToggleButton abButton {"Hear Extracted Vocal"};
 
     TextButton startStopButton;
 

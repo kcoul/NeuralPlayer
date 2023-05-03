@@ -65,10 +65,11 @@ public:
     bool trackHasChanged = false;
     std::atomic<int> currentTrack;
     std::atomic<int> numTracks;
-    double nextStartTime = 0.0;
-    
+
+    std::atomic<bool> hearExtractedVocal = false;
+
     roli::Block::Ptr lumi;
-    void sendAllNotesOff();
+    void sendAllNotesOffToLumi();
 
 private:
     juce::MidiBuffer noteOffMessages;
@@ -76,6 +77,6 @@ private:
     TimeSliceThread readAheadThread;
     
     void lumiMIDIEvent(const void* message, size_t size);
-
+    void sendAllNotesOffToMIDIOut(MidiBuffer& buffer);
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioFilePlayerProcessor)
 };
