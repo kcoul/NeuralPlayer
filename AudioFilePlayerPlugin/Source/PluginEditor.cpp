@@ -63,7 +63,7 @@ AudioFilePlayerEditor::AudioFilePlayerEditor(AudioFilePlayerProcessor& p) :
     addAndMakeVisible(keyboardComponent);
 
     setOpaque(true);
-    setSize(512, 400);
+    setSize(800, 400);
     
     // Register to receive topologyChanged() callbacks from pts.
     pts.addListener (this);
