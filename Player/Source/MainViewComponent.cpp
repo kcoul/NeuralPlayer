@@ -28,7 +28,7 @@ MainViewComponent::MainViewComponent()
 
             auto pwd = File::getCurrentWorkingDirectory();
 
-            while (true)
+            while (true) //Ascend to build folder
             {
                 pwd = pwd.getParentDirectory();
                 if (pwd.getFileName().endsWith("cmake-build-debug") ||
@@ -36,6 +36,7 @@ MainViewComponent::MainViewComponent()
                     break;
             }
 
+            //Descend to SpleeterRTBin location
             pwd = pwd.getChildFile("SpleeterRT/Executable/SpleeterRTBin");
 
             for (auto file : folder.findChildFiles(File::TypesOfFileToFind::findFiles,
@@ -46,7 +47,7 @@ MainViewComponent::MainViewComponent()
                 arguments.add("3"); //spawnNthreads
                 arguments.add("512"); //timeStep
                 arguments.add("1024"); //analyseBinLimit
-                arguments.add("4"); //numStems
+                arguments.add("2"); //numStems (seems to ignore 4 and maxes at 3, SpleeterRTPlug does 4)
                 arguments.add(file.getFullPathName());
 
                 //String args;
@@ -55,9 +56,23 @@ MainViewComponent::MainViewComponent()
 
                 ChildProcess p;
                 p.start(arguments);
+                //TODO: Get output as it arrives
+                //TODO: Move processing to thread so it doesn't block GUI
                 String returnedText = p.readAllProcessOutput();
                 if (returnedText.isNotEmpty())
                     consoleViewComponent->insertText(returnedText, true);
+
+                //Make dual-mono file from original and extracted vocal for ABing
+                pwd = File::getCurrentWorkingDirectory();
+
+                auto possibleVocalFile = File(pwd.getChildFile(file.getFileName().substring(0,
+                                                                                            file.getFileName().length() - 4) + "_Vocal.wav"));
+                if (possibleVocalFile.existsAsFile())
+                {
+                    int i = 1;
+                }
+
+                //Re-save vocal file in mono to get MIDI more quickly from NeuralNote
             }
         };
     };
