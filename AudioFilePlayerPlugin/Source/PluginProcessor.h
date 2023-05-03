@@ -63,16 +63,16 @@ public:
     juce::MidiFile MIDIFile;
     bool isPlayingSomething;
     bool trackHasChanged = false;
-    std::atomic<int> currentTrack;
-    std::atomic<int> numTracks;
-
-    std::atomic<bool> hearExtractedVocal = false;
 
     roli::Block::Ptr lumi;
     void sendAllNotesOff();
-
     juce::MidiBuffer latestMIDIBuffer;
+
+    std::atomic<int> currentTrack;
+    std::atomic<int> numTracks;
     std::atomic<int> numSamplesPerBuffer;
+
+    std::atomic<bool> hearExtractedVocal = false;
     std::atomic<bool> newMIDIBufferAvailable = false;
     std::atomic<bool> pendingMIDIFlush = false;
 private:
