@@ -24,15 +24,19 @@ AudioFilePlayerEditor::AudioFilePlayerEditor(AudioFilePlayerProcessor& p) :
     processor(p),
     keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
-    buttonLoadMIDIFile = std::make_unique<juce::TextButton>("Load MIDI file");
-    addAndMakeVisible(buttonLoadMIDIFile.get());
-    buttonLoadMIDIFile->onClick = [this]
+    loadButton = std::make_unique<juce::TextButton>("Load audio file");
+    addAndMakeVisible(loadButton.get());
+    loadButton->onClick = [this]
     {
-        juce::FileChooser fileChooser("Find MIDI file", juce::File(), "*.mid");
+        juce::FileChooser fileChooser("Load audio file...", juce::File(), "*.wav");
         
         if (fileChooser.browseForFileToOpen())
         {
-            processor.loadMIDIFile(fileChooser.getResult());
+            auto result = fileChooser.getResult();
+            if (result.getFileExtension() == ".wav")
+            {
+                loadFiles(result);
+            }
         }
     };
 
@@ -92,7 +96,7 @@ void AudioFilePlayerEditor::resized()
     thumbnail->setBounds(r.removeFromBottom(180));
     r.removeFromBottom(6);
     
-    buttonLoadMIDIFile->setBounds(r.removeFromBottom(32));
+    loadButton->setBounds(r.removeFromBottom(32));
 
     lumiDetectedButton.setBounds(r.removeFromBottom(32));
 }
@@ -118,9 +122,22 @@ void AudioFilePlayerEditor::changeListenerCallback(ChangeBroadcaster* source)
 {
     if (source == thumbnail.get())
     {
-        processor.loadAudioFileIntoTransport(thumbnail->getLastDroppedFile());
-        thumbnail->setFile(thumbnail->getLastDroppedFile());
+        auto file = thumbnail->getLastDroppedFile();
+        loadFiles(file);
     }
+}
+
+void AudioFilePlayerEditor::loadFiles(juce::File wavFile)
+{
+    processor.loadAudioFileIntoTransport(wavFile);
+    thumbnail->setFile(wavFile);
+
+    //Try loading a MIDI file of same path/name to MIDI player
+    auto possibleMIDIFile = File(wavFile.getFullPathName().substring(0,
+                                                                     wavFile.getFullPathName().length() - 4)
+                                                                             + ".mid");
+    if (possibleMIDIFile.existsAsFile())
+        processor.loadMIDIFile(possibleMIDIFile);
 }
 
 void AudioFilePlayerEditor::timerCallback()

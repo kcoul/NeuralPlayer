@@ -45,7 +45,7 @@ private:
     };
 
     juce::ToggleButton lumiDetectedButton {"Lumi Detected"};
-    std::unique_ptr<juce::TextButton> buttonLoadMIDIFile;
+    std::unique_ptr<juce::TextButton> loadButton;
     std::unique_ptr<AudioThumbnailComp> thumbnail;
     juce::ToggleButton abButton {"Hear Extracted Vocal"};
 
@@ -65,6 +65,8 @@ private:
     roli::PhysicalTopologySource pts;
 
     void timerCallback() override;
+
+    void loadFiles(File wavFile);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioFilePlayerEditor)
 };

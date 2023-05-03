@@ -56,7 +56,7 @@ public:
     AudioThumbnailCache thumbnailCache;
 
     void loadAudioFileIntoTransport(const File& audioFile);
-    void loadMIDIFile(juce::File fileMIDI);
+    void loadMIDIFile(const File& midiFile);
     
     juce::CriticalSection processLock;
     

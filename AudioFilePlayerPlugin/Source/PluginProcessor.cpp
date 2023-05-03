@@ -101,7 +101,7 @@ void AudioFilePlayerProcessor::releaseResources()
     transportSource.releaseResources();
 }
 
-void AudioFilePlayerProcessor::loadMIDIFile(juce::File file)
+void AudioFilePlayerProcessor::loadMIDIFile(const File& file)
 {
     MIDIFile.clear();
     

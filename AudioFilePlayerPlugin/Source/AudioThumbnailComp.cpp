@@ -122,8 +122,12 @@ void AudioThumbnailComp::changeListenerCallback(ChangeBroadcaster*)
 
 void AudioThumbnailComp::filesDropped(const StringArray& files, int /*x*/, int /*y*/)
 {
-    lastFileDropped = File(files[0]);
-    sendChangeMessage();
+    auto result = File(files[0]); //Only array element guaranteed to exist, just load one for now.
+    if (result.getFileExtension() == ".wav")
+    {
+        lastFileDropped = result;
+        sendChangeMessage();
+    }
 }
 
 void AudioThumbnailComp::mouseDown(const MouseEvent& e)
