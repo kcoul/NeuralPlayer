@@ -21,13 +21,14 @@
 
 AudioFilePlayerEditor::AudioFilePlayerEditor(AudioFilePlayerProcessor& p) :
     AudioProcessorEditor(&p),
-    processor(p)
+    processor(p),
+    keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
-    buttonLoadMIDIFile = std::make_unique<juce::TextButton>("Load a MIDI file");
+    buttonLoadMIDIFile = std::make_unique<juce::TextButton>("Load MIDI file");
     addAndMakeVisible(buttonLoadMIDIFile.get());
     buttonLoadMIDIFile->onClick = [this]
     {
-        juce::FileChooser fileChooser("Find a MIDI file", juce::File(), "*.mid");
+        juce::FileChooser fileChooser("Find MIDI file", juce::File(), "*.mid");
         
         if (fileChooser.browseForFileToOpen())
         {
@@ -54,12 +55,16 @@ AudioFilePlayerEditor::AudioFilePlayerEditor(AudioFilePlayerProcessor& p) :
     lumiDetectedButton.setInterceptsMouseClicks(false, false);
     addAndMakeVisible(lumiDetectedButton);
 
-    setOpaque(true);
+    keyboardComponent.setInterceptsMouseClicks(false, false);
+    addAndMakeVisible(keyboardComponent);
 
-    setSize(512, 334);
+    setOpaque(true);
+    setSize(512, 400);
     
     // Register to receive topologyChanged() callbacks from pts.
     pts.addListener (this);
+
+    startTimer(20);
 }
 
 AudioFilePlayerEditor::~AudioFilePlayerEditor()
@@ -76,6 +81,8 @@ void AudioFilePlayerEditor::paint(Graphics& g)
 void AudioFilePlayerEditor::resized()
 {
     Rectangle<int> r(getLocalBounds().reduced(4));
+
+    keyboardComponent.setBounds(r.removeFromBottom(66));
 
     abButton.setBounds(r.removeFromBottom(32));
 
@@ -116,9 +123,21 @@ void AudioFilePlayerEditor::changeListenerCallback(ChangeBroadcaster* source)
     }
 }
 
+void AudioFilePlayerEditor::timerCallback()
+{
+    if (processor.transportSource.isPlaying() && !processor.latestMIDIBuffer.isEmpty())
+    {
+        keyboardState.processNextMidiBuffer(processor.latestMIDIBuffer,
+                                            0,
+                                            processor.numSamplesPerBuffer,
+                                            false);
+        processor.newMIDIBufferAvailable = false;
+    }
+}
+
 void AudioFilePlayerEditor::topologyChanged()
 {
-    // We have a new topology, so find out what it isand store it in a local
+    // We have a new topology, so find out what it is and store it in a local
     // variable.
     auto currentTopology = pts.getCurrentTopology();
     Logger::writeToLog ("\nNew BLOCKS topology.");

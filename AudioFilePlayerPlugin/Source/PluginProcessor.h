@@ -71,8 +71,11 @@ public:
     roli::Block::Ptr lumi;
     void sendAllNotesOff();
 
+    juce::MidiBuffer latestMIDIBuffer;
+    std::atomic<int> numSamplesPerBuffer;
+    std::atomic<bool> newMIDIBufferAvailable = false;
 private:
-    juce::MidiBuffer noteOffMessages;
+    juce::MidiBuffer allNoteOffMessages;
     std::unique_ptr<AudioFormatReaderSource> currentAudioFileSource;
     TimeSliceThread readAheadThread;
 

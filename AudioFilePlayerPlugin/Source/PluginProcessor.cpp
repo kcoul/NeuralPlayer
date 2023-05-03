@@ -30,7 +30,7 @@ AudioFilePlayerProcessor::AudioFilePlayerProcessor() :
     
     for (auto i = 0; i <= 127; i++)
     {
-        noteOffMessages.addEvent(juce::MidiMessage::noteOff(1, i), 0);
+        allNoteOffMessages.addEvent(juce::MidiMessage::noteOff(1, i), 0);
     }
 }
 
@@ -93,6 +93,7 @@ void AudioFilePlayerProcessor::changeProgramName(int index, const String& newNam
 void AudioFilePlayerProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
     transportSource.prepareToPlay(samplesPerBlock, sampleRate);
+    numSamplesPerBuffer = samplesPerBlock;
 }
 
 void AudioFilePlayerProcessor::releaseResources()
@@ -125,6 +126,8 @@ void AudioFilePlayerProcessor::lumiMIDIEvent(const void* message, size_t size)
 
 void AudioFilePlayerProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
+    latestMIDIBuffer.clear();
+
     if (pendingMIDIFlush)
         sendAllNotesOffToMIDIOut(midiMessages);
 
@@ -181,6 +184,7 @@ void AudioFilePlayerProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffe
                             //auto noteNumber = event->message.getNoteNumber();
                             auto samplePosition = juce::roundToInt((event->message.getTimeStamp() - startTime) * getSampleRate());
                             midiMessages.addEvent(event->message, samplePosition);
+                            latestMIDIBuffer.addEvent(event->message, samplePosition);
 
                             lumiMIDIEvent((void*)event->message.getRawData(), event->message.getRawDataSize());
                             
@@ -188,6 +192,7 @@ void AudioFilePlayerProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffe
                         }
                     }
                 }
+                newMIDIBufferAvailable = true;
             }
         }
         else
@@ -212,7 +217,7 @@ void AudioFilePlayerProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffe
 void AudioFilePlayerProcessor::sendAllNotesOff()
 {
     //Send to Lumi for 'stuck note' situations, doesn't seem to respond to MidiMessage::allNotesOff however
-    for(auto msg : noteOffMessages)
+    for(auto msg : allNoteOffMessages)
         lumiMIDIEvent(msg.data, msg.numBytes);
     
     isPlayingSomething = false;
