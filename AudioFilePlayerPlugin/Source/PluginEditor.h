@@ -45,6 +45,7 @@ private:
     std::unique_ptr<AudioThumbnailComp> thumbnail;
 
     juce::ToggleButton abButton {"Hear Extracted Vocal"};
+    juce::ToggleButton lumiDetectedButton {"Lumi Detected"};
 
     TextButton startStopButton;
 

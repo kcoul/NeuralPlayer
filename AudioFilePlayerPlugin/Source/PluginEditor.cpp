@@ -51,9 +51,12 @@ AudioFilePlayerEditor::AudioFilePlayerEditor(AudioFilePlayerProcessor& p) :
     abButton.onClick = [this] { processor.hearExtractedVocal = abButton.getToggleState(); };
     addAndMakeVisible(abButton);
 
+    lumiDetectedButton.setInterceptsMouseClicks(false, false);
+    addAndMakeVisible(lumiDetectedButton);
+
     setOpaque(true);
 
-    setSize(512, 302);
+    setSize(512, 334);
     
     // Register to receive topologyChanged() callbacks from pts.
     pts.addListener (this);
@@ -83,6 +86,8 @@ void AudioFilePlayerEditor::resized()
     r.removeFromBottom(6);
     
     buttonLoadMIDIFile->setBounds(r.removeFromBottom(32));
+
+    lumiDetectedButton.setBounds(r.removeFromBottom(32));
 }
 
 void AudioFilePlayerEditor::buttonClicked (Button* buttonThatWasClicked) 
@@ -156,6 +161,7 @@ void AudioFilePlayerEditor::topologyChanged()
             case roli::Block::lumiKeysBlock:
                 Logger::writeToLog ("    Type:          lumiKeysBlock");
                 processor.lumi = block;
+                lumiDetectedButton.setToggleState(true, juce::dontSendNotification);
                 break;
         };
     }
