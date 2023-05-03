@@ -49,13 +49,12 @@ MainViewComponent::MainViewComponent()
                 arguments.add("4"); //numStems
                 arguments.add(file.getFullPathName());
 
-                String args;
-
-                for (auto a: arguments)
-                    args.append(a + " ", 100);
+                //String args;
+                //for (auto a: arguments)
+                //    args.append(a + " ", 255);
 
                 ChildProcess p;
-                p.start(args);
+                p.start(arguments);
                 String returnedText = p.readAllProcessOutput();
                 if (returnedText.isNotEmpty())
                     consoleViewComponent->insertText(returnedText, true);
