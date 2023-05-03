@@ -67,6 +67,7 @@ private:
     void timerCallback() override;
 
     void loadFiles(File wavFile);
+    juce::Label loadedFilenameLabel {"", ""};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioFilePlayerEditor)
 };

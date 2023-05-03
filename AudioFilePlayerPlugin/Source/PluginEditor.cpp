@@ -24,6 +24,9 @@ AudioFilePlayerEditor::AudioFilePlayerEditor(AudioFilePlayerProcessor& p) :
     processor(p),
     keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
+    loadedFilenameLabel.setJustificationType(Justification::right);
+    addAndMakeVisible(loadedFilenameLabel);
+
     loadButton = std::make_unique<juce::TextButton>("Load audio file");
     addAndMakeVisible(loadButton.get());
     loadButton->onClick = [this]
@@ -63,7 +66,7 @@ AudioFilePlayerEditor::AudioFilePlayerEditor(AudioFilePlayerProcessor& p) :
     addAndMakeVisible(keyboardComponent);
 
     setOpaque(true);
-    setSize(800, 400);
+    setSize(1225, 800);
     
     // Register to receive topologyChanged() callbacks from pts.
     pts.addListener (this);
@@ -84,21 +87,30 @@ void AudioFilePlayerEditor::paint(Graphics& g)
 
 void AudioFilePlayerEditor::resized()
 {
-    Rectangle<int> r(getLocalBounds().reduced(4));
+    auto margin = 4;
+    Rectangle<int> r(getLocalBounds().reduced(margin));
 
-    keyboardComponent.setBounds(r.removeFromBottom(66));
+    auto heightDivUnit = r.getHeight() / 12; //Divide available height into 12 equal parts to work with
 
-    abButton.setBounds(r.removeFromBottom(32));
+    auto halfWidth = r.getWidth() / 2;
 
-    startStopButton.setBounds(r.removeFromBottom(32));
+    auto topCell = r.removeFromTop(heightDivUnit);
 
-    r.removeFromBottom(6);
-    thumbnail->setBounds(r.removeFromBottom(180));
-    r.removeFromBottom(6);
-    
-    loadButton->setBounds(r.removeFromBottom(32));
+    lumiDetectedButton.setBounds(topCell.removeFromLeft(halfWidth));
+    loadedFilenameLabel.setBounds(topCell);
 
-    lumiDetectedButton.setBounds(r.removeFromBottom(32));
+    loadButton->setBounds(r.removeFromTop(heightDivUnit));
+
+    auto spacer = 6;
+    r.removeFromTop(spacer);
+    thumbnail->setBounds(r.removeFromTop(heightDivUnit * 6));
+    r.removeFromTop(spacer);
+
+    startStopButton.setBounds(r.removeFromTop(heightDivUnit));
+
+    abButton.setBounds(r.removeFromTop(heightDivUnit));
+
+    keyboardComponent.setBounds(r.removeFromBottom(heightDivUnit * 2));
 }
 
 void AudioFilePlayerEditor::buttonClicked (Button* buttonThatWasClicked) 
@@ -138,6 +150,8 @@ void AudioFilePlayerEditor::loadFiles(juce::File wavFile)
                                                                              + ".mid");
     if (possibleMIDIFile.existsAsFile())
         processor.loadMIDIFile(possibleMIDIFile);
+
+    loadedFilenameLabel.setText(wavFile.getFileName(), juce::dontSendNotification);
 }
 
 void AudioFilePlayerEditor::timerCallback()
