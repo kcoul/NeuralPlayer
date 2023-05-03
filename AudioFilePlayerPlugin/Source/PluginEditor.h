@@ -39,10 +39,9 @@ public:
 private:
     AudioFilePlayerProcessor& processor;
 
-    std::function<void()> relayAllNotesOff = [this]()
+    std::function<void()> thumbnailPlayheadPositionChanged = [this]()
     {
         processor.sendAllNotesOff();
-        keyboardState.allNotesOff(1);
     };
 
     juce::ToggleButton lumiDetectedButton {"Lumi Detected"};

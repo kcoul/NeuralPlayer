@@ -39,7 +39,7 @@ AudioFilePlayerEditor::AudioFilePlayerEditor(AudioFilePlayerProcessor& p) :
     thumbnail = std::make_unique<AudioThumbnailComp>(processor.formatManager,
                                                      processor.transportSource,
                                                      processor.thumbnailCache,
-                                                     relayAllNotesOff,
+                                                     thumbnailPlayheadPositionChanged,
                                                      processor.currentlyLoadedFile);
     addAndMakeVisible(thumbnail.get());
     thumbnail->addChangeListener(this);
@@ -125,7 +125,7 @@ void AudioFilePlayerEditor::changeListenerCallback(ChangeBroadcaster* source)
 
 void AudioFilePlayerEditor::timerCallback()
 {
-    if (processor.transportSource.isPlaying() && !processor.latestMIDIBuffer.isEmpty())
+    if (processor.transportSource.isPlaying() && processor.newMIDIBufferAvailable)
     {
         keyboardState.processNextMidiBuffer(processor.latestMIDIBuffer,
                                             0,
@@ -133,6 +133,8 @@ void AudioFilePlayerEditor::timerCallback()
                                             false);
         processor.newMIDIBufferAvailable = false;
     }
+    if (processor.pendingMIDIFlush)
+        keyboardState.allNotesOff(1);
 }
 
 void AudioFilePlayerEditor::topologyChanged()

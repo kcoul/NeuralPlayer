@@ -74,12 +74,11 @@ public:
     juce::MidiBuffer latestMIDIBuffer;
     std::atomic<int> numSamplesPerBuffer;
     std::atomic<bool> newMIDIBufferAvailable = false;
+    std::atomic<bool> pendingMIDIFlush = false;
 private:
     juce::MidiBuffer allNoteOffMessages;
     std::unique_ptr<AudioFormatReaderSource> currentAudioFileSource;
     TimeSliceThread readAheadThread;
-
-    std::atomic<bool> pendingMIDIFlush = false;
 
     void lumiMIDIEvent(const void* message, size_t size);
     void sendAllNotesOffToMIDIOut(MidiBuffer& buffer);
