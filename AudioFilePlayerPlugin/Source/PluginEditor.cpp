@@ -97,7 +97,7 @@ void AudioFilePlayerEditor::buttonClicked (Button* buttonThatWasClicked)
         if (processor.transportSource.isPlaying())
         {
             processor.transportSource.stop();
-            processor.sendAllNotesOffToLumi();
+            processor.sendAllNotesOff();
         }
         else
         {

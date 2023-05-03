@@ -69,13 +69,15 @@ public:
     std::atomic<bool> hearExtractedVocal = false;
 
     roli::Block::Ptr lumi;
-    void sendAllNotesOffToLumi();
+    void sendAllNotesOff();
 
 private:
     juce::MidiBuffer noteOffMessages;
     std::unique_ptr<AudioFormatReaderSource> currentAudioFileSource;
     TimeSliceThread readAheadThread;
-    
+
+    std::atomic<bool> pendingMIDIFlush = false;
+
     void lumiMIDIEvent(const void* message, size_t size);
     void sendAllNotesOffToMIDIOut(MidiBuffer& buffer);
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioFilePlayerProcessor)
