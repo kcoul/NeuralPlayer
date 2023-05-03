@@ -36,5 +36,5 @@ private:
 
     std::unique_ptr<juce::Array<juce::URL>> filesToShare;
 
-
+    AudioFormatManager formatManager;
 };
