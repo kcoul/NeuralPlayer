@@ -2,7 +2,7 @@
 
 MainViewComponent::MainViewComponent()
 {
-    renderingThread = std::make_unique<SpleeterRTBinRenderingThread>();
+    renderingThread = std::make_unique<SourceSepMIDIRenderingThread>();
 
     formatManager.registerBasicFormats();
     setSize(700, 800);
