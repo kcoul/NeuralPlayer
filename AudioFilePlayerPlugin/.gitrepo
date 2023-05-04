@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/kcoul/AudioFilePlayerPlugin.git
 	branch = master
-	commit = 2b23f01d09d41ffae81c1d1f00b98aa3975bc16c
-	parent = 1d15281d18e32df5e25e26c7deb292770e682de2
+	commit = 83b97697b6d00f683c6b06b9625f4d179cf33ac9
+	parent = 9ef23c8ac445c216be203e4daebe10015f198291
 	method = merge
 	cmdver = 0.4.5
