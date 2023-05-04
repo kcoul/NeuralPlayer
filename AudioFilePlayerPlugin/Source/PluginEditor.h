@@ -19,9 +19,10 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include <roli_blocks_basics/roli_blocks_basics.h>
+
 #include "AudioThumbnailComp.h"
 #include "PluginProcessor.h"
-#include <roli_blocks_basics/roli_blocks_basics.h>
 
 class AudioFilePlayerEditor :
     public AudioProcessorEditor,

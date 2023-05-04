@@ -8,7 +8,7 @@ class ConsoleViewComponent : public juce::Component,
 {
 public:
     //==============================================================================
-    ConsoleViewComponent();
+    ConsoleViewComponent(String& consoleInput);
     ~ConsoleViewComponent() override;
 
     //==============================================================================
@@ -24,7 +24,8 @@ protected:
     void visibilityChanged() override;
 private:
     //==============================================================================
-
+    String& newConsoleInputToDisplay;
+    String lastDisplayedString = "";
     std::unique_ptr<juce::CodeEditorComponent> testResultsWindow;
     std::unique_ptr<juce::CodeDocument> testResultsDocument;
     int positionIndex = 0;

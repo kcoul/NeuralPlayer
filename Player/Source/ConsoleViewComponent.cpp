@@ -1,7 +1,8 @@
 #include "ConsoleViewComponent.h"
 
 //==============================================================================
-ConsoleViewComponent::ConsoleViewComponent()
+ConsoleViewComponent::ConsoleViewComponent(String& consoleInput) :
+        newConsoleInputToDisplay(consoleInput)
 {
     testResultsDocument = std::make_unique<juce::CodeDocument>();
     testResultsWindow = std::make_unique<juce::CodeEditorComponent>(*testResultsDocument, nullptr);
@@ -63,7 +64,11 @@ void ConsoleViewComponent::visibilityChanged()
 
 void ConsoleViewComponent::timerCallback()
 {
-
+    if (lastDisplayedString != newConsoleInputToDisplay)
+    {
+        lastDisplayedString = newConsoleInputToDisplay;
+        insertText(lastDisplayedString, true);
+    }
 }
 
 void ConsoleViewComponent::exitSignalSent()

@@ -6,6 +6,7 @@
 
 #include "ConsoleViewComponent.h"
 #include "SharedAudioDeviceManager.h"
+#include "SpleeterRTBinRenderingThread.h"
 
 enum class FolderSelectResult
 {
@@ -34,7 +35,9 @@ private:
     std::pair<FolderSelectResult, juce::File> selectInputFolder();
     juce::File selectedOutputFolder;
 
-    std::unique_ptr<juce::Array<juce::URL>> filesToShare;
+    std::unique_ptr<SpleeterRTBinRenderingThread> renderingThread;
+
+
 
     AudioFormatManager formatManager;
 };
