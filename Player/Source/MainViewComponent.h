@@ -1,8 +1,9 @@
 #pragma once
 
 #include <JuceHeader.h>
-
 #include <utility>
+
+#include "DataStructures.h"
 
 #include "ConsoleViewComponent.h"
 #include "SharedAudioDeviceManager.h"

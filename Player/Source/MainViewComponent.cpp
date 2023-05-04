@@ -35,11 +35,8 @@ MainViewComponent::MainViewComponent()
     };
     addAndMakeVisible(loadButton);
 
-    consoleViewComponent = std::make_unique<ConsoleViewComponent>(renderingThread->returnedText);
+    consoleViewComponent = std::make_unique<ConsoleViewComponent>(renderingThread->threadVars);
     addAndMakeVisible(*consoleViewComponent);
-
-
-
 }
 
 MainViewComponent::~MainViewComponent()

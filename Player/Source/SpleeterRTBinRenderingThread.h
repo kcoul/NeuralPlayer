@@ -1,6 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "DataStructures.h"
 
 class SpleeterRTBinRenderingThread : public juce::Thread
 {
@@ -34,12 +35,7 @@ public:
     void setOutputFolder(juce::File outFolder) { outputFolder = std::move(outFolder); }
     bool stopRenderingFlag = false;
 
-    //Watched variables
-    String returnedText;
-    int numFiles;
-    int currentFile;
-    String currentFileName;
-
+    WatchedVars threadVars;
 private:
     AudioFormatManager formatManager;
     juce::File currentInputFile;
@@ -51,27 +47,30 @@ private:
     {
         auto files = inputFolder.findChildFiles(File::TypesOfFileToFind::findFiles,
                                                 false, "*.wav");
-        numFiles = files.size();
+        threadVars.numFiles = files.size();
         for (auto inputFile : files)
         {
+            threadVars.currentFileIndex++;
             renderSingleFile(bin, inputFile);
         }
+        threadVars.currentFileIndex = 0;
     }
 
     void renderSingleFile(juce::File bin, juce::File inputFile)
     {
-        String inputFileName = inputFile.getFullPathName();
+        const String fullPathName = inputFile.getFullPathName();
+        threadVars.currentFileName = inputFile.getFileName();
         StringArray arguments;
         arguments.add(bin.getFullPathName());
         arguments.add("3"); //spawnNthreads
         arguments.add("512"); //timeStep
         arguments.add("1024"); //analyseBinLimit
         arguments.add("2"); //numStems (seems to ignore 4 and maxes at 3, SpleeterRTPlug does 4)
-        arguments.add(inputFileName);
+        arguments.add(fullPathName);
 
         ChildProcess p;
         p.start(arguments);
-        returnedText = p.readAllProcessOutput();
+        threadVars.returnedText = p.readAllProcessOutput();
 
         //Make dual-mono inputFile from original and extracted vocal for ABing
         auto pwd = File::getCurrentWorkingDirectory();

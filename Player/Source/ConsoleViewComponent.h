@@ -1,6 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "DataStructures.h"
 
 class ConsoleViewComponent : public juce::Component,
                              public juce::Thread::Listener,
@@ -8,7 +9,7 @@ class ConsoleViewComponent : public juce::Component,
 {
 public:
     //==============================================================================
-    ConsoleViewComponent(String& consoleInput);
+    ConsoleViewComponent(WatchedVars& threadVars);
     ~ConsoleViewComponent() override;
 
     //==============================================================================
@@ -24,10 +25,12 @@ protected:
     void visibilityChanged() override;
 private:
     //==============================================================================
-    String& newConsoleInputToDisplay;
+    WatchedVars& watchedVariables;
     String lastDisplayedString = "";
+    int processingIndex = 0;
+
     std::unique_ptr<juce::CodeEditorComponent> testResultsWindow;
     std::unique_ptr<juce::CodeDocument> testResultsDocument;
-    int positionIndex = 0;
+    int documentPositionIndex = 0;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ConsoleViewComponent)
 };

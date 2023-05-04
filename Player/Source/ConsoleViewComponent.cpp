@@ -1,8 +1,7 @@
 #include "ConsoleViewComponent.h"
 
 //==============================================================================
-ConsoleViewComponent::ConsoleViewComponent(String& consoleInput) :
-        newConsoleInputToDisplay(consoleInput)
+ConsoleViewComponent::ConsoleViewComponent(WatchedVars& watchedVars) : watchedVariables(watchedVars)
 {
     testResultsDocument = std::make_unique<juce::CodeDocument>();
     testResultsWindow = std::make_unique<juce::CodeEditorComponent>(*testResultsDocument, nullptr);
@@ -41,13 +40,13 @@ void ConsoleViewComponent::insertText(juce::String text, bool addCarriageReturn)
 {
     if (addCarriageReturn)
     {
-        testResultsDocument->insertText(positionIndex, text + "\n");
-        positionIndex += (text.length() + 1);
+        testResultsDocument->insertText(documentPositionIndex, text + "\n");
+        documentPositionIndex += (text.length() + 1);
     }
     else
     {
-        testResultsDocument->insertText(positionIndex, text);
-        positionIndex += (text.length());
+        testResultsDocument->insertText(documentPositionIndex, text);
+        documentPositionIndex += (text.length());
     }
 
     testResultsWindow->moveCaretToEnd(false);
@@ -64,9 +63,26 @@ void ConsoleViewComponent::visibilityChanged()
 
 void ConsoleViewComponent::timerCallback()
 {
-    if (lastDisplayedString != newConsoleInputToDisplay)
+    if (watchedVariables.currentFileIndex > 0 &&
+        processingIndex != watchedVariables.currentFileIndex)
     {
-        lastDisplayedString = newConsoleInputToDisplay;
+        processingIndex = watchedVariables.currentFileIndex;
+        auto textToPost = "Now processing file " + String(processingIndex) + " of " +
+                                 String(watchedVariables.numFiles) + ", " +
+                                 watchedVariables.currentFileName;
+        insertText(textToPost, true);
+    }
+    else if (watchedVariables.currentFileIndex == 0 &&
+             processingIndex != watchedVariables.currentFileIndex)
+    {
+        processingIndex = watchedVariables.currentFileIndex;
+        auto textToPost = "Done!";
+        insertText(textToPost, true);
+    }
+
+    if (lastDisplayedString != watchedVariables.returnedText)
+    {
+        lastDisplayedString = watchedVariables.returnedText;
         insertText(lastDisplayedString, true);
     }
 }
