@@ -26,11 +26,12 @@ public:
 private:
     Player audioMIDIPlayer;
 
-    juce::TextButton loadButton {"Load Audio"};
+    juce::TextButton loadNewFolderButton {"Load New"};
+    juce::TextButton loadExistingPlaylistButton {"Load Existing"};
 
     std::unique_ptr<juce::FileChooser> loadChooser;
-    std::pair<FolderSelectResult, juce::File> selectInputFolder();
-    juce::File selectedOutputFolder;
+    std::pair<FolderSelectResult, juce::File> selectNewInputFolder();
+    std::pair<FolderSelectResult, juce::File> selectExistingPlaylistFile();
 
     std::unique_ptr<SourceSepMIDIRenderingThread>& renderingThread;
 

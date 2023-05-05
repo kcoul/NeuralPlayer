@@ -13,7 +13,9 @@ AudioFilePlayerEditor::AudioFilePlayerEditor(AudioFilePlayerProcessor& p) :
     addAndMakeVisible(loadButton.get());
     loadButton->onClick = [this]
     {
-        juce::FileChooser fileChooser("Load audio file...", juce::File(), "*.wav");
+        juce::FileChooser fileChooser("Load audio file...",
+                                      juce::File::getSpecialLocation(juce::File::userDesktopDirectory),
+                                      "*.wav");
         
         if (fileChooser.browseForFileToOpen())
         {

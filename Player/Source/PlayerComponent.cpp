@@ -1,9 +1,9 @@
 #include "PlayerComponent.h"
 
 PlayerComponent::PlayerComponent(std::unique_ptr<SourceSepMIDIRenderingThread>& thread) :
+audioMIDIPlayer(latestMIDIBufferFn),
 renderingThread(thread),
 playlistComponent(trackSelected),
-audioMIDIPlayer(latestMIDIBufferFn),
 thumbnailCache(1),
 readAheadThread("transport read ahead"),
 keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
@@ -38,9 +38,9 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
         }
     };
 
-    loadButton.onClick = [this]
+    loadNewFolderButton.onClick = [this]
     {
-        auto result = selectInputFolder();
+        auto result = selectNewInputFolder();
         if (result.first == FolderSelectResult::ok)
         {
             auto inputFolder = result.second;
@@ -49,7 +49,17 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
             renderingThread->startThread();
         };
     };
-    addAndMakeVisible(loadButton);
+    addAndMakeVisible(loadNewFolderButton);
+
+    loadExistingPlaylistButton.onClick = [this]
+    {
+        auto result = selectExistingPlaylistFile();
+        if (result.first == FolderSelectResult::ok)
+        {
+            auto playlistXML = result.second;
+        };
+    };
+    addAndMakeVisible(loadExistingPlaylistButton);
 
     addAndMakeVisible(playlistComponent);
 
@@ -113,7 +123,11 @@ void PlayerComponent::resized()
     area.removeFromTop(30);
 #endif
     auto vUnit = area.getHeight()/12;
-    loadButton.setBounds(area.removeFromTop(vUnit));
+
+    auto vUnitSlot = area.removeFromTop(vUnit);
+
+    loadNewFolderButton.setBounds(vUnitSlot.removeFromLeft(vUnitSlot.getWidth()/2).reduced(2, 0));
+    loadExistingPlaylistButton.setBounds(vUnitSlot.reduced(2, 0));
 
     area.removeFromTop(4);
 
@@ -132,7 +146,7 @@ void PlayerComponent::resized()
     keyboardComponent.setBounds(area);
 }
 
-std::pair<FolderSelectResult, juce::File> PlayerComponent::selectInputFolder()
+std::pair<FolderSelectResult, juce::File> PlayerComponent::selectNewInputFolder()
 {
     loadChooser =
             std::make_unique<juce::FileChooser>("Choose folder of audio files to load...",
@@ -141,6 +155,23 @@ std::pair<FolderSelectResult, juce::File> PlayerComponent::selectInputFolder()
                                                 true);
 #if JUCE_MAC || JUCE_WINDOWS || JUCE_LINUX
     if (loadChooser->browseForDirectory())
+    {
+        return std::make_pair<FolderSelectResult, juce::File>(FolderSelectResult::ok, loadChooser->getResult());
+    }
+#endif
+
+    return std::make_pair<FolderSelectResult, juce::File>(FolderSelectResult::cancelled, juce::File());
+}
+
+std::pair<FolderSelectResult, juce::File> PlayerComponent::selectExistingPlaylistFile()
+{
+    loadChooser =
+            std::make_unique<juce::FileChooser>("Find playlist.xml for previously rendered folder...",
+                                                juce::File::getSpecialLocation(juce::File::userDesktopDirectory),
+                                                "*.xml",
+                                                true);
+#if JUCE_MAC || JUCE_WINDOWS || JUCE_LINUX
+    if (loadChooser->browseForFileToOpen())
     {
         return std::make_pair<FolderSelectResult, juce::File>(FolderSelectResult::ok, loadChooser->getResult());
     }
