@@ -1,45 +1,26 @@
 #include "MainViewComponent.h"
 
-MainViewComponent::MainViewComponent()
+MainViewComponent::MainViewComponent() : tabComponent(juce::TabbedButtonBar::TabsAtTop)
 {
     renderingThread = std::make_unique<SourceSepMIDIRenderingThread>();
+    playerComponent = std::make_unique<PlayerComponent>(renderingThread);
+    settingsComponent = std::make_unique<SettingsComponent>(renderingThread->threadVars);
 
-    formatManager.registerBasicFormats();
     setSize(700, 800);
 
-    audioSettings = std::make_unique<juce::AudioDeviceSelectorComponent>(audioDeviceManager,
-                                                                   0,
-                                                                   0,
-                                                                   2,
-                                                                   2,
-                                                                   false,
-                                                                   true,
-                                                                   true,
-                                                                   false);
-
-
-
-
-    addAndMakeVisible(*audioSettings);
-
-    loadButton.onClick = [this]
-    {
-        auto result = selectInputFolder();
-        if (result.first == FolderSelectResult::ok)
-        {
-            auto inputFolder = result.second;
-            renderingThread->setInputFolder(inputFolder);
-            renderingThread->setOutputFolder(File(inputFolder.getFullPathName() + "/out"));
-            renderingThread->startThread();
-        };
-    };
-    addAndMakeVisible(loadButton);
-
-    consoleViewComponent = std::make_unique<ConsoleViewComponent>(renderingThread->threadVars);
-    addAndMakeVisible(*consoleViewComponent);
+    tabComponent.addTab("Player", Colour(Colours::black),
+                        playerComponent.get(), false);
+    tabComponent.addTab("Settings", Colour(Colours::black),
+                        settingsComponent.get(), false);
+    addAndMakeVisible(tabComponent);
 }
 
 MainViewComponent::~MainViewComponent()
+{
+
+}
+
+void MainViewComponent::paint(juce::Graphics& g)
 {
 
 }
@@ -51,34 +32,7 @@ void MainViewComponent::resized()
     area.removeFromTop(30);
 #endif
 
-    auto vUnit = area.getHeight()/12;
-
-    if(audioSettings)
-        audioSettings->setBounds(area.removeFromTop(vUnit * 3));
-
-    loadButton.setBounds(area.removeFromTop(vUnit));
-
-    area.removeFromTop(vUnit * 3);
-
-    if(consoleViewComponent)
-        consoleViewComponent->setBounds(area);
-}
-
-std::pair<FolderSelectResult, juce::File> MainViewComponent::selectInputFolder()
-{
-    loadChooser =
-            std::make_unique<juce::FileChooser>("Choose folder of audio files to load...",
-                                                juce::File::getSpecialLocation(juce::File::userDesktopDirectory),
-                                                "",
-                                                true);
-#if JUCE_MAC || JUCE_WINDOWS || JUCE_LINUX
-    if (loadChooser->browseForDirectory())
-    {
-        return std::make_pair<FolderSelectResult, juce::File>(FolderSelectResult::ok, loadChooser->getResult());
-    }
-#endif
-
-    return std::make_pair<FolderSelectResult, juce::File>(FolderSelectResult::cancelled, juce::File());
+    tabComponent.setBounds(area);
 }
 
 

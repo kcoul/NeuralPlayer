@@ -49,6 +49,8 @@ target_sources(${TargetName} PRIVATE
         Source/ConsoleViewComponent.cpp
         Source/Main.cpp
         Source/MainViewComponent.cpp
+        Source/PlayerComponent.cpp
+        Source/SettingsComponent.cpp
         Source/SharedAudioDeviceManager.cpp)
 
 if (CMAKE_SYSTEM_NAME MATCHES "^(Darwin|Linux|Windows)")

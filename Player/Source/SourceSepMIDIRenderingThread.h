@@ -165,10 +165,6 @@ private:
             {
                 threadVars.returnedText = "MIDI write operation failed.";
             }
-            else
-            {
-                threadVars.returnedText = "MIDI file generated.";
-            }
         }
 
     }
