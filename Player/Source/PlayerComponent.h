@@ -6,7 +6,6 @@
 #include "AudioThumbnailComponent.h"
 #include "Player.h"
 #include "PlaylistComponent.h"
-#include "SharedAudioDeviceManager.h"
 #include "SourceSepMIDIRenderingThread.h"
 
 enum class FolderSelectResult
@@ -25,7 +24,6 @@ public:
 
     void setLumi(roli::Block::Ptr lumi) { audioMIDIPlayer.lumi = lumi; };
 private:
-    juce::AudioDeviceManager& audioDeviceManager { getSharedAudioDeviceManager(0, 2) };
     Player audioMIDIPlayer;
 
     juce::TextButton loadButton {"Load Audio"};

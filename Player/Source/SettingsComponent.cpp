@@ -1,9 +1,10 @@
 #include "SettingsComponent.h"
 
-SettingsComponent::SettingsComponent(WatchedVars& consoleVars, std::function<void(roli::Block::Ptr)>& lumiCallbackFn) :
+SettingsComponent::SettingsComponent(WatchedVars& consoleVars,
+                                     std::function<void(roli::Block::Ptr)>& lumiCallbackFn) :
 lumiCallback(lumiCallbackFn)
 {
-    audioSettings = std::make_unique<juce::AudioDeviceSelectorComponent>(audioDeviceManager,
+    audioMIDISettings = std::make_unique<juce::AudioDeviceSelectorComponent>(audioDeviceManager,
                                                                          0,
                                                                          0,
                                                                          2,
@@ -16,8 +17,9 @@ lumiCallback(lumiCallbackFn)
     //settingsLaf.setColour (Label::textColourId, Colours::white);
     //settingsLaf.setColour (TextButton::buttonColourId, Colours::white);
     //settingsLaf.setColour (TextButton::textColourOffId, Colours::black);
-    //audioSettings->setLookAndFeel (&settingsLaf);
-    addAndMakeVisible(*audioSettings);
+    //audioMIDISettings->setLookAndFeel (&settingsLaf);
+
+    addAndMakeVisible(*audioMIDISettings);
 
     consoleViewComponent = std::make_unique<ConsoleViewComponent>(consoleVars);
     addAndMakeVisible(*consoleViewComponent);
@@ -28,7 +30,7 @@ lumiCallback(lumiCallbackFn)
 
 SettingsComponent::~SettingsComponent()
 {
-    //audioSettings->setLookAndFeel (nullptr);
+    //audioMIDISettings->setLookAndFeel (nullptr);
 }
 
 void SettingsComponent::paint(juce::Graphics& g)
@@ -45,8 +47,8 @@ void SettingsComponent::resized()
 
     auto vUnit = area.getHeight()/4;
 
-    if(audioSettings)
-        audioSettings->setBounds(area.removeFromTop(vUnit));
+    if(audioMIDISettings)
+        audioMIDISettings->setBounds(area.removeFromTop(vUnit));
 
     if(consoleViewComponent)
         consoleViewComponent->setBounds(area);

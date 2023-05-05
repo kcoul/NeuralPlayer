@@ -4,17 +4,20 @@
 
 #include "Player.h"
 
-Player::Player(std::function<void(juce::MidiBuffer)>& latestMIDIBufferFn) : latestMIDIBufferCallback(latestMIDIBufferFn)
+Player::Player(std::function<void(juce::MidiBuffer)>& latestMIDIBufferFn) :
+latestMIDIBufferCallback(latestMIDIBufferFn)
 {
     for (auto i = 0; i <= 127; i++)
     {
         allNoteOffMessages.addEvent(juce::MidiMessage::noteOff(1, i), 0);
     }
+
+    audioDeviceManager.addAudioCallback(this);
 }
 
 Player::~Player() noexcept
 {
-
+    audioDeviceManager.removeAudioCallback(this);
 }
 
 void Player::audioDeviceAboutToStart(juce::AudioIODevice* device)
@@ -22,6 +25,8 @@ void Player::audioDeviceAboutToStart(juce::AudioIODevice* device)
     sampleRate = device->getCurrentSampleRate();
     numSamplesPerBuffer = device->getCurrentBufferSizeSamples();
     transportSource.prepareToPlay(numSamplesPerBuffer, sampleRate);
+
+    outDevice = MidiOutput::openDevice (audioDeviceManager.getDefaultMidiOutputIdentifier());
 }
 
 void Player::audioDeviceStopped()
@@ -70,11 +75,14 @@ void Player::audioDeviceIOCallbackWithContext(const float* const* inputChannelDa
                     {
                         //auto noteNumber = event->message.getNoteNumber();
                         auto samplePosition = juce::roundToInt((event->message.getTimeStamp() - startTime) * sampleRate);
-                        //midiMessages.addEvent(event->message, samplePosition);
 
                         latestMIDIBuffer.addEvent(event->message, samplePosition);
-
                         lumiMIDIEvent((void*)event->message.getRawData(), event->message.getRawDataSize());
+
+                        if (outDevice)
+                        {
+                            outDevice->sendBlockOfMessagesNow(latestMIDIBuffer);
+                        }
                     }
                 }
             }
@@ -101,4 +109,9 @@ void Player::sendAllNotesOff()
         lumiMIDIEvent(msg.data, msg.numBytes);
 
     latestMIDIBufferCallback(allNoteOffMessages);
+
+    if (outDevice)
+    {
+        outDevice->sendBlockOfMessagesNow(allNoteOffMessages);
+    }
 }

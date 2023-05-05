@@ -1,5 +1,7 @@
 #include <JuceHeader.h>
 
+#include "SharedAudioDeviceManager.h"
+
 class Player : public juce::AudioIODeviceCallback
 {
 public:
@@ -30,8 +32,13 @@ public:
     int numSamplesPerBuffer;
     double sampleRate;
 private:
+    juce::AudioDeviceManager& audioDeviceManager { getSharedAudioDeviceManager(0, 2) };
+
     void lumiMIDIEvent(const void* message, size_t size);
     juce::MidiBuffer allNoteOffMessages;
+
+    MidiDeviceInfo deviceInfo;
+    std::unique_ptr<MidiOutput> outDevice;
 };
 
 

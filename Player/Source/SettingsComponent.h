@@ -21,7 +21,7 @@ private:
     std::function<void(roli::Block::Ptr)>& lumiCallback;
     juce::AudioDeviceManager& audioDeviceManager { getSharedAudioDeviceManager(0, 2) };
     std::unique_ptr<ConsoleViewComponent> consoleViewComponent;
-    std::unique_ptr<juce::AudioDeviceSelectorComponent> audioSettings;
+    std::unique_ptr<juce::AudioDeviceSelectorComponent> audioMIDISettings;
     LookAndFeel_V4 settingsLaf;
 
     // The PhysicalTopologySource member variable which reports BLOCKS changes.

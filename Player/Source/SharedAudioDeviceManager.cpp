@@ -85,21 +85,7 @@ juce::AudioDeviceManager& getSharedAudioDeviceManager(int numInputChannels, int 
         auto setup = sharedAudioDeviceManager->getAudioDeviceSetup();
         setup.bufferSize = 256;
 
-#if JUCE_LINUX
-            setup.inputDeviceName = "JACK Audio Connection Kit";
-            setup.outputDeviceName = "JACK Audio Connection Kit";
-#endif
-
         sharedAudioDeviceManager->setAudioDeviceSetup(setup, true);
-
-        /*
-        currentDevice = sharedAudioDeviceManager->getCurrentAudioDevice();
-        auto bufferSizes = currentDevice->getAvailableBufferSizes();
-        for(int bufferSize : bufferSizes)
-        {
-            std::cout << "Available buffer size: " << bufferSize << std::endl;
-        }
-         */
     }
 
     return *sharedAudioDeviceManager;

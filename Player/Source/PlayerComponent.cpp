@@ -95,13 +95,10 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
                                             false);
     };
     addAndMakeVisible(keyboardComponent);
-
-    audioDeviceManager.addAudioCallback(&audioMIDIPlayer);
 }
 
 PlayerComponent::~PlayerComponent()
 {
-    audioDeviceManager.removeAudioCallback(&audioMIDIPlayer);
 }
 
 void PlayerComponent::paint(juce::Graphics& g)
