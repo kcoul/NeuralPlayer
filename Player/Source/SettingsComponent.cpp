@@ -12,9 +12,10 @@ SettingsComponent::SettingsComponent(WatchedVars& consoleVars)
                                                                          true,
                                                                          false);
 
-
-
-
+    //settingsLaf.setColour (Label::textColourId, Colours::white);
+    //settingsLaf.setColour (TextButton::buttonColourId, Colours::white);
+    //settingsLaf.setColour (TextButton::textColourOffId, Colours::black);
+    //audioSettings->setLookAndFeel (&settingsLaf);
     addAndMakeVisible(*audioSettings);
 
     consoleViewComponent = std::make_unique<ConsoleViewComponent>(consoleVars);
@@ -23,12 +24,12 @@ SettingsComponent::SettingsComponent(WatchedVars& consoleVars)
 
 SettingsComponent::~SettingsComponent()
 {
-
+    //audioSettings->setLookAndFeel (nullptr);
 }
 
 void SettingsComponent::paint(juce::Graphics& g)
 {
-
+    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
 }
 
 void SettingsComponent::resized()
@@ -42,8 +43,6 @@ void SettingsComponent::resized()
 
     if(audioSettings)
         audioSettings->setBounds(area.removeFromTop(vUnit));
-
-    area.removeFromTop(vUnit);
 
     if(consoleViewComponent)
         consoleViewComponent->setBounds(area);

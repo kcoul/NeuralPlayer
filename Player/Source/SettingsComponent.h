@@ -16,6 +16,7 @@ private:
     juce::AudioDeviceManager& audioDeviceManager { getSharedAudioDeviceManager(0, 2) };
     std::unique_ptr<ConsoleViewComponent> consoleViewComponent;
     std::unique_ptr<juce::AudioDeviceSelectorComponent> audioSettings;
+    LookAndFeel_V4 settingsLaf;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SettingsComponent)
 };

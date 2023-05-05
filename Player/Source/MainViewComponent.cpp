@@ -8,9 +8,9 @@ MainViewComponent::MainViewComponent() : tabComponent(juce::TabbedButtonBar::Tab
 
     setSize(700, 800);
 
-    tabComponent.addTab("Player", Colour(Colours::black),
+    tabComponent.addTab("Player", getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId),
                         playerComponent.get(), false);
-    tabComponent.addTab("Settings", Colour(Colours::black),
+    tabComponent.addTab("Settings", getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId),
                         settingsComponent.get(), false);
     addAndMakeVisible(tabComponent);
 }

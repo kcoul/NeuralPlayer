@@ -1,6 +1,6 @@
 <TABLE_DATA>
     <HEADERS>
-        <COLUMN columnId="1" name="Title" width="325"/>
+        <COLUMN columnId="1" name="Title" width="320"/>
         <COLUMN columnId="2" name="Author" width="100"/>
         <COLUMN columnId="3" name="Duration" width="100"/>
     </HEADERS>

@@ -46,6 +46,7 @@ target_sources(${TargetName} PRIVATE
         Lib/Model/BasicPitch.cpp
         Lib/Model/Features.cpp
         Lib/Model/Notes.cpp
+        Source/AudioThumbnailComp.cpp
         Source/ConsoleViewComponent.cpp
         Source/Main.cpp
         Source/MainViewComponent.cpp

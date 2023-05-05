@@ -2,6 +2,7 @@
 
 #include <JuceHeader.h>
 
+#include "AudioThumbnailComp.h"
 #include "PlaylistComponent.h"
 #include "SharedAudioDeviceManager.h"
 #include "SourceSepMIDIRenderingThread.h"
@@ -12,12 +13,25 @@ enum class FolderSelectResult
     cancelled
 };
 
-class PlayerComponent : public juce::Component {
+class PlayerComponent : public juce::Component,
+                        public juce::AudioIODeviceCallback
+{
 public:
     PlayerComponent(std::unique_ptr<SourceSepMIDIRenderingThread>& renderingThread);
     ~PlayerComponent() override;
     void paint(juce::Graphics&) override;
     void resized() override;
+
+    void audioDeviceAboutToStart(juce::AudioIODevice* device) override;
+
+    void audioDeviceStopped() override;
+
+    void audioDeviceIOCallbackWithContext(const float* const* inputChannelData,
+                               int numInputChannels,
+                               float* const* outputChannelData,
+                               int numOutputChannels,
+                               int numSamples,
+                               const AudioIODeviceCallbackContext& context) override;
 private:
     juce::AudioDeviceManager& audioDeviceManager { getSharedAudioDeviceManager(0, 2) };
 
@@ -30,6 +44,22 @@ private:
     std::unique_ptr<SourceSepMIDIRenderingThread>& renderingThread;
 
     PlaylistComponent playlistComponent;
+
+    std::unique_ptr<AudioThumbnailComp> thumbnail;
+    AudioTransportSource transportSource;
+    AudioFormatManager formatManager;
+    AudioThumbnailCache thumbnailCache;
+    std::function<void()> thumbnailPlayheadPositionChanged = [this]()
+    {
+        //processor.sendAllNotesOff();
+    };
+    File currentlyLoadedFile;
+    TimeSliceThread readAheadThread;
+
+    juce::TextButton startStopButton;
+
+    juce::MidiKeyboardState keyboardState;
+    juce::MidiKeyboardComponent keyboardComponent;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlayerComponent)
 };

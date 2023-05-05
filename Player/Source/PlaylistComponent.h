@@ -55,7 +55,7 @@ public:
 
         table.getHeader().setSortColumnId (1, true);                                // [3]
 
-        table.setMultipleSelectionEnabled (true);                                   // [4]
+        table.setMultipleSelectionEnabled (false);                                   // [4]
 
         resized();
     }
@@ -96,7 +96,7 @@ public:
     {
         if (newSortColumnId != 0)
         {
-            TutorialDataSorter sorter (getAttributeNameForColumnId (newSortColumnId), isForwards);
+            DataSorter sorter (getAttributeNameForColumnId (newSortColumnId), isForwards);
             dataList->sortChildElements (sorter);
 
             table.updateContent();
@@ -254,10 +254,10 @@ private:
     };
 
     //==============================================================================
-    class TutorialDataSorter
+    class DataSorter
     {
     public:
-        TutorialDataSorter (const juce::String& attributeToSortBy, bool forwards)
+        DataSorter (const juce::String& attributeToSortBy, bool forwards)
                 : attributeToSort (attributeToSortBy),
                   direction (forwards ? 1 : -1)
         {}
