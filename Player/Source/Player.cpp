@@ -1,7 +1,3 @@
-//
-// Created by zendev on 2023-05-04.
-//
-
 #include "Player.h"
 
 Player::Player(std::function<void(juce::MidiBuffer)>& latestMIDIBufferFn) :
