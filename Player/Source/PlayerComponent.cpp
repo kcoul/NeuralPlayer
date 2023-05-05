@@ -11,28 +11,21 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
     formatManager.registerBasicFormats();
     readAheadThread.startThread();
 
+    debugResourcesDirectory = walkDebugDirectoryToResourcesFolder();
+
     trackSelected = [this] (String trackName)
     {
-        auto pwd = File::getCurrentWorkingDirectory();
-        while (true) //Ascend to build inputFolder
-        {
-            pwd = pwd.getParentDirectory();
-            if (pwd.getFileName().endsWith("cmake-build-debug") ||
-                pwd.getFileName().endsWith("cmake-build-release"))
-                break;
-        }
+        auto trackPath = debugResourcesDirectory.getChildFile(trackName + ".wav");
 
-        pwd = pwd.getParentDirectory();
-        pwd = pwd.getChildFile("Player/Resources/" + trackName + ".wav");
-
-        if(currentlyLoadedFile != pwd && pwd.existsAsFile())
+        if(currentlyLoadedFile != trackPath && trackPath.existsAsFile())
         {
-            loadAudioFileIntoTransport(pwd);
-            thumbnail->setFile(pwd);
+            loadAudioFileIntoTransport(trackPath);
+            thumbnail->setFile(trackPath);
 
             //Try loading a MIDI file of same path/name to MIDI player
-            auto possibleMIDIFile = File(pwd.getFullPathName().substring(0,
-                                                        pwd.getFullPathName().length() - 4) + ".mid");
+            auto possibleMIDIFile = File(trackPath.getFullPathName().substring(0,
+                                                                               trackPath.getFullPathName().length() - 4) +
+                                                                                       ".mid");
             if (possibleMIDIFile.existsAsFile())
                 loadMIDIFile(possibleMIDIFile);
         }
@@ -166,8 +159,8 @@ std::pair<FolderSelectResult, juce::File> PlayerComponent::selectNewInputFolder(
 std::pair<FolderSelectResult, juce::File> PlayerComponent::selectExistingPlaylistFile()
 {
     loadChooser =
-            std::make_unique<juce::FileChooser>("Find playlist.xml for previously rendered folder...",
-                                                juce::File::getSpecialLocation(juce::File::userDesktopDirectory),
+            std::make_unique<juce::FileChooser>("Find Playlist.xml for previously rendered folder...",
+                                                debugResourcesDirectory,
                                                 "*.xml",
                                                 true);
 #if JUCE_MAC || JUCE_WINDOWS || JUCE_LINUX
@@ -212,4 +205,21 @@ void PlayerComponent::loadMIDIFile(const File& file)
 
     //This function call means that the MIDI file is going to be played with the original tempo and signature.
     audioMIDIPlayer.MIDIFile.convertTimestampTicksToSeconds();
+}
+
+juce::File PlayerComponent::walkDebugDirectoryToResourcesFolder()
+{
+    auto pwd = File::getCurrentWorkingDirectory();
+    while (true) //Ascend to build inputFolder
+    {
+        pwd = pwd.getParentDirectory();
+        if (pwd.getFileName().endsWith("cmake-build-debug") ||
+            pwd.getFileName().endsWith("cmake-build-release"))
+            break;
+    }
+
+    pwd = pwd.getParentDirectory();
+    pwd = pwd.getChildFile("Player/Resources/");
+
+    return pwd;
 }

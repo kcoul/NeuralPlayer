@@ -32,6 +32,8 @@ private:
     std::unique_ptr<juce::FileChooser> loadChooser;
     std::pair<FolderSelectResult, juce::File> selectNewInputFolder();
     std::pair<FolderSelectResult, juce::File> selectExistingPlaylistFile();
+    juce::File debugResourcesDirectory;
+    juce::File walkDebugDirectoryToResourcesFolder();
 
     std::unique_ptr<SourceSepMIDIRenderingThread>& renderingThread;
 
