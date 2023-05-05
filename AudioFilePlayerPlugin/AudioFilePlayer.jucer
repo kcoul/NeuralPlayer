@@ -15,10 +15,10 @@
               pluginFormats="buildAU,buildStandalone,buildVST3" pluginCharacteristicsValue="pluginIsSynth"
               jucerFormatVersion="1">
   <MAINGROUP id="tjuOXe" name="AudioFilePlayer">
-    <FILE id="lFuAFH" name="AudioThumbnailComp.cpp" compile="1" resource="0"
-          file="Source/AudioThumbnailComp.cpp"/>
-    <FILE id="MXkcJl" name="AudioThumbnailComp.h" compile="0" resource="0"
-          file="Source/AudioThumbnailComp.h"/>
+    <FILE id="lFuAFH" name="AudioThumbnailComponent.cpp" compile="1" resource="0"
+          file="Source/AudioThumbnailComponent.cpp"/>
+    <FILE id="MXkcJl" name="AudioThumbnailComponent.h" compile="0" resource="0"
+          file="Source/AudioThumbnailComponent.h"/>
     <FILE id="Yabvca" name="PluginProcessor.cpp" compile="1" resource="0"
           file="Source/PluginProcessor.cpp"/>
     <FILE id="LW9She" name="PluginProcessor.h" compile="0" resource="0"

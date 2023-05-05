@@ -52,8 +52,8 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
 
     addAndMakeVisible(playlistComponent);
 
-    thumbnail = std::make_unique<AudioThumbnailComp>(formatManager,
-                                                     transportSource,
+    thumbnail = std::make_unique<AudioThumbnailComponent>(formatManager,
+                                                     audioMIDIPlayer.transportSource,
                                                      thumbnailCache,
                                                      thumbnailPlayheadPositionChanged,
                                                      currentlyLoadedFile);
@@ -61,32 +61,37 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
 
     addAndMakeVisible(startStopButton);
     startStopButton.setButtonText("Play");
+
+    midiFlushJob = [this]() { audioMIDIPlayer.sendAllNotesOff(); };
+    transportStartJob = [this]()
+            { audioMIDIPlayer.transportSource.setPosition(0);
+              audioMIDIPlayer.transportSource.start(); };
+    transportStopJob = [this]() { audioMIDIPlayer.transportSource.stop(); };
+
     startStopButton.onClick = [this]
     {
-        if (transportSource.isPlaying())
+        if (audioMIDIPlayer.transportSource.isPlaying())
         {
-            startStopButton.setButtonText("Stop");
-            transportSource.stop();
-            //sendAllNotesOff();
-
+            threadPool.addJob(midiFlushJob);
+            threadPool.addJob(transportStopJob);
+            startStopButton.setButtonText("Play");
         }
         else
         {
-            startStopButton.setButtonText("Play");
-            transportSource.setPosition(0);
-            transportSource.start();
+            threadPool.addJob(transportStartJob);
+            startStopButton.setButtonText("Stop");
         }
     };
     addAndMakeVisible(startStopButton);
 
     addAndMakeVisible(keyboardComponent);
 
-    audioDeviceManager.addAudioCallback(this);
+    audioDeviceManager.addAudioCallback(&audioMIDIPlayer);
 }
 
 PlayerComponent::~PlayerComponent()
 {
-    audioDeviceManager.removeAudioCallback(this);
+    audioDeviceManager.removeAudioCallback(&audioMIDIPlayer);
 }
 
 void PlayerComponent::paint(juce::Graphics& g)
@@ -120,30 +125,6 @@ void PlayerComponent::resized()
     keyboardComponent.setBounds(area);
 }
 
-void PlayerComponent::audioDeviceAboutToStart(juce::AudioIODevice* device)
-{
-    transportSource.prepareToPlay(device->getCurrentBufferSizeSamples(), device->getCurrentSampleRate());
-}
-
-void PlayerComponent::audioDeviceStopped()
-{
-
-}
-
-void PlayerComponent::audioDeviceIOCallbackWithContext(const float* const* inputChannelData,
-                           int numInputChannels,
-                           float* const* outputChannelData,
-                           int numOutputChannels,
-                           int numSamples,
-                           const AudioIODeviceCallbackContext& context)
-{
-    AudioSampleBuffer buffer;
-    //buffer.setSize(numOutputChannels, numSamples);
-    buffer.setDataToReferTo(outputChannelData, numOutputChannels, numSamples);
-    transportSource.getNextAudioBlock(AudioSourceChannelInfo(buffer));
-
-}
-
 std::pair<FolderSelectResult, juce::File> PlayerComponent::selectInputFolder()
 {
     loadChooser =
@@ -164,8 +145,8 @@ std::pair<FolderSelectResult, juce::File> PlayerComponent::selectInputFolder()
 void PlayerComponent::loadAudioFileIntoTransport(const File& audioFile)
 {
     // unload the previous file source and delete it..
-    transportSource.stop();
-    transportSource.setSource(nullptr);
+    audioMIDIPlayer.transportSource.stop();
+    audioMIDIPlayer.transportSource.setSource(nullptr);
     currentAudioFileSource = nullptr;
 
     AudioFormatReader* reader = formatManager.createReaderFor(audioFile);
@@ -176,7 +157,7 @@ void PlayerComponent::loadAudioFileIntoTransport(const File& audioFile)
         currentAudioFileSource = std::make_unique<AudioFormatReaderSource>(reader, true);
 
         // ..and plug it into our transport source
-        transportSource.setSource(
+        audioMIDIPlayer.transportSource.setSource(
                 currentAudioFileSource.get(),
                 32768,                   // tells it to buffer this many samples ahead
                 &readAheadThread,        // this is the background thread to use for reading-ahead
@@ -186,11 +167,11 @@ void PlayerComponent::loadAudioFileIntoTransport(const File& audioFile)
 
 void PlayerComponent::loadMIDIFile(const File& file)
 {
-    MIDIFile.clear();
+    audioMIDIPlayer.MIDIFile.clear();
 
     juce::FileInputStream stream(file);
-    MIDIFile.readFrom(stream);
+    audioMIDIPlayer.MIDIFile.readFrom(stream);
 
     //This function call means that the MIDI file is going to be played with the original tempo and signature.
-    MIDIFile.convertTimestampTicksToSeconds();
+    audioMIDIPlayer.MIDIFile.convertTimestampTicksToSeconds();
 }

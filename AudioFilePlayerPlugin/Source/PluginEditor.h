@@ -21,7 +21,7 @@
 #include <JuceHeader.h>
 #include <roli_blocks_basics/roli_blocks_basics.h>
 
-#include "AudioThumbnailComp.h"
+#include "AudioThumbnailComponent.h"
 #include "PluginProcessor.h"
 
 class AudioFilePlayerEditor :
@@ -47,7 +47,7 @@ private:
 
     juce::ToggleButton lumiDetectedButton {"Lumi Detected"};
     std::unique_ptr<juce::TextButton> loadButton;
-    std::unique_ptr<AudioThumbnailComp> thumbnail;
+    std::unique_ptr<AudioThumbnailComponent> thumbnail;
     juce::ToggleButton abButton {"Hear Extracted Vocal"};
 
     TextButton startStopButton;

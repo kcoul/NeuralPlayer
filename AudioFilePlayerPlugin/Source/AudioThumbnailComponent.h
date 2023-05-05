@@ -1,5 +1,5 @@
 /*
-    AudioThumbnailComp.h
+    AudioThumbnailComponent.h
     Copyright (C) 2017 Jonathon Racz, ROLI Ltd.
 
     This program is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 
 #include <JuceHeader.h>
 
-class AudioThumbnailComp :
+class AudioThumbnailComponent :
     public Component,
     public ChangeListener,
     public FileDragAndDropTarget,
@@ -29,14 +29,14 @@ class AudioThumbnailComp :
     private Timer
 {
 public:
-    AudioThumbnailComp(
+    AudioThumbnailComponent(
         AudioFormatManager& formatManager,
         AudioTransportSource& transport,
         AudioThumbnailCache& thumbCache,
         std::function<void()>& relayAllNotesOff,
         const File& existingFile = File());
 
-    ~AudioThumbnailComp();
+    ~AudioThumbnailComponent();
 
     void setFile(const File& file);
 

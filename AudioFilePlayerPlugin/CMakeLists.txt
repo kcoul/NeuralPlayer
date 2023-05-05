@@ -60,12 +60,10 @@ juce_generate_juce_header(${TargetName})
 
 # Manually list all .h and .cpp files for the plugin, don't use globs:
 set(SourceFiles
-        Source/AudioThumbnailComp.cpp
-        Source/AudioThumbnailComp.h
+        Source/AudioThumbnailComponent.cpp
         Source/PluginEditor.cpp
-        Source/PluginEditor.h
-        Source/PluginProcessor.cpp
-        Source/PluginProcessor.h)
+        Source/PluginProcessor.cpp)
+
 target_sources("${TargetName}" PRIVATE ${SourceFiles})
 
 # We don't want our source buried in extra nested folders

@@ -4,7 +4,10 @@ MainViewComponent::MainViewComponent() : tabComponent(juce::TabbedButtonBar::Tab
 {
     renderingThread = std::make_unique<SourceSepMIDIRenderingThread>();
     playerComponent = std::make_unique<PlayerComponent>(renderingThread);
-    settingsComponent = std::make_unique<SettingsComponent>(renderingThread->threadVars);
+
+    lumiCallback = [this] (roli::Block::Ptr p){ playerComponent->setLumi(p); };
+
+    settingsComponent = std::make_unique<SettingsComponent>(renderingThread->threadVars, lumiCallback);
 
     setSize(700, 800);
 

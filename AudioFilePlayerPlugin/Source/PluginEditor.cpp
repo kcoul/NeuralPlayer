@@ -43,11 +43,11 @@ AudioFilePlayerEditor::AudioFilePlayerEditor(AudioFilePlayerProcessor& p) :
         }
     };
 
-    thumbnail = std::make_unique<AudioThumbnailComp>(processor.formatManager,
-                                                     processor.transportSource,
-                                                     processor.thumbnailCache,
-                                                     thumbnailPlayheadPositionChanged,
-                                                     processor.currentlyLoadedFile);
+    thumbnail = std::make_unique<AudioThumbnailComponent>(processor.formatManager,
+                                                          processor.transportSource,
+                                                          processor.thumbnailCache,
+                                                          thumbnailPlayheadPositionChanged,
+                                                          processor.currentlyLoadedFile);
     addAndMakeVisible(thumbnail.get());
     thumbnail->addChangeListener(this);
 

@@ -1,8 +1,10 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include <roli_blocks_basics/roli_blocks_basics.h>
 
-#include "AudioThumbnailComp.h"
+#include "AudioThumbnailComponent.h"
+#include "Player.h"
 #include "PlaylistComponent.h"
 #include "SharedAudioDeviceManager.h"
 #include "SourceSepMIDIRenderingThread.h"
@@ -13,8 +15,7 @@ enum class FolderSelectResult
     cancelled
 };
 
-class PlayerComponent : public juce::Component,
-                        public juce::AudioIODeviceCallback
+class PlayerComponent : public juce::Component
 {
 public:
     PlayerComponent(std::unique_ptr<SourceSepMIDIRenderingThread>& renderingThread);
@@ -22,18 +23,10 @@ public:
     void paint(juce::Graphics&) override;
     void resized() override;
 
-    void audioDeviceAboutToStart(juce::AudioIODevice* device) override;
-
-    void audioDeviceStopped() override;
-
-    void audioDeviceIOCallbackWithContext(const float* const* inputChannelData,
-                               int numInputChannels,
-                               float* const* outputChannelData,
-                               int numOutputChannels,
-                               int numSamples,
-                               const AudioIODeviceCallbackContext& context) override;
+    void setLumi(roli::Block::Ptr lumi) { audioMIDIPlayer.lumi = lumi; };
 private:
     juce::AudioDeviceManager& audioDeviceManager { getSharedAudioDeviceManager(0, 2) };
+    Player audioMIDIPlayer;
 
     juce::TextButton loadButton {"Load Audio"};
 
@@ -43,24 +36,32 @@ private:
 
     std::unique_ptr<SourceSepMIDIRenderingThread>& renderingThread;
 
-    PlaylistComponent playlistComponent;
-    std::function<void(String)> trackSelected;
-    std::unique_ptr<AudioFormatReaderSource> currentAudioFileSource;
     void loadAudioFileIntoTransport(const File& audioFile);
     void loadMIDIFile(const File& midiFile);
 
-    std::unique_ptr<AudioThumbnailComp> thumbnail;
-    AudioTransportSource transportSource;
+    PlaylistComponent playlistComponent;
+    std::function<void(String)> trackSelected;
+
+    std::unique_ptr<AudioThumbnailComponent> thumbnail;
+
+    std::unique_ptr<AudioFormatReaderSource> currentAudioFileSource;
     AudioFormatManager formatManager;
     AudioThumbnailCache thumbnailCache;
+
+
     std::function<void()> thumbnailPlayheadPositionChanged = [this]()
     {
-        //processor.sendAllNotesOff();
+        threadPool.addJob(midiFlushJob);
+        startStopButton.setButtonText("Stop");
     };
+
+    juce::ThreadPool threadPool;
+    std::function<void()> midiFlushJob;
+    std::function<void()> transportStartJob;
+    std::function<void()> transportStopJob;
+
     File currentlyLoadedFile;
     TimeSliceThread readAheadThread;
-
-    juce::MidiFile MIDIFile;
 
     juce::TextButton startStopButton;
 

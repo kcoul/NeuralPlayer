@@ -1,5 +1,5 @@
 /*
-    AudioThumbnailComp.cpp
+    AudioThumbnailComponent.cpp
     Copyright (C) 2017 Jonathon Racz, ROLI Ltd.
 
     This program is free software: you can redistribute it and/or modify
@@ -16,9 +16,9 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "AudioThumbnailComp.h"
+#include "AudioThumbnailComponent.h"
 
-AudioThumbnailComp::AudioThumbnailComp(
+AudioThumbnailComponent::AudioThumbnailComponent(
     AudioFormatManager& formatManager,
     AudioTransportSource& transport,
     AudioThumbnailCache& thumbCache,
@@ -43,13 +43,13 @@ AudioThumbnailComp::AudioThumbnailComp(
     setFile(existingFile);
 }
 
-AudioThumbnailComp::~AudioThumbnailComp()
+AudioThumbnailComponent::~AudioThumbnailComponent()
 {
     scrollbar.removeListener(this);
     thumbnail.removeChangeListener(this);
 }
 
-void AudioThumbnailComp::setFile(const File& file)
+void AudioThumbnailComponent::setFile(const File& file)
 {
     if (file.existsAsFile())
     {
@@ -62,12 +62,12 @@ void AudioThumbnailComp::setFile(const File& file)
     }
 }
 
-File AudioThumbnailComp::getLastDroppedFile() const noexcept
+File AudioThumbnailComponent::getLastDroppedFile() const noexcept
 {
     return lastFileDropped;
 }
 
-void AudioThumbnailComp::setZoomFactor(double amount)
+void AudioThumbnailComponent::setZoomFactor(double amount)
 {
     if (thumbnail.getTotalLength() > 0)
     {
@@ -77,7 +77,7 @@ void AudioThumbnailComp::setZoomFactor(double amount)
     }
 }
 
-void AudioThumbnailComp::setRange(Range<double> newRange)
+void AudioThumbnailComponent::setRange(Range<double> newRange)
 {
     visibleRange = newRange;
     scrollbar.setCurrentRange(visibleRange);
@@ -85,12 +85,12 @@ void AudioThumbnailComp::setRange(Range<double> newRange)
     repaint();
 }
 
-void AudioThumbnailComp::setFollowsTransport(bool shouldFollow)
+void AudioThumbnailComponent::setFollowsTransport(bool shouldFollow)
 {
     isFollowingTransport = shouldFollow;
 }
 
-void AudioThumbnailComp::paint(Graphics& g)
+void AudioThumbnailComponent::paint(Graphics& g)
 {
     g.fillAll(Colours::darkgrey);
     g.setColour(Colours::lightblue);
@@ -109,18 +109,18 @@ void AudioThumbnailComp::paint(Graphics& g)
     }
 }
 
-void AudioThumbnailComp::resized()
+void AudioThumbnailComponent::resized()
 {
     scrollbar.setBounds(getLocalBounds().removeFromBottom(14).reduced(2));
 }
 
-void AudioThumbnailComp::changeListenerCallback(ChangeBroadcaster*)
+void AudioThumbnailComponent::changeListenerCallback(ChangeBroadcaster*)
 {
     // this method is called by the thumbnail when it has changed, so we should repaint it..
     repaint();
 }
 
-void AudioThumbnailComp::filesDropped(const StringArray& files, int /*x*/, int /*y*/)
+void AudioThumbnailComponent::filesDropped(const StringArray& files, int /*x*/, int /*y*/)
 {
     auto result = File(files[0]); //Only array element guaranteed to exist, just load one for now.
     if (result.getFileExtension() == ".wav")
@@ -130,12 +130,12 @@ void AudioThumbnailComp::filesDropped(const StringArray& files, int /*x*/, int /
     }
 }
 
-void AudioThumbnailComp::mouseDown(const MouseEvent& e)
+void AudioThumbnailComponent::mouseDown(const MouseEvent& e)
 {
     mouseDrag(e);
 }
 
-void AudioThumbnailComp::mouseDrag(const MouseEvent& e)
+void AudioThumbnailComponent::mouseDrag(const MouseEvent& e)
 {
     if (canMoveTransport())
     {
@@ -144,12 +144,12 @@ void AudioThumbnailComp::mouseDrag(const MouseEvent& e)
     }
 }
 
-void AudioThumbnailComp::mouseUp(const MouseEvent&)
+void AudioThumbnailComponent::mouseUp(const MouseEvent&)
 {
     transportSource.start();
 }
 
-void AudioThumbnailComp::mouseWheelMove(const MouseEvent&, const MouseWheelDetails& wheel)
+void AudioThumbnailComponent::mouseWheelMove(const MouseEvent&, const MouseWheelDetails& wheel)
 {
     if (thumbnail.getTotalLength() > 0.0)
     {
@@ -163,29 +163,29 @@ void AudioThumbnailComp::mouseWheelMove(const MouseEvent&, const MouseWheelDetai
     }
 }
 
-float AudioThumbnailComp::timeToX(const double time) const
+float AudioThumbnailComponent::timeToX(const double time) const
 {
     return getWidth() * (float)((time - visibleRange.getStart()) / (visibleRange.getLength()));
 }
 
-double AudioThumbnailComp::xToTime(const float x) const
+double AudioThumbnailComponent::xToTime(const float x) const
 {
     return (x / getWidth()) * (visibleRange.getLength()) + visibleRange.getStart();
 }
 
-bool AudioThumbnailComp::canMoveTransport() const noexcept
+bool AudioThumbnailComponent::canMoveTransport() const noexcept
 {
     return !(isFollowingTransport && transportSource.isPlaying());
 }
 
-void AudioThumbnailComp::scrollBarMoved(ScrollBar* scrollBarThatHasMoved, double newRangeStart)
+void AudioThumbnailComponent::scrollBarMoved(ScrollBar* scrollBarThatHasMoved, double newRangeStart)
 {
     if (scrollBarThatHasMoved == &scrollbar)
         if (!(isFollowingTransport && transportSource.isPlaying()))
             setRange(visibleRange.movedToStartAt(newRangeStart));
 }
 
-void AudioThumbnailComp::timerCallback()
+void AudioThumbnailComponent::timerCallback()
 {
     if (canMoveTransport())
         updateCursorPosition();
@@ -193,7 +193,7 @@ void AudioThumbnailComp::timerCallback()
         setRange(visibleRange.movedToStartAt(transportSource.getCurrentPosition() - (visibleRange.getLength() / 2.0)));
 }
 
-void AudioThumbnailComp::updateCursorPosition()
+void AudioThumbnailComponent::updateCursorPosition()
 {
     currentPositionMarker.setVisible(transportSource.isPlaying() || isMouseButtonDown());
 

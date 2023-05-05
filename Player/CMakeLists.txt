@@ -46,10 +46,11 @@ target_sources(${TargetName} PRIVATE
         Lib/Model/BasicPitch.cpp
         Lib/Model/Features.cpp
         Lib/Model/Notes.cpp
-        Source/AudioThumbnailComp.cpp
+        Source/AudioThumbnailComponent.cpp
         Source/ConsoleViewComponent.cpp
         Source/Main.cpp
         Source/MainViewComponent.cpp
+        Source/Player.cpp
         Source/PlayerComponent.cpp
         Source/SettingsComponent.cpp
         Source/SharedAudioDeviceManager.cpp)
@@ -82,6 +83,7 @@ target_link_libraries(${TargetName}
         juce::juce_audio_processors
         juce::juce_audio_utils
         juce::juce_dsp
+        roli_blocks_basics
         PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
