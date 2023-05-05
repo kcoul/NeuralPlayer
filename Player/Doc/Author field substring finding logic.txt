@@ -1,0 +1,7 @@
+Author field substring finding logic
+
+1. Prefix substring immediately before first occurrence of " - " or " ~ " (Japan style)
+2. Suffix substring immediately following "by " and before author-suffix-end token possibilities:
+	" ("
+	" ["
+	or otherwise remainder of string 

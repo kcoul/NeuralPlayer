@@ -1,7 +1,11 @@
 project (Player VERSION 0.0.1)
 set(TargetName ${PROJECT_NAME})
 
-juce_add_gui_app(${TargetName} PRODUCT_NAME "AudioMIDIPlayer" VERSION 0.1)
+juce_add_gui_app(${TargetName}
+        PRODUCT_NAME "AudioMIDIPlayer"
+        VERSION 0.1
+        ICON_BIG "${CMAKE_SOURCE_DIR}/Player/Resources/AudioMIDI.png"
+        ICON_SMALL "${CMAKE_SOURCE_DIR}/Player/Resources/AudioMIDI.png")
 target_compile_features(${TargetName} PUBLIC cxx_std_17)
 
 juce_generate_juce_header(${TargetName})
@@ -14,11 +18,9 @@ add_library(onnxruntime SHARED IMPORTED)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     if(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") #libonnxruntime can't seem to build in this configuration, ironically
-        message("Using alternative libonnxruntime.dylib path")
         set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
-                ${OnnxRuntime_SOURCE_DIR}/../../../cmake-build-release/_deps/onnxruntime-src/build/MacOS/RelWithDebInfo/libonnxruntime.dylib)
+                ${OnnxRuntime_SOURCE_DIR}/../../../cmake-build-debug/_deps/onnxruntime-src/build/MacOS/RelWithDebInfo/libonnxruntime.dylib)
     else()
-        message("Using in-tree libonnxruntime.dylib path")
         set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
                 ${OnnxRuntime_SOURCE_DIR}/build/MacOS/RelWithDebInfo/libonnxruntime.dylib)
     endif()

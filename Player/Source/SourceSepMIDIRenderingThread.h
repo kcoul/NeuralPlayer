@@ -25,7 +25,7 @@ public:
     }
 
     void setInputFolder(juce::File inFolder) { inputFolder = std::move(inFolder); }
-    void setOutputFolder(juce::File outFolder) { outputFolder = std::move(outFolder); }
+    void setDebugOutputFolder(juce::File outFolder) { outputFolder = std::move(outFolder); }
 
     bool stopRenderingFlag = false; //TODO: Use this to elegantly stop rendering after current file is done processing
 

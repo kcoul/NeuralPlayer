@@ -38,7 +38,7 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
         {
             auto inputFolder = result.second;
             renderingThread->setInputFolder(inputFolder);
-            renderingThread->setOutputFolder(File(inputFolder.getFullPathName() + "/out"));
+            renderingThread->setDebugOutputFolder(File(inputFolder.getFullPathName() + "/debug"));
             renderingThread->startThread();
         };
     };
