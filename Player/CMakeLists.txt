@@ -13,8 +13,15 @@ find_package(OnnxRuntime)
 add_library(onnxruntime SHARED IMPORTED)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
-            ${OnnxRuntime_SOURCE_DIR}/build/MacOS/RelWithDebInfo/libonnxruntime.dylib)
+    if(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") #libonnxruntime can't seem to build in this configuration, ironically
+        message("Using alternative libonnxruntime.dylib path")
+        set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
+                ${OnnxRuntime_SOURCE_DIR}/../../../cmake-build-release/_deps/onnxruntime-src/build/MacOS/RelWithDebInfo/libonnxruntime.dylib)
+    else()
+        message("Using in-tree libonnxruntime.dylib path")
+        set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
+                ${OnnxRuntime_SOURCE_DIR}/build/MacOS/RelWithDebInfo/libonnxruntime.dylib)
+    endif()
 endif()
 
 #Binary data

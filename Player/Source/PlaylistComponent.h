@@ -35,18 +35,18 @@ public:
     void paintCell (juce::Graphics& g, int rowNumber, int columnId,
                     int width, int height, bool rowIsSelected) override
     {
-        g.setColour (rowIsSelected ? juce::Colours::darkblue : getLookAndFeel().findColour (juce::ListBox::textColourId));  // [5]
+        g.setColour (rowIsSelected ? juce::Colours::darkblue : getLookAndFeel().findColour (juce::ListBox::textColourId));
         g.setFont (font);
 
         if (auto* rowElement = dataList->getChildElement (rowNumber))
         {
             auto text = rowElement->getStringAttribute (getAttributeNameForColumnId (columnId));
 
-            g.drawText (text, 2, 0, width - 4, height, juce::Justification::centredLeft, true);                             // [6]
+            g.drawText (text, 2, 0, width - 4, height, juce::Justification::centredLeft, true);
         }
 
         g.setColour (getLookAndFeel().findColour (juce::ListBox::backgroundColourId));
-        g.fillRect (width - 1, 0, 1, height);                                                                               // [7]
+        g.fillRect (width - 1, 0, 1, height);
     }
 
     void sortOrderChanged (int newSortColumnId, bool isForwards) override
@@ -294,7 +294,8 @@ private:
         {
             pwd = pwd.getParentDirectory();
             if (pwd.getFileName().endsWith("cmake-build-debug") ||
-                pwd.getFileName().endsWith("cmake-build-release"))
+                pwd.getFileName().endsWith("cmake-build-release") ||
+                pwd.getFileName().endsWith("cmake-build-relwithdebinfo"))
                 break;
         }
 

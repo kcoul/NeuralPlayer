@@ -18,31 +18,39 @@ public:
     }
     void run() override
     {
-        auto pwd = File::getCurrentWorkingDirectory();
-
-        while (true) //Ascend to build inputFolder
-        {
-            pwd = pwd.getParentDirectory();
-            if (pwd.getFileName().endsWith("cmake-build-debug") ||
-                pwd.getFileName().endsWith("cmake-build-release"))
-                break;
-        }
-
-        //Descend to SpleeterRTBin location
-        pwd = pwd.getChildFile("SpleeterRT/Executable/SpleeterRTBin");
-
-        //renderSingleFile(pwd, currentInputFile);
-        renderFiles(pwd);
+        SpleeterRTBinFile = walkDebugDirectoryToSpleeterRTBin();
+        renderFiles(SpleeterRTBinFile);
 
         signalThreadShouldExit();
     }
 
     void setInputFolder(juce::File inFolder) { inputFolder = std::move(inFolder); }
     void setOutputFolder(juce::File outFolder) { outputFolder = std::move(outFolder); }
-    bool stopRenderingFlag = false;
+
+    bool stopRenderingFlag = false; //TODO: Use this to elegantly stop rendering after current file is done processing
 
     WatchedVars threadVars;
 private:
+    juce::File SpleeterRTBinFile;
+    static juce::File walkDebugDirectoryToSpleeterRTBin()
+    {
+        auto pwd = File::getCurrentWorkingDirectory();
+
+        while (true) //Ascend to build inputFolder
+        {
+            pwd = pwd.getParentDirectory();
+            if (pwd.getFileName().endsWith("cmake-build-debug") ||
+                pwd.getFileName().endsWith("cmake-build-release") ||
+                    pwd.getFileName().endsWith("cmake-build-relwithdebinfo"))
+                break;
+        }
+
+        //Descend to SpleeterRTBin location
+        pwd = pwd.getChildFile("SpleeterRT/Executable/SpleeterRTBin");
+
+        return pwd;
+    }
+
     AudioFormatManager formatManager;
 
     juce::File currentInputFile;
@@ -119,7 +127,10 @@ private:
 
             std::unique_ptr<AudioFormatWriter> writer;
             WavAudioFormat format;
-            writer.reset (format.createWriterFor (new FileOutputStream (outputFolder.getChildFile(originalFilenameWithoutExtension + "_DualMono.wav")),
+            writer.reset (format.createWriterFor (new FileOutputStream (
+                    outputFolder.getChildFile(originalFilenameWithoutExtension +
+                                                   /* "_DualMono" + */ //Optional: We want identical filenames to analyze output with AudioFilePlayerPlugin
+                                                   ".wav")),
                                                   44100.0,
                                                   dualMonoBuffer.getNumChannels(),
                                                   16,
@@ -128,15 +139,15 @@ private:
             if (writer != nullptr)
                 writer->writeFromAudioSampleBuffer (dualMonoBuffer, 0, dualMonoBuffer.getNumSamples());
 
-            //Also re-save vocal inputFile in mono to get MIDI more quickly from NeuralNote
-            writer.reset (format.createWriterFor (new FileOutputStream (outputFolder.getChildFile(originalFilenameWithoutExtension + "_VocalMono.wav")),
-                                                  44100.0,
-                                                  extractedVocalMonoBuffer.getNumChannels(),
-                                                  16,
-                                                  {},
-                                                  0));
-            if (writer != nullptr)
-                writer->writeFromAudioSampleBuffer (extractedVocalMonoBuffer, 0, extractedVocalMonoBuffer.getNumSamples());
+            //Optional: re-save vocal inputFile in mono to get MIDI more quickly from NeuralNote plug-in to compare with
+            //writer.reset (format.createWriterFor (new FileOutputStream (outputFolder.getChildFile(originalFilenameWithoutExtension + "_VocalMono.wav")),
+            //                                      44100.0,
+            //                                      extractedVocalMonoBuffer.getNumChannels(),
+            //                                      16,
+            //                                      {},
+            //                                      0));
+            //if (writer != nullptr)
+            //    writer->writeFromAudioSampleBuffer (extractedVocalMonoBuffer, 0, extractedVocalMonoBuffer.getNumSamples());
 
 
             //MIDI Processing Workbench
@@ -157,10 +168,22 @@ private:
                                          mAudioBufferForMIDITranscription.getNumSamples());
 
             auto noteEvents = mBasicPitch.getNoteEvents();
-            auto midiOutputFilePath = outputFolder.getChildFile(originalFilenameWithoutExtension + ".mid");
+
+            //Write MIDI to debug output folder to be able to load it alongside DualMono file in AudioFilePlayerPlugin
+            auto debugMidiOutputFilePath = outputFolder.getChildFile(originalFilenameWithoutExtension + ".mid");
             if (!mMidiFileWriter.writeMidiFile(
                     noteEvents,
-                    midiOutputFilePath,
+                    debugMidiOutputFilePath,
+                    120))
+            {
+                threadVars.returnedText = "MIDI write operation failed.";
+            }
+
+            //Also write MIDI to input folder to be able to load it as part of Playlist.xml
+            auto releaseMidiOutputFilePath = inputFolder.getChildFile(originalFilenameWithoutExtension + ".mid");
+            if (!mMidiFileWriter.writeMidiFile(
+                    noteEvents,
+                    releaseMidiOutputFilePath,
                     120))
             {
                 threadVars.returnedText = "MIDI write operation failed.";

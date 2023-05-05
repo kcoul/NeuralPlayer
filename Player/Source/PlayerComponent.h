@@ -33,7 +33,7 @@ private:
     std::pair<FolderSelectResult, juce::File> selectNewInputFolder();
     std::pair<FolderSelectResult, juce::File> selectExistingPlaylistFile();
     juce::File debugResourcesDirectory;
-    juce::File walkDebugDirectoryToResourcesFolder();
+    static juce::File walkDebugDirectoryToResourcesFolder();
 
     std::unique_ptr<SourceSepMIDIRenderingThread>& renderingThread;
 
