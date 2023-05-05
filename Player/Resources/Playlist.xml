@@ -5,7 +5,7 @@
         <COLUMN columnId="3" name="Duration" width="100"/>
     </HEADERS>
     <DATA>
-        <ITEM Title="True Survivor (From 'Kung Fury')" Author="Super MadNES" Duration="02:57"/>
+        <ITEM Title="TrueSurvivor" Author="Super MadNES" Duration="02:57"/>
         <ITEM Title="Yee" Author="" Duration="00:09"/>
     </DATA>
 </TABLE_DATA>

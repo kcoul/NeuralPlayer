@@ -2,13 +2,35 @@
 
 PlayerComponent::PlayerComponent(std::unique_ptr<SourceSepMIDIRenderingThread>& thread) :
 renderingThread(thread),
-keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard),
+playlistComponent(trackSelected),
 thumbnailCache(1),
-readAheadThread("transport read ahead")
+readAheadThread("transport read ahead"),
+keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
     formatManager.registerBasicFormats();
     readAheadThread.startThread();
-    
+
+    trackSelected = [this] (String trackName)
+    {
+        auto pwd = File::getCurrentWorkingDirectory();
+        while (true) //Ascend to build inputFolder
+        {
+            pwd = pwd.getParentDirectory();
+            if (pwd.getFileName().endsWith("cmake-build-debug") ||
+                pwd.getFileName().endsWith("cmake-build-release"))
+                break;
+        }
+
+        pwd = pwd.getParentDirectory();
+        pwd = pwd.getChildFile("Player/Resources/" + trackName + ".wav");
+
+        if(currentlyLoadedFile != pwd && pwd.existsAsFile())
+        {
+            loadAudioFileIntoTransport(pwd);
+            thumbnail->setFile(pwd);
+        }
+    };
+
     loadButton.onClick = [this]
     {
         auto result = selectInputFolder();
@@ -43,11 +65,13 @@ readAheadThread("transport read ahead")
     addAndMakeVisible(startStopButton);
 
     addAndMakeVisible(keyboardComponent);
+
+    audioDeviceManager.addAudioCallback(this);
 }
 
 PlayerComponent::~PlayerComponent()
 {
-
+    audioDeviceManager.removeAudioCallback(this);
 }
 
 void PlayerComponent::paint(juce::Graphics& g)
@@ -98,7 +122,7 @@ void PlayerComponent::audioDeviceIOCallbackWithContext(const float* const* input
                            int numSamples,
                            const AudioIODeviceCallbackContext& context)
 {
-
+    int i = 1;
 }
 
 std::pair<FolderSelectResult, juce::File> PlayerComponent::selectInputFolder()
@@ -116,4 +140,27 @@ std::pair<FolderSelectResult, juce::File> PlayerComponent::selectInputFolder()
 #endif
 
     return std::make_pair<FolderSelectResult, juce::File>(FolderSelectResult::cancelled, juce::File());
+}
+
+void PlayerComponent::loadAudioFileIntoTransport(const File& audioFile)
+{
+    // unload the previous file source and delete it..
+    transportSource.stop();
+    transportSource.setSource(nullptr);
+    currentAudioFileSource = nullptr;
+
+    AudioFormatReader* reader = formatManager.createReaderFor(audioFile);
+    currentlyLoadedFile = audioFile;
+
+    if (reader != nullptr)
+    {
+        currentAudioFileSource = std::make_unique<AudioFormatReaderSource>(reader, true);
+
+        // ..and plug it into our transport source
+        transportSource.setSource(
+                currentAudioFileSource.get(),
+                32768,                   // tells it to buffer this many samples ahead
+                &readAheadThread,        // this is the background thread to use for reading-ahead
+                reader->sampleRate);     // allows for sample rate correction
+    }
 }

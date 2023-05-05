@@ -44,6 +44,9 @@ private:
     std::unique_ptr<SourceSepMIDIRenderingThread>& renderingThread;
 
     PlaylistComponent playlistComponent;
+    std::function<void(String)> trackSelected;
+    std::unique_ptr<AudioFormatReaderSource> currentAudioFileSource;
+    void loadAudioFileIntoTransport(const File& audioFile);
 
     std::unique_ptr<AudioThumbnailComp> thumbnail;
     AudioTransportSource transportSource;
@@ -55,6 +58,8 @@ private:
     };
     File currentlyLoadedFile;
     TimeSliceThread readAheadThread;
+
+    juce::MidiFile MIDIFile;
 
     juce::TextButton startStopButton;
 

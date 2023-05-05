@@ -6,7 +6,7 @@ class PlaylistComponent    : public juce::Component,
                                   public juce::TableListBoxModel
 {
 public:
-    PlaylistComponent()
+    PlaylistComponent(std::function<void(String)>& trackSelectFn) : trackSelected(trackSelectFn)
     {
         auto pwd = File::getCurrentWorkingDirectory();
         while (true) //Ascend to build inputFolder
@@ -28,23 +28,23 @@ public:
         {
             const auto callback = [this] (const juce::FileChooser& chooser)
             {
-                loadData (chooser.getResult());                                             // [1]
+                loadData (chooser.getResult());
             };
             fileChooser.launchAsync (  juce::FileBrowserComponent::openMode
                                        | juce::FileBrowserComponent::canSelectFiles,
                                        callback);
         }
 
-        addAndMakeVisible (table);                                                  // [1]
+        addAndMakeVisible (table);
 
-        table.setColour (juce::ListBox::outlineColourId, juce::Colours::grey);      // [2]
+        table.setColour (juce::ListBox::outlineColourId, juce::Colours::grey);
         table.setOutlineThickness (1);
 
         if (columnList != nullptr)
         {
             for (auto* columnXml : columnList->getChildIterator())
             {
-                table.getHeader().addColumn (columnXml->getStringAttribute ("name"), // [2]
+                table.getHeader().addColumn (columnXml->getStringAttribute ("name"),
                                              columnXml->getIntAttribute ("columnId"),
                                              columnXml->getIntAttribute ("width"),
                                              50,
@@ -53,9 +53,9 @@ public:
             }
         }
 
-        table.getHeader().setSortColumnId (1, true);                                // [3]
+        table.getHeader().setSortColumnId (1, true);
 
-        table.setMultipleSelectionEnabled (false);                                   // [4]
+        table.setMultipleSelectionEnabled (false);
 
         resized();
     }
@@ -103,9 +103,15 @@ public:
         }
     }
 
-    Component* refreshComponentForCell (int rowNumber, int columnId, bool /*isRowSelected*/,
+    Component* refreshComponentForCell (int rowNumber, int columnId, bool isRowSelected,
                                         Component* existingComponentToUpdate) override
     {
+        if (isRowSelected)
+        {
+            auto title = dataList->getChildElement(rowNumber)->getStringAttribute ("Title");
+            trackSelected(title);
+        }
+
         if (columnId == 9)  // [8]
         {
             auto* selectionBox = static_cast<SelectionColumnCustomComponent*> (existingComponentToUpdate);
@@ -117,7 +123,7 @@ public:
             return selectionBox;
         }
 
-        if (columnId == 8)  // [9]
+        if (columnId == 8)
         {
             auto* textLabel = static_cast<EditableTextCustomComponent*> (existingComponentToUpdate);
 
@@ -129,7 +135,7 @@ public:
         }
 
         jassert (existingComponentToUpdate == nullptr);
-        return nullptr;     // [10]
+        return nullptr;
     }
 
     int getColumnAutoSizeWidth (int columnId) override
@@ -183,10 +189,12 @@ private:
     juce::TableListBox table  { {}, this };
     juce::Font font           { 14.0f };
 
-    std::unique_ptr<juce::XmlElement> tutorialData;
+    std::unique_ptr<juce::XmlElement> playlistData;
     juce::XmlElement* columnList = nullptr;
     juce::XmlElement* dataList = nullptr;
     int numRows = 0;
+
+    std::function<void(String)>& trackSelected;
 
     //==============================================================================
     class EditableTextCustomComponent  : public juce::Label
@@ -265,13 +273,13 @@ private:
         int compareElements (juce::XmlElement* first, juce::XmlElement* second) const
         {
             auto result = first->getStringAttribute (attributeToSort)
-                    .compareNatural (second->getStringAttribute (attributeToSort)); // [1]
+                    .compareNatural (second->getStringAttribute (attributeToSort));
 
             if (result == 0)
-                result = first->getStringAttribute ("ID")
-                        .compareNatural (second->getStringAttribute ("ID"));             // [2]
+                result = first->getStringAttribute ("Title")
+                        .compareNatural (second->getStringAttribute ("Title"));
 
-            return direction * result;                                                          // [3]
+            return direction * result;
         }
 
     private:
@@ -285,12 +293,12 @@ private:
         if (tableFile == juce::File() || ! tableFile.exists())
             return;
 
-        tutorialData = juce::XmlDocument::parse (tableFile);            // [3]
+        playlistData = juce::XmlDocument::parse (tableFile);
 
-        dataList   = tutorialData->getChildByName ("DATA");
-        columnList = tutorialData->getChildByName ("HEADERS");          // [4]
+        dataList   = playlistData->getChildByName ("DATA");
+        columnList = playlistData->getChildByName ("HEADERS");
 
-        numRows = dataList->getNumChildElements();                      // [5]
+        numRows = dataList->getNumChildElements();
     }
 
     juce::String getAttributeNameForColumnId (const int columnId) const
