@@ -50,6 +50,7 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
         if (result.first == FolderSelectResult::ok)
         {
             auto playlistXML = result.second;
+            playlistComponent.loadData(playlistXML);
         };
     };
     addAndMakeVisible(loadExistingPlaylistButton);

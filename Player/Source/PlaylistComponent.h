@@ -8,56 +8,13 @@ class PlaylistComponent    : public juce::Component,
 public:
     PlaylistComponent(std::function<void(String)>& trackSelectFn) : trackSelected(trackSelectFn)
     {
-        auto pwd = File::getCurrentWorkingDirectory();
-        while (true) //Ascend to build inputFolder
-        {
-            pwd = pwd.getParentDirectory();
-            if (pwd.getFileName().endsWith("cmake-build-debug") ||
-                pwd.getFileName().endsWith("cmake-build-release"))
-                break;
-        }
-
-        pwd = pwd.getParentDirectory();
-        pwd = pwd.getChildFile("Player/Resources/playlist.xml");
-
-        if(pwd.existsAsFile())
-        {
-            loadData(pwd);
-        }
-        else
-        {
-            const auto callback = [this] (const juce::FileChooser& chooser)
-            {
-                loadData (chooser.getResult());
-            };
-            fileChooser.launchAsync (  juce::FileBrowserComponent::openMode
-                                       | juce::FileBrowserComponent::canSelectFiles,
-                                       callback);
-        }
+        /* debugPlaylistLoading(); */ //Replaced by explicit load function called from outside of this component
 
         addAndMakeVisible (table);
 
         table.setColour (juce::ListBox::outlineColourId, juce::Colours::grey);
         table.setOutlineThickness (1);
-
-        if (columnList != nullptr)
-        {
-            for (auto* columnXml : columnList->getChildIterator())
-            {
-                table.getHeader().addColumn (columnXml->getStringAttribute ("name"),
-                                             columnXml->getIntAttribute ("columnId"),
-                                             columnXml->getIntAttribute ("width"),
-                                             50,
-                                             400,
-                                             juce::TableHeaderComponent::defaultFlags);
-            }
-        }
-
-        table.getHeader().setSortColumnId (1, true);
-
         table.setMultipleSelectionEnabled (false);
-
-        resized();
     }
 
     int getNumRows() override
@@ -185,6 +142,36 @@ public:
         table.setBoundsInset (juce::BorderSize<int> (0));
     }
 
+    void loadData (juce::File playlistXml)
+    {
+        if (playlistXml == juce::File() || ! playlistXml.exists())
+            return;
+
+        playlistData = juce::XmlDocument::parse (playlistXml);
+
+        dataList   = playlistData->getChildByName ("DATA");
+        columnList = playlistData->getChildByName ("HEADERS");
+
+        numRows = dataList->getNumChildElements();
+
+        if (columnList != nullptr)
+        {
+            for (auto* columnXml : columnList->getChildIterator())
+            {
+                table.getHeader().addColumn (columnXml->getStringAttribute ("name"),
+                                             columnXml->getIntAttribute ("columnId"),
+                                             columnXml->getIntAttribute ("width"),
+                                             50,
+                                             400,
+                                             juce::TableHeaderComponent::defaultFlags);
+            }
+        }
+
+        table.getHeader().setSortColumnId (1, true);
+
+        resized();
+    }
+
 private:
     juce::TableListBox table  { {}, this };
     juce::Font font           { 14.0f };
@@ -288,18 +275,6 @@ private:
     };
 
     //==============================================================================
-    void loadData (juce::File tableFile)
-    {
-        if (tableFile == juce::File() || ! tableFile.exists())
-            return;
-
-        playlistData = juce::XmlDocument::parse (tableFile);
-
-        dataList   = playlistData->getChildByName ("DATA");
-        columnList = playlistData->getChildByName ("HEADERS");
-
-        numRows = dataList->getNumChildElements();
-    }
 
     juce::String getAttributeNameForColumnId (const int columnId) const
     {
@@ -312,7 +287,38 @@ private:
         return {};
     }
 
-    juce::FileChooser fileChooser { "Browse for TableData.xml",
+    void debugPlaylistLoading()
+    {
+        auto pwd = File::getCurrentWorkingDirectory();
+        while (true) //Ascend to build inputFolder
+        {
+            pwd = pwd.getParentDirectory();
+            if (pwd.getFileName().endsWith("cmake-build-debug") ||
+                pwd.getFileName().endsWith("cmake-build-release"))
+                break;
+        }
+
+        pwd = pwd.getParentDirectory();
+        pwd = pwd.getChildFile("Player/Resources/Playlist.xml");
+
+        if(pwd.existsAsFile())
+        {
+            loadData(pwd);
+        }
+        else
+        {
+            const auto callback = [this] (const juce::FileChooser& chooser)
+            {
+                loadData (chooser.getResult());
+            };
+            fileChooser.launchAsync (  juce::FileBrowserComponent::openMode
+                                       | juce::FileBrowserComponent::canSelectFiles,
+                                       callback);
+        }
+    }
+
+
+    juce::FileChooser fileChooser { "Browse for Playlist.xml",
                                     juce::File::getSpecialLocation (juce::File::invokedExecutableFile) };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlaylistComponent)
