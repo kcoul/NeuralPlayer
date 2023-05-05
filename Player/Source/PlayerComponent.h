@@ -2,6 +2,7 @@
 
 #include <JuceHeader.h>
 
+#include "PlaylistComponent.h"
 #include "SharedAudioDeviceManager.h"
 #include "SourceSepMIDIRenderingThread.h"
 
@@ -27,5 +28,9 @@ private:
     juce::File selectedOutputFolder;
 
     std::unique_ptr<SourceSepMIDIRenderingThread>& renderingThread;
+
+    PlaylistComponent playlistComponent;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlayerComponent)
 };
 

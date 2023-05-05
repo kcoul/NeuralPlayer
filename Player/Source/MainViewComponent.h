@@ -29,4 +29,6 @@ private:
     std::unique_ptr<juce::AudioDeviceSelectorComponent> audioSettings;
 
     std::unique_ptr<SourceSepMIDIRenderingThread> renderingThread;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainViewComponent)
 };

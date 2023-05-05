@@ -32,5 +32,6 @@ private:
     std::unique_ptr<juce::CodeEditorComponent> testResultsWindow;
     std::unique_ptr<juce::CodeDocument> testResultsDocument;
     int documentPositionIndex = 0;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ConsoleViewComponent)
 };

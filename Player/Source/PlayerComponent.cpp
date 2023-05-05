@@ -14,6 +14,8 @@ PlayerComponent::PlayerComponent(std::unique_ptr<SourceSepMIDIRenderingThread>& 
         };
     };
     addAndMakeVisible(loadButton);
+
+    addAndMakeVisible(playlistComponent);
 }
 
 PlayerComponent::~PlayerComponent()
@@ -34,6 +36,10 @@ void PlayerComponent::resized()
 #endif
     auto vUnit = area.getHeight()/12;
     loadButton.setBounds(area.removeFromTop(vUnit));
+
+    area.removeFromTop(4);
+
+    playlistComponent.setBounds(area.removeFromTop(vUnit * 6));
 }
 
 std::pair<FolderSelectResult, juce::File> PlayerComponent::selectInputFolder()
