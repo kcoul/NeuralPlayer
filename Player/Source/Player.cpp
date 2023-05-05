@@ -4,7 +4,7 @@
 
 #include "Player.h"
 
-Player::Player()
+Player::Player(std::function<void(juce::MidiBuffer)>& latestMIDIBufferFn) : latestMIDIBufferCallback(latestMIDIBufferFn)
 {
     for (auto i = 0; i <= 127; i++)
     {
@@ -20,7 +20,8 @@ Player::~Player() noexcept
 void Player::audioDeviceAboutToStart(juce::AudioIODevice* device)
 {
     sampleRate = device->getCurrentSampleRate();
-    transportSource.prepareToPlay(device->getCurrentBufferSizeSamples(), sampleRate);
+    numSamplesPerBuffer = device->getCurrentBufferSizeSamples();
+    transportSource.prepareToPlay(numSamplesPerBuffer, sampleRate);
 }
 
 void Player::audioDeviceStopped()
@@ -36,6 +37,7 @@ void Player::audioDeviceIOCallbackWithContext(const float* const* inputChannelDa
                                                        const AudioIODeviceCallbackContext& context)
 {
     juce::ScopedNoDenormals noDenormals;
+    latestMIDIBuffer.clear();
 
     if (transportSource.isPlaying())
     {
@@ -69,12 +71,14 @@ void Player::audioDeviceIOCallbackWithContext(const float* const* inputChannelDa
                         //auto noteNumber = event->message.getNoteNumber();
                         auto samplePosition = juce::roundToInt((event->message.getTimeStamp() - startTime) * sampleRate);
                         //midiMessages.addEvent(event->message, samplePosition);
-                        //latestMIDIBuffer.addEvent(event->message, samplePosition);
+
+                        latestMIDIBuffer.addEvent(event->message, samplePosition);
 
                         lumiMIDIEvent((void*)event->message.getRawData(), event->message.getRawDataSize());
                     }
                 }
             }
+            latestMIDIBufferCallback(latestMIDIBuffer);
         }
     }
     else
@@ -95,4 +99,6 @@ void Player::sendAllNotesOff()
     //Send to Lumi for 'stuck note' situations, doesn't seem to respond to MidiMessage::allNotesOff however
     for(auto msg : allNoteOffMessages)
         lumiMIDIEvent(msg.data, msg.numBytes);
+
+    latestMIDIBufferCallback(allNoteOffMessages);
 }

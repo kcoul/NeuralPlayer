@@ -3,7 +3,7 @@
 class Player : public juce::AudioIODeviceCallback
 {
 public:
-    Player();
+    Player(std::function<void(juce::MidiBuffer)>& latestMIDIBuffer);
 
     ~Player();
 
@@ -23,8 +23,13 @@ public:
     juce::MidiFile MIDIFile;
 
     void sendAllNotesOff();
-private:
+
+    std::function<void(juce::MidiBuffer)>& latestMIDIBufferCallback;
+    juce::MidiBuffer latestMIDIBuffer;
+
+    int numSamplesPerBuffer;
     double sampleRate;
+private:
     void lumiMIDIEvent(const void* message, size_t size);
     juce::MidiBuffer allNoteOffMessages;
 };

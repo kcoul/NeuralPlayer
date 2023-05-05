@@ -42,12 +42,13 @@ private:
     PlaylistComponent playlistComponent;
     std::function<void(String)> trackSelected;
 
+    std::function<void(juce::MidiBuffer)> latestMIDIBufferFn;
+
     std::unique_ptr<AudioThumbnailComponent> thumbnail;
 
     std::unique_ptr<AudioFormatReaderSource> currentAudioFileSource;
     AudioFormatManager formatManager;
     AudioThumbnailCache thumbnailCache;
-
 
     std::function<void()> thumbnailPlayheadPositionChanged = [this]()
     {

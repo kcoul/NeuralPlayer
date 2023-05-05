@@ -3,6 +3,7 @@
 PlayerComponent::PlayerComponent(std::unique_ptr<SourceSepMIDIRenderingThread>& thread) :
 renderingThread(thread),
 playlistComponent(trackSelected),
+audioMIDIPlayer(latestMIDIBufferFn),
 thumbnailCache(1),
 readAheadThread("transport read ahead"),
 keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
@@ -62,7 +63,8 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
     addAndMakeVisible(startStopButton);
     startStopButton.setButtonText("Play");
 
-    midiFlushJob = [this]() { audioMIDIPlayer.sendAllNotesOff(); };
+    midiFlushJob = [this]()
+            { audioMIDIPlayer.sendAllNotesOff(); };
     transportStartJob = [this]()
             { audioMIDIPlayer.transportSource.setPosition(0);
               audioMIDIPlayer.transportSource.start(); };
@@ -75,6 +77,7 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
             threadPool.addJob(midiFlushJob);
             threadPool.addJob(transportStopJob);
             startStopButton.setButtonText("Play");
+            keyboardState.allNotesOff(1);
         }
         else
         {
@@ -84,6 +87,13 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
     };
     addAndMakeVisible(startStopButton);
 
+    latestMIDIBufferFn = [this] (juce::MidiBuffer latestBuffer)
+    {
+        keyboardState.processNextMidiBuffer(audioMIDIPlayer.latestMIDIBuffer,
+                                            0,
+                                            audioMIDIPlayer.numSamplesPerBuffer,
+                                            false);
+    };
     addAndMakeVisible(keyboardComponent);
 
     audioDeviceManager.addAudioCallback(&audioMIDIPlayer);
