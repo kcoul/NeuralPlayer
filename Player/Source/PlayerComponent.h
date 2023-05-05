@@ -47,6 +47,7 @@ private:
     std::function<void(String)> trackSelected;
     std::unique_ptr<AudioFormatReaderSource> currentAudioFileSource;
     void loadAudioFileIntoTransport(const File& audioFile);
+    void loadMIDIFile(const File& midiFile);
 
     std::unique_ptr<AudioThumbnailComp> thumbnail;
     AudioTransportSource transportSource;

@@ -28,6 +28,12 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
         {
             loadAudioFileIntoTransport(pwd);
             thumbnail->setFile(pwd);
+
+            //Try loading a MIDI file of same path/name to MIDI player
+            auto possibleMIDIFile = File(pwd.getFullPathName().substring(0,
+                                                        pwd.getFullPathName().length() - 4) + ".mid");
+            if (possibleMIDIFile.existsAsFile())
+                loadMIDIFile(possibleMIDIFile);
         }
     };
 
@@ -163,4 +169,15 @@ void PlayerComponent::loadAudioFileIntoTransport(const File& audioFile)
                 &readAheadThread,        // this is the background thread to use for reading-ahead
                 reader->sampleRate);     // allows for sample rate correction
     }
+}
+
+void PlayerComponent::loadMIDIFile(const File& file)
+{
+    MIDIFile.clear();
+
+    juce::FileInputStream stream(file);
+    MIDIFile.readFrom(stream);
+
+    //This function call means that the MIDI file is going to be played with the original tempo and signature.
+    MIDIFile.convertTimestampTicksToSeconds();
 }
