@@ -63,10 +63,19 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
     startStopButton.setButtonText("Play");
     startStopButton.onClick = [this]
     {
-        if (startStopButton.getToggleState())
+        if (transportSource.isPlaying())
+        {
             startStopButton.setButtonText("Stop");
+            transportSource.stop();
+            //sendAllNotesOff();
+
+        }
         else
+        {
             startStopButton.setButtonText("Play");
+            transportSource.setPosition(0);
+            transportSource.start();
+        }
     };
     addAndMakeVisible(startStopButton);
 
@@ -113,7 +122,7 @@ void PlayerComponent::resized()
 
 void PlayerComponent::audioDeviceAboutToStart(juce::AudioIODevice* device)
 {
-
+    transportSource.prepareToPlay(device->getCurrentBufferSizeSamples(), device->getCurrentSampleRate());
 }
 
 void PlayerComponent::audioDeviceStopped()
@@ -128,7 +137,11 @@ void PlayerComponent::audioDeviceIOCallbackWithContext(const float* const* input
                            int numSamples,
                            const AudioIODeviceCallbackContext& context)
 {
-    int i = 1;
+    AudioSampleBuffer buffer;
+    //buffer.setSize(numOutputChannels, numSamples);
+    buffer.setDataToReferTo(outputChannelData, numOutputChannels, numSamples);
+    transportSource.getNextAudioBlock(AudioSourceChannelInfo(buffer));
+
 }
 
 std::pair<FolderSelectResult, juce::File> PlayerComponent::selectInputFolder()
