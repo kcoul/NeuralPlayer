@@ -9,6 +9,7 @@
 #include "PlaylistComponent.h"
 #include "SidePanelHeader.h"
 #include "SourceSepMIDIRenderingThread.h"
+#include "VectorPathData.h"
 
 enum class FolderSelectResult
 {
@@ -49,8 +50,10 @@ private:
     void loadMIDIFile(const File& midiFile);
 
     ProgressBar progressBar;
-    juce::Image openSidePanelButtonImage;
-    juce::ImageButton openSidePanelButton;
+    juce::ShapeButton openSidePanelButton { "Settings",
+                                            juce::Colours::transparentBlack,
+                                            juce::Colours::transparentBlack,
+                                            juce::Colours::transparentBlack };
     SidePanelHeader sidePanelHeader;
     ConsoleViewComponent softwareConsoleComponent;
     String lastDisplayedString = "";

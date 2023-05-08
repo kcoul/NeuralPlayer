@@ -71,29 +71,14 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
 
     addAndMakeVisible(progressBar);
 
-    //TODO: Don't use rastered images for icons when you know how to do vector icons (see SidePanelHeader.cpp)
-    openSidePanelButtonImage =
-            juce::ImageCache::getFromMemory(BinaryData::three_dots_png, BinaryData::three_dots_pngSize);
-
-    auto normal = getLookAndFeel().findColour(juce::SidePanel::dismissButtonNormalColour);
-    auto over = getLookAndFeel().findColour(juce::SidePanel::dismissButtonOverColour);
-    auto down = getLookAndFeel().findColour(juce::SidePanel::dismissButtonDownColour);
-
-    openSidePanelButton.setImages(false,
-                                  true,
-                                  true,
-                                  openSidePanelButtonImage,
-                                  0.5f,
-                                  normal,
-                                  openSidePanelButtonImage,
-                                  1.0f,
-                                  over,
-                                  openSidePanelButtonImage,
-                                  1.0f,
-                                  down);
+    juce::Path p;
+    p.clear();
+    p.loadPathFromData(settingsIconPathData, sizeof(settingsIconPathData));
+    openSidePanelButton.setShape(p, true, true, false);
     openSidePanelButton.onClick = [this] { softwareConsoleComponentPanel.showOrHide(true); };
     addAndMakeVisible(openSidePanelButton);
 
+    sidePanelHeader.setHomeButtonClicked([this] {softwareConsoleComponent.clear();});
     softwareConsoleComponentPanel.setTitleBarComponent(&sidePanelHeader, true, false);
     softwareConsoleComponentPanel.setContent(&softwareConsoleComponent, false);
     addAndMakeVisible(softwareConsoleComponentPanel);
@@ -162,6 +147,12 @@ PlayerComponent::~PlayerComponent()
 void PlayerComponent::paint(juce::Graphics& g)
 {
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+
+    auto normal = getLookAndFeel().findColour(juce::SidePanel::dismissButtonNormalColour);
+    auto over = getLookAndFeel().findColour(juce::SidePanel::dismissButtonOverColour);
+    auto down = getLookAndFeel().findColour(juce::SidePanel::dismissButtonDownColour);
+
+    openSidePanelButton.setColours(normal, over, down);
 }
 
 void PlayerComponent::resized()
@@ -171,13 +162,14 @@ void PlayerComponent::resized()
     area.removeFromTop(30);
 #endif
 
-    //TODO: Don't use absolute values in layout!
-    openSidePanelButton.setBounds(area.removeFromTop(40).removeFromLeft(30));
-
     auto vUnit = area.getHeight()/12;
     auto halfVUnit = vUnit / 2;
-    auto vUnitSlot = area.removeFromTop(vUnit);
 
+    openSidePanelButton.setBounds(area.removeFromTop(halfVUnit).removeFromLeft(halfVUnit));
+
+    area.removeFromTop(4);
+
+    auto vUnitSlot = area.removeFromTop(vUnit);
     loadNewFolderButton.setBounds(vUnitSlot.removeFromLeft(vUnitSlot.getWidth()/3).reduced(2, 0));
     haltButton.setBounds(vUnitSlot.removeFromLeft(vUnitSlot.getWidth()/2).reduced(2, 0));
     loadExistingPlaylistButton.setBounds(vUnitSlot.reduced(2, 0));
