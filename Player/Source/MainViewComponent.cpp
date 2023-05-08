@@ -2,12 +2,11 @@
 
 MainViewComponent::MainViewComponent() : tabComponent(juce::TabbedButtonBar::TabsAtTop)
 {
-    renderingThread = std::make_unique<SourceSepMIDIRenderingThread>();
-    playerComponent = std::make_unique<PlayerComponent>(renderingThread);
+    playerComponent = std::make_unique<PlayerComponent>();
 
     lumiCallback = [this] (roli::Block::Ptr p){ playerComponent->setLumi(p); };
 
-    settingsComponent = std::make_unique<SettingsComponent>(renderingThread->threadVars, lumiCallback);
+    settingsComponent = std::make_unique<SettingsComponent>(lumiCallback);
 
     setSize(700, 800);
 
@@ -20,7 +19,6 @@ MainViewComponent::MainViewComponent() : tabComponent(juce::TabbedButtonBar::Tab
 
 MainViewComponent::~MainViewComponent()
 {
-
 }
 
 void MainViewComponent::paint(juce::Graphics& g)

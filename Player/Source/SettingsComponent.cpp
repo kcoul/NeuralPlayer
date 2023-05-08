@@ -1,7 +1,6 @@
 #include "SettingsComponent.h"
 
-SettingsComponent::SettingsComponent(WatchedVars& consoleVars,
-                                     std::function<void(roli::Block::Ptr)>& lumiCallbackFn) :
+SettingsComponent::SettingsComponent(std::function<void(roli::Block::Ptr)>& lumiCallbackFn) :
 lumiCallback(lumiCallbackFn)
 {
     audioMIDISettings = std::make_unique<juce::AudioDeviceSelectorComponent>(audioDeviceManager,
@@ -27,7 +26,7 @@ lumiCallback(lumiCallbackFn)
     xmlWriteTestButton.setButtonText("Write debug XML");
     xmlWriteTestButton.onClick = [this]
     {
-        XmlElement tableDataList ("TABLEDATA");
+        XmlElement playlist ("TABLEDATA");
         XmlElement* headers = new XmlElement("HEADERS");
 
         for (int i = 1; i <= 3; ++i)
@@ -53,7 +52,7 @@ lumiCallback(lumiCallbackFn)
 
             headers->addChildElement(column);
         }
-        tableDataList.addChildElement(headers);
+        playlist.addChildElement(headers);
 
         XmlElement* data = new XmlElement("DATA");
 
@@ -75,15 +74,15 @@ lumiCallback(lumiCallbackFn)
 
             data->addChildElement(item);
         }
-        tableDataList.addChildElement(data);
+        playlist.addChildElement(data);
 
-        tableDataList.writeTo(
+        playlist.writeTo(
                 juce::File::getSpecialLocation(juce::File::userDesktopDirectory)
                                 .getChildFile("Playlist.xml"), XmlElement::TextFormat());
     };
     addAndMakeVisible(xmlWriteTestButton);
 
-    consoleViewComponent = std::make_unique<ConsoleViewComponent>(consoleVars);
+    consoleViewComponent = std::make_unique<ConsoleViewComponent>();
     addAndMakeVisible(*consoleViewComponent);
 
     // Register to receive topologyChanged() callbacks from pts.
@@ -169,5 +168,6 @@ void SettingsComponent::topologyChanged()
                 lumiDetectedButton.setToggleState(true, juce::dontSendNotification);
                 break;
         };
+        consoleViewComponent->insertText("", true);
     }
 }

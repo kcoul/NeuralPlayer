@@ -158,6 +158,7 @@ public:
         {
             for (auto* columnXml : columnList->getChildIterator())
             {
+                //TODO: There is a jassert that gets triggered here that will require further debugging to resolve
                 table.getHeader().addColumn (columnXml->getStringAttribute ("name"),
                                              columnXml->getIntAttribute ("columnId"),
                                              columnXml->getIntAttribute ("width"),

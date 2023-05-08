@@ -4,8 +4,10 @@
 #include <roli_blocks_basics/roli_blocks_basics.h>
 
 #include "AudioThumbnailComponent.h"
+#include "ConsoleViewComponent.h"
 #include "Player.h"
 #include "PlaylistComponent.h"
+#include "SidePanelHeader.h"
 #include "SourceSepMIDIRenderingThread.h"
 
 enum class FolderSelectResult
@@ -14,19 +16,26 @@ enum class FolderSelectResult
     cancelled
 };
 
-class PlayerComponent : public juce::Component
+class PlayerComponent : public juce::Component,
+                        public juce::Thread::Listener,
+                        public juce::Timer
 {
 public:
-    PlayerComponent(std::unique_ptr<SourceSepMIDIRenderingThread>& renderingThread);
+    PlayerComponent();
     ~PlayerComponent() override;
     void paint(juce::Graphics&) override;
     void resized() override;
-
+    void exitSignalSent() override;
+    void timerCallback() override;
     void setLumi(roli::Block::Ptr lumi) { audioMIDIPlayer.lumi = lumi; };
+
+    std::unique_ptr<SourceSepMIDIRenderingThread> renderingThread;
+    double renderingProgress = 0.0;
 private:
     Player audioMIDIPlayer;
 
     juce::TextButton loadNewFolderButton {"Load New"};
+    juce::TextButton haltButton { "Halt" };
     juce::TextButton loadExistingPlaylistButton {"Load Existing"};
 
     std::unique_ptr<juce::FileChooser> loadChooser;
@@ -34,11 +43,18 @@ private:
     std::pair<FolderSelectResult, juce::File> selectExistingPlaylistFile();
     juce::File debugResourcesDirectory;
     static juce::File walkDebugDirectoryToResourcesFolder();
-
-    std::unique_ptr<SourceSepMIDIRenderingThread>& renderingThread;
+    juce::File currentPlaylistDirectory;
 
     void loadAudioFileIntoTransport(const File& audioFile);
     void loadMIDIFile(const File& midiFile);
+
+    ProgressBar progressBar;
+    juce::Image openSidePanelButtonImage;
+    juce::ImageButton openSidePanelButton;
+    SidePanelHeader sidePanelHeader;
+    ConsoleViewComponent softwareConsoleComponent;
+    String lastDisplayedString = "";
+    juce::SidePanel softwareConsoleComponentPanel;
 
     PlaylistComponent playlistComponent;
     std::function<void(String)> trackSelected;
@@ -69,6 +85,8 @@ private:
 
     juce::MidiKeyboardState keyboardState;
     juce::MidiKeyboardComponent keyboardComponent;
+
+    double processingIndex = 0;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlayerComponent)
 };

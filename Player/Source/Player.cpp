@@ -42,6 +42,7 @@ void Player::audioDeviceIOCallbackWithContext(const float* const* inputChannelDa
 
     if (transportSource.isPlaying())
     {
+        streamWasPlaying = true;
         AudioSampleBuffer buffer;
         buffer.setDataToReferTo(outputChannelData, numOutputChannels, numSamples);
         transportSource.getNextAudioBlock(AudioSourceChannelInfo(buffer));
@@ -84,6 +85,14 @@ void Player::audioDeviceIOCallbackWithContext(const float* const* inputChannelDa
             }
             latestMIDIBufferCallback(latestMIDIBuffer);
         }
+    }
+    else if (streamWasPlaying && transportSource.hasStreamFinished())
+    {
+        juce::MessageManager::callAsync([this]
+        {
+            streamFinishedCallback();
+        });
+        streamWasPlaying = false;
     }
     else
     {

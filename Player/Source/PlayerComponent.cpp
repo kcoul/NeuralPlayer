@@ -1,13 +1,19 @@
 #include "PlayerComponent.h"
 
-PlayerComponent::PlayerComponent(std::unique_ptr<SourceSepMIDIRenderingThread>& thread) :
+#include <memory>
+
+PlayerComponent::PlayerComponent() :
 audioMIDIPlayer(latestMIDIBufferFn),
-renderingThread(thread),
+progressBar(renderingProgress),
+sidePanelHeader("Software Debug Console"),
+softwareConsoleComponentPanel("Software Debug Console Panel", 725, true, nullptr, false),
 playlistComponent(trackSelected),
 thumbnailCache(1),
 readAheadThread("transport read ahead"),
 keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
+    renderingThread = std::make_unique<SourceSepMIDIRenderingThread>();
+    renderingThread->addListener(this);
     formatManager.registerBasicFormats();
     readAheadThread.startThread();
 
@@ -15,7 +21,7 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
 
     trackSelected = [this] (String trackName)
     {
-        auto trackPath = debugResourcesDirectory.getChildFile(trackName + ".wav");
+        auto trackPath = currentPlaylistDirectory.getChildFile(trackName + ".wav");
 
         if(currentlyLoadedFile != trackPath && trackPath.existsAsFile())
         {
@@ -40,9 +46,16 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
             renderingThread->setInputFolder(inputFolder);
             renderingThread->setDebugOutputFolder(File(inputFolder.getFullPathName() + "/debug"));
             renderingThread->startThread();
+            startTimer (30);
         };
     };
     addAndMakeVisible(loadNewFolderButton);
+
+    haltButton.onClick = [this]
+    {
+        renderingThread->stopRenderingFlag = true;
+    };
+    addAndMakeVisible(haltButton);
 
     loadExistingPlaylistButton.onClick = [this]
     {
@@ -50,10 +63,40 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
         if (result.first == FolderSelectResult::ok)
         {
             auto playlistXML = result.second;
+            currentPlaylistDirectory = playlistXML.getParentDirectory();
             playlistComponent.loadData(playlistXML);
         };
     };
     addAndMakeVisible(loadExistingPlaylistButton);
+
+    addAndMakeVisible(progressBar);
+
+    //TODO: Don't use rastered images for icons when you know how to do vector icons (see SidePanelHeader.cpp)
+    openSidePanelButtonImage =
+            juce::ImageCache::getFromMemory(BinaryData::three_dots_png, BinaryData::three_dots_pngSize);
+
+    auto normal = getLookAndFeel().findColour(juce::SidePanel::dismissButtonNormalColour);
+    auto over = getLookAndFeel().findColour(juce::SidePanel::dismissButtonOverColour);
+    auto down = getLookAndFeel().findColour(juce::SidePanel::dismissButtonDownColour);
+
+    openSidePanelButton.setImages(false,
+                                  true,
+                                  true,
+                                  openSidePanelButtonImage,
+                                  0.5f,
+                                  normal,
+                                  openSidePanelButtonImage,
+                                  1.0f,
+                                  over,
+                                  openSidePanelButtonImage,
+                                  1.0f,
+                                  down);
+    openSidePanelButton.onClick = [this] { softwareConsoleComponentPanel.showOrHide(true); };
+    addAndMakeVisible(openSidePanelButton);
+
+    softwareConsoleComponentPanel.setTitleBarComponent(&sidePanelHeader, true, false);
+    softwareConsoleComponentPanel.setContent(&softwareConsoleComponent, false);
+    addAndMakeVisible(softwareConsoleComponentPanel);
 
     addAndMakeVisible(playlistComponent);
 
@@ -64,9 +107,6 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
                                                      currentlyLoadedFile);
     addAndMakeVisible(thumbnail.get());
 
-    addAndMakeVisible(startStopButton);
-    startStopButton.setButtonText("Play");
-
     midiFlushJob = [this]()
             { audioMIDIPlayer.sendAllNotesOff(); };
     transportStartJob = [this]()
@@ -74,6 +114,7 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
               audioMIDIPlayer.transportSource.start(); };
     transportStopJob = [this]() { audioMIDIPlayer.transportSource.stop(); };
 
+    startStopButton.setButtonText("Play");
     startStopButton.onClick = [this]
     {
         if (audioMIDIPlayer.transportSource.isPlaying())
@@ -91,6 +132,14 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
     };
     addAndMakeVisible(startStopButton);
 
+    audioMIDIPlayer.streamFinishedCallback = [this]
+    {
+        threadPool.addJob(midiFlushJob);
+        threadPool.addJob(transportStopJob);
+        startStopButton.setButtonText("Play");
+        keyboardState.allNotesOff(1);
+    };
+
     latestMIDIBufferFn = [this] (juce::MidiBuffer latestBuffer)
     {
         keyboardState.processNextMidiBuffer(audioMIDIPlayer.latestMIDIBuffer,
@@ -103,6 +152,11 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
 
 PlayerComponent::~PlayerComponent()
 {
+    renderingThread->removeListener(this);
+    renderingThread->stopRenderingFlag = true;
+    renderingThread->stopThread(1000);
+    softwareConsoleComponentPanel.setTitleBarComponent(nullptr, true);
+    softwareConsoleComponentPanel.setContent(nullptr);
 }
 
 void PlayerComponent::paint(juce::Graphics& g)
@@ -116,16 +170,23 @@ void PlayerComponent::resized()
 #if JUCE_IOS
     area.removeFromTop(30);
 #endif
-    auto vUnit = area.getHeight()/12;
 
+    //TODO: Don't use absolute values in layout!
+    openSidePanelButton.setBounds(area.removeFromTop(40).removeFromLeft(30));
+
+    auto vUnit = area.getHeight()/12;
+    auto halfVUnit = vUnit / 2;
     auto vUnitSlot = area.removeFromTop(vUnit);
 
-    loadNewFolderButton.setBounds(vUnitSlot.removeFromLeft(vUnitSlot.getWidth()/2).reduced(2, 0));
+    loadNewFolderButton.setBounds(vUnitSlot.removeFromLeft(vUnitSlot.getWidth()/3).reduced(2, 0));
+    haltButton.setBounds(vUnitSlot.removeFromLeft(vUnitSlot.getWidth()/2).reduced(2, 0));
     loadExistingPlaylistButton.setBounds(vUnitSlot.reduced(2, 0));
 
     area.removeFromTop(4);
 
-    playlistComponent.setBounds(area.removeFromTop(vUnit * 6));
+    progressBar.setBounds(area.removeFromTop(halfVUnit));
+
+    playlistComponent.setBounds(area.removeFromTop(vUnit * 5));
 
     area.removeFromTop(4);
 
@@ -224,4 +285,52 @@ juce::File PlayerComponent::walkDebugDirectoryToResourcesFolder()
     pwd = pwd.getChildFile("Player/Resources/");
 
     return pwd;
+}
+
+void PlayerComponent::exitSignalSent()
+{
+    if (renderingThread->playlistSuccessfullyGenerated)
+    {
+        auto path = renderingThread->playlistPath;
+
+        juce::MessageManager::callAsync( [this, path]
+        {
+            playlistComponent.loadData(path);
+            currentPlaylistDirectory = File(path).getParentDirectory();
+            renderingProgress = 0.0;
+            processingIndex = 0;
+            stopTimer();
+        });
+    }
+
+    renderingThread->playlistPath = "";
+    renderingThread->playlistSuccessfullyGenerated = false;
+}
+
+void PlayerComponent::timerCallback()
+{
+    if (renderingThread->threadVars.currentFileIndex > 0 &&
+        processingIndex != renderingThread->threadVars.currentFileIndex)
+    {
+        processingIndex = renderingThread->threadVars.currentFileIndex;
+        renderingProgress = (processingIndex-1.0) / renderingThread->threadVars.numFiles;
+
+        auto textToPost = "Now processing file " + String(processingIndex) + " of " +
+                          String(renderingThread->threadVars.numFiles) + ", " +
+                          renderingThread->threadVars.currentFileName;
+        softwareConsoleComponent.insertText(textToPost, true);
+    }
+    else if (renderingThread->threadVars.currentFileIndex == 0 &&
+             processingIndex != renderingThread->threadVars.currentFileIndex)
+    {
+        processingIndex = renderingThread->threadVars.currentFileIndex;
+        auto textToPost = "Done!/n";
+        softwareConsoleComponent.insertText(textToPost, true);
+    }
+
+    if (lastDisplayedString != renderingThread->threadVars.returnedText)
+    {
+        lastDisplayedString = renderingThread->threadVars.returnedText;
+        softwareConsoleComponent.insertText(lastDisplayedString, true);
+    }
 }

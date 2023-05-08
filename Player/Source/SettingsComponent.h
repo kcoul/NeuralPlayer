@@ -11,7 +11,7 @@ class SettingsComponent : public juce::Component,
                           private roli::TopologySource::Listener
 {
 public:
-    SettingsComponent(WatchedVars& consoleVars, std::function<void(roli::Block::Ptr)>& lumiCallbackFn);
+    SettingsComponent(std::function<void(roli::Block::Ptr)>& lumiCallbackFn);
     ~SettingsComponent() override;
     void paint(juce::Graphics&) override;
     void resized() override;

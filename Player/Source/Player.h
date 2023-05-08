@@ -23,7 +23,7 @@ public:
     roli::Block::Ptr lumi;
     AudioTransportSource transportSource;
     juce::MidiFile MIDIFile;
-
+    std::function<void()> streamFinishedCallback;
     void sendAllNotesOff();
 
     std::function<void(juce::MidiBuffer)>& latestMIDIBufferCallback;
@@ -39,6 +39,7 @@ private:
 
     MidiDeviceInfo deviceInfo;
     std::unique_ptr<MidiOutput> outDevice;
+    bool streamWasPlaying = false;
 };
 
 
