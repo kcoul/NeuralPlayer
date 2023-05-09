@@ -1,6 +1,6 @@
 # NeuralPlayer
 
-##Pre-requisites
+## Pre-requisites
 1. Download Intel OneAPI's Online Installer (Shortcuts to latest installers, May 2023): 
 (macOS) https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-download.html?operatingsystem=mac&distributions=online&version=2023.1
 (Linux) https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-download.html?operatingsystem=linux&distributions=online&version=2023.1
