@@ -313,8 +313,8 @@ private:
         }
         else if (inputFilenameWithoutExtension.contains(" by "))
         {
-            return inputFilenameWithoutExtension.substring(inputFilenameWithoutExtension.indexOf(" by "),
-                                                           inputFilenameWithoutExtension.length() - 1);
+            return inputFilenameWithoutExtension.substring(inputFilenameWithoutExtension.indexOf(" by ") + 4,
+                                                           inputFilenameWithoutExtension.length());
         }
         else return "";
     }
