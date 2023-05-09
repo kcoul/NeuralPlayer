@@ -1,6 +1,6 @@
 # NeuralPlayer
 
-## Pre-requisites
+## Prerequisites
 1. Download Intel OneAPI's Online Installer (Shortcuts to latest installers, May 2023):
  
 (macOS) https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-download.html?operatingsystem=mac&distributions=online&version=2023.1
@@ -15,14 +15,17 @@
 ### macOS
 ```
 brew install python3
+brew install cmake
 ```
 
 ### Linux
 ```
 apt install python3
+apt install cmake
 ```
 ### Windows
 https://www.python.org/downloads/windows/
+https://cmake.org/download/
 
 ## Build-time Dependencies 
 1. Clone NeuralPlayer and configure CMake once using ```cmake-build-debug``` as build directory (CLion does this automatically)
