@@ -39,3 +39,7 @@ Example: macOS (Intel):
 
 3. Thereafter CMake should be able to rebuild onnxruntime anytime it changes, unless the Debug build directory is wiped
 4. Anytime new CMake build config is set up, SpleeterRTBin should be compiled for that build type (i.e. Debug, Release, RelWithDebInfo) before NeuralPlayer is run with that config
+
+## Run-time Limitations
+1. Only tested on Intel macOS so far
+2. Currently only supports 44.1kHz .wav format input
