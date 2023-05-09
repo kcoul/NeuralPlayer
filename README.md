@@ -12,7 +12,7 @@
 2. Run it, and select Custom Installation. De-select all components except Intel OneAPI Math Kernel Library.
 3. Allow for the installation to complete.
 
-## macOS (Intel)
+## macOS
 ```
-
+brew install python3
 ```
