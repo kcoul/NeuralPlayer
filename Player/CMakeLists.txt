@@ -17,17 +17,16 @@ find_package(OnnxRuntime)
 add_library(onnxruntime SHARED IMPORTED Source/Converters.h)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    #TODO: Compile onnxruntime in Release mode instead and use that unless you need to debug into it
-    #NOTE: Looking for libonnxruntime.dylib in the most likely location, change path if your use-case is different
+    #NOTE: Recompile onnxruntime in Debug or RelWithDebInfo mode if you need to debug into it
+    #NOTE: Looking for libonnxruntime.dylib in our most likely location, change path if your use-case is different
     set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
-            ${CMAKE_SOURCE_DIR}/cmake-build-debug/_deps/onnxruntime-src/build/MacOS/RelWithDebInfo/libonnxruntime.dylib)
+            ${CMAKE_SOURCE_DIR}/cmake-build-debug/_deps/onnxruntime-src/build/MacOS/Release/libonnxruntime.dylib)
 endif()
 
 #Binary data
 file(GLOB RESOURCES_FILES
         ${CMAKE_CURRENT_LIST_DIR}/Lib/ModelData/*.json
-        ${CMAKE_CURRENT_LIST_DIR}/Lib/ModelData/*.ort
-        ${CMAKE_CURRENT_LIST_DIR}/Resources/three_dots.png)
+        ${CMAKE_CURRENT_LIST_DIR}/Lib/ModelData/*.ort)
 
 juce_add_binary_data(Player-Assets SOURCES ${RESOURCES_FILES})
 
