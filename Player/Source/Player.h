@@ -5,7 +5,8 @@
 class Player : public juce::AudioIODeviceCallback
 {
 public:
-    Player(std::function<void(juce::MidiBuffer)>& latestMIDIBuffer);
+    Player(std::function<void(juce::MidiBuffer)>& latestMIDIBuffer,
+           std::function<void(double)>& latestPlaybackLocation);
 
     ~Player();
 
@@ -26,8 +27,10 @@ public:
     std::function<void()> streamFinishedCallback;
     void sendAllNotesOff();
 
+
     std::function<void(juce::MidiBuffer)>& latestMIDIBufferCallback;
     juce::MidiBuffer latestMIDIBuffer;
+    std::function<void(double)>& latestPlaybackLocationFn;
 
     int numSamplesPerBuffer;
     double sampleRate;

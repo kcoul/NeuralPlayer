@@ -5,6 +5,7 @@
 
 #include "AudioThumbnailComponent.h"
 #include "ConsoleViewComponent.h"
+#include "Converters.h"
 #include "Player.h"
 #include "PlaylistComponent.h"
 #include "SidePanelHeader.h"
@@ -54,6 +55,7 @@ private:
                                             juce::Colours::transparentBlack,
                                             juce::Colours::transparentBlack,
                                             juce::Colours::transparentBlack };
+    juce::Label playbackProgressLabel {"playBackProgress", "00:00"};
     SidePanelHeader sidePanelHeader;
     ConsoleViewComponent softwareConsoleComponent;
     String lastDisplayedString = "";
@@ -63,6 +65,7 @@ private:
     std::function<void(String)> trackSelected;
 
     std::function<void(juce::MidiBuffer)> latestMIDIBufferFn;
+    std::function<void(double)> latestPlaybackLocationFn;
 
     std::unique_ptr<AudioThumbnailComponent> thumbnail;
 

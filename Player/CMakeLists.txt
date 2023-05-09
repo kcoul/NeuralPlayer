@@ -14,7 +14,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake)
 find_package(RTNeural)
 find_package(OnnxRuntime)
 
-add_library(onnxruntime SHARED IMPORTED)
+add_library(onnxruntime SHARED IMPORTED Source/Converters.h)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     #TODO: Compile onnxruntime in Release mode instead and use that unless you need to debug into it

@@ -3,10 +3,10 @@
 #include <memory>
 
 PlayerComponent::PlayerComponent() :
-        neuralPlayer(latestMIDIBufferFn),
+        neuralPlayer(latestMIDIBufferFn, latestPlaybackLocationFn),
         progressBar(renderingProgress),
         sidePanelHeader("Software Debug Console"),
-        softwareConsoleComponentPanel("Software Debug Console Panel", 725, true, nullptr, false),
+        softwareConsoleComponentPanel("Software Debug Console Panel", 700, true, nullptr, false),
         playlistComponent(trackSelected),
         thumbnailCache(1),
         readAheadThread("transport read ahead"),
@@ -25,6 +25,12 @@ PlayerComponent::PlayerComponent() :
 
         if(currentlyLoadedFile != trackPath && trackPath.existsAsFile())
         {
+            threadPool.addJob(midiFlushJob);
+            threadPool.addJob(transportStopJob);
+            startStopButton.setButtonText("Play");
+            keyboardState.allNotesOff(1);
+            playbackProgressLabel.setText("00:00", juce::dontSendNotification);
+
             loadAudioFileIntoTransport(trackPath);
             thumbnail->setFile(trackPath);
 
@@ -78,6 +84,9 @@ PlayerComponent::PlayerComponent() :
     openSidePanelButton.onClick = [this] { softwareConsoleComponentPanel.showOrHide(true); };
     addAndMakeVisible(openSidePanelButton);
 
+    playbackProgressLabel.setJustificationType(Justification::right);
+    addAndMakeVisible(playbackProgressLabel);
+
     sidePanelHeader.setHomeButtonClicked([this] {softwareConsoleComponent.clear();});
     softwareConsoleComponentPanel.setTitleBarComponent(&sidePanelHeader, true, false);
     softwareConsoleComponentPanel.setContent(&softwareConsoleComponent, false);
@@ -108,6 +117,7 @@ PlayerComponent::PlayerComponent() :
             threadPool.addJob(transportStopJob);
             startStopButton.setButtonText("Play");
             keyboardState.allNotesOff(1);
+            playbackProgressLabel.setText("00:00", juce::dontSendNotification);
         }
         else
         {
@@ -131,6 +141,14 @@ PlayerComponent::PlayerComponent() :
                                             0,
                                             neuralPlayer.numSamplesPerBuffer,
                                             false);
+    };
+    latestPlaybackLocationFn = [this] (double location)
+    {
+        juce::MessageManager::callAsync([this, location]
+        {
+            playbackProgressLabel.setText(tryParseDuration(location), juce::dontSendNotification);
+        });
+
     };
     addAndMakeVisible(keyboardComponent);
 }
@@ -165,7 +183,10 @@ void PlayerComponent::resized()
     auto vUnit = area.getHeight()/12;
     auto halfVUnit = vUnit / 2;
 
-    openSidePanelButton.setBounds(area.removeFromTop(halfVUnit).removeFromLeft(halfVUnit));
+    auto halfVUnitSlot = area.removeFromTop(halfVUnit);
+
+    openSidePanelButton.setBounds(halfVUnitSlot.removeFromLeft(halfVUnit));
+    playbackProgressLabel.setBounds(halfVUnitSlot.removeFromRight(vUnit));
 
     area.removeFromTop(4);
 
@@ -287,6 +308,10 @@ void PlayerComponent::exitSignalSent()
 
         juce::MessageManager::callAsync( [this, path]
         {
+            processingIndex = 0;
+            auto textToPost = "Done!\n";
+            softwareConsoleComponent.insertText(textToPost, true);
+
             playlistComponent.loadData(path);
             currentPlaylistDirectory = File(path).getParentDirectory();
             renderingProgress = 0.0;
@@ -310,13 +335,6 @@ void PlayerComponent::timerCallback()
         auto textToPost = "Now processing file " + String(processingIndex) + " of " +
                           String(renderingThread->threadVars.numFiles) + ", " +
                           renderingThread->threadVars.currentFileName;
-        softwareConsoleComponent.insertText(textToPost, true);
-    }
-    else if (renderingThread->threadVars.currentFileIndex == 0 &&
-             processingIndex != renderingThread->threadVars.currentFileIndex)
-    {
-        processingIndex = renderingThread->threadVars.currentFileIndex;
-        auto textToPost = "Done!/n";
         softwareConsoleComponent.insertText(textToPost, true);
     }
 

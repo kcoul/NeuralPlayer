@@ -1,7 +1,8 @@
 #include "Player.h"
 
-Player::Player(std::function<void(juce::MidiBuffer)>& latestMIDIBufferFn) :
-latestMIDIBufferCallback(latestMIDIBufferFn)
+Player::Player(std::function<void(juce::MidiBuffer)>& latestMIDIBufferFn,
+               std::function<void(double)>& latestPlaybackLocation) :
+latestMIDIBufferCallback(latestMIDIBufferFn), latestPlaybackLocationFn(latestPlaybackLocation)
 {
     for (auto i = 0; i <= 127; i++)
     {
@@ -42,7 +43,6 @@ void Player::audioDeviceIOCallbackWithContext(const float* const* inputChannelDa
 
     if (transportSource.isPlaying())
     {
-        streamWasPlaying = true;
         AudioSampleBuffer buffer;
         buffer.setDataToReferTo(outputChannelData, numOutputChannels, numSamples);
         transportSource.getNextAudioBlock(AudioSourceChannelInfo(buffer));
@@ -85,8 +85,9 @@ void Player::audioDeviceIOCallbackWithContext(const float* const* inputChannelDa
             }
             latestMIDIBufferCallback(latestMIDIBuffer);
         }
+        latestPlaybackLocationFn(transportSource.getCurrentPosition());
     }
-    else if (streamWasPlaying && transportSource.hasStreamFinished())
+    else if (transportSource.positionableSource != nullptr && transportSource.hasStreamFinished())
     {
         juce::MessageManager::callAsync([this]
         {
