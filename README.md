@@ -28,7 +28,7 @@ https://www.python.org/downloads/windows/
 https://cmake.org/download/
 
 ## Build-time Dependencies 
-1. Clone NeuralPlayer and configure CMake once using ```cmake-build-debug``` as build directory (CLion does this automatically)
+1. Clone NeuralPlayer and configure CMake in Debug mode once using ```cmake-build-debug``` as build directory (CLion does this automatically)
 2. Build onnxruntime manually once to generate sub-build CMake Cache (see https://onnxruntime.ai/docs/build/inferencing.html):
 
 ``` cd <path-to-NeuralPlayer>/cmake-build-debug/_deps/onnxruntime-src ```
@@ -37,4 +37,4 @@ Example: macOS (Intel):
 
 ``` ./build.sh --config RelWithDebInfo --build_shared_lib --parallel --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=x86_64 ```
 
-3. Thereafter CMake should be able to rebuild onnxruntime anytime it changes, unless the build directory is wiped
+3. Thereafter CMake should be able to rebuild onnxruntime anytime it changes, unless the Debug build directory is wiped
