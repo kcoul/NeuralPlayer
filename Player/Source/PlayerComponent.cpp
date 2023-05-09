@@ -3,14 +3,14 @@
 #include <memory>
 
 PlayerComponent::PlayerComponent() :
-audioMIDIPlayer(latestMIDIBufferFn),
-progressBar(renderingProgress),
-sidePanelHeader("Software Debug Console"),
-softwareConsoleComponentPanel("Software Debug Console Panel", 725, true, nullptr, false),
-playlistComponent(trackSelected),
-thumbnailCache(1),
-readAheadThread("transport read ahead"),
-keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
+        neuralPlayer(latestMIDIBufferFn),
+        progressBar(renderingProgress),
+        sidePanelHeader("Software Debug Console"),
+        softwareConsoleComponentPanel("Software Debug Console Panel", 725, true, nullptr, false),
+        playlistComponent(trackSelected),
+        thumbnailCache(1),
+        readAheadThread("transport read ahead"),
+        keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
     renderingThread = std::make_unique<SourceSepMIDIRenderingThread>();
     renderingThread->addListener(this);
@@ -86,23 +86,23 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
     addAndMakeVisible(playlistComponent);
 
     thumbnail = std::make_unique<AudioThumbnailComponent>(formatManager,
-                                                     audioMIDIPlayer.transportSource,
-                                                     thumbnailCache,
-                                                     thumbnailPlayheadPositionChanged,
-                                                     currentlyLoadedFile);
+                                                          neuralPlayer.transportSource,
+                                                          thumbnailCache,
+                                                          thumbnailPlayheadPositionChanged,
+                                                          currentlyLoadedFile);
     addAndMakeVisible(thumbnail.get());
 
     midiFlushJob = [this]()
-            { audioMIDIPlayer.sendAllNotesOff(); };
+            { neuralPlayer.sendAllNotesOff(); };
     transportStartJob = [this]()
-            { audioMIDIPlayer.transportSource.setPosition(0);
-              audioMIDIPlayer.transportSource.start(); };
-    transportStopJob = [this]() { audioMIDIPlayer.transportSource.stop(); };
+            { neuralPlayer.transportSource.setPosition(0);
+              neuralPlayer.transportSource.start(); };
+    transportStopJob = [this]() { neuralPlayer.transportSource.stop(); };
 
     startStopButton.setButtonText("Play");
     startStopButton.onClick = [this]
     {
-        if (audioMIDIPlayer.transportSource.isPlaying())
+        if (neuralPlayer.transportSource.isPlaying())
         {
             threadPool.addJob(midiFlushJob);
             threadPool.addJob(transportStopJob);
@@ -117,7 +117,7 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
     };
     addAndMakeVisible(startStopButton);
 
-    audioMIDIPlayer.streamFinishedCallback = [this]
+    neuralPlayer.streamFinishedCallback = [this]
     {
         threadPool.addJob(midiFlushJob);
         threadPool.addJob(transportStopJob);
@@ -127,9 +127,9 @@ keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboar
 
     latestMIDIBufferFn = [this] (juce::MidiBuffer latestBuffer)
     {
-        keyboardState.processNextMidiBuffer(audioMIDIPlayer.latestMIDIBuffer,
+        keyboardState.processNextMidiBuffer(neuralPlayer.latestMIDIBuffer,
                                             0,
-                                            audioMIDIPlayer.numSamplesPerBuffer,
+                                            neuralPlayer.numSamplesPerBuffer,
                                             false);
     };
     addAndMakeVisible(keyboardComponent);
@@ -230,8 +230,8 @@ std::pair<FolderSelectResult, juce::File> PlayerComponent::selectExistingPlaylis
 void PlayerComponent::loadAudioFileIntoTransport(const File& audioFile)
 {
     // unload the previous file source and delete it..
-    audioMIDIPlayer.transportSource.stop();
-    audioMIDIPlayer.transportSource.setSource(nullptr);
+    neuralPlayer.transportSource.stop();
+    neuralPlayer.transportSource.setSource(nullptr);
     currentAudioFileSource = nullptr;
 
     AudioFormatReader* reader = formatManager.createReaderFor(audioFile);
@@ -242,7 +242,7 @@ void PlayerComponent::loadAudioFileIntoTransport(const File& audioFile)
         currentAudioFileSource = std::make_unique<AudioFormatReaderSource>(reader, true);
 
         // ..and plug it into our transport source
-        audioMIDIPlayer.transportSource.setSource(
+        neuralPlayer.transportSource.setSource(
                 currentAudioFileSource.get(),
                 32768,                   // tells it to buffer this many samples ahead
                 &readAheadThread,        // this is the background thread to use for reading-ahead
@@ -252,13 +252,13 @@ void PlayerComponent::loadAudioFileIntoTransport(const File& audioFile)
 
 void PlayerComponent::loadMIDIFile(const File& file)
 {
-    audioMIDIPlayer.MIDIFile.clear();
+    neuralPlayer.MIDIFile.clear();
 
     juce::FileInputStream stream(file);
-    audioMIDIPlayer.MIDIFile.readFrom(stream);
+    neuralPlayer.MIDIFile.readFrom(stream);
 
     //This function call means that the MIDI file is going to be played with the original tempo and signature.
-    audioMIDIPlayer.MIDIFile.convertTimestampTicksToSeconds();
+    neuralPlayer.MIDIFile.convertTimestampTicksToSeconds();
 }
 
 juce::File PlayerComponent::walkDebugDirectoryToResourcesFolder()

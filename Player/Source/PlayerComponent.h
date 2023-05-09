@@ -28,12 +28,12 @@ public:
     void resized() override;
     void exitSignalSent() override;
     void timerCallback() override;
-    void setLumi(roli::Block::Ptr lumi) { audioMIDIPlayer.lumi = lumi; };
+    void setLumi(roli::Block::Ptr lumi) { neuralPlayer.lumi = lumi; };
 
     std::unique_ptr<SourceSepMIDIRenderingThread> renderingThread;
     double renderingProgress = 0.0;
 private:
-    Player audioMIDIPlayer;
+    Player neuralPlayer;
 
     juce::TextButton loadNewFolderButton {"Load New"};
     juce::TextButton haltButton { "Halt" };
