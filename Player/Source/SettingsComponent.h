@@ -3,7 +3,6 @@
 #include <roli_blocks_basics/roli_blocks_basics.h>
 
 #include "ConsoleViewComponent.h"
-#include "DataStructures.h"
 #include "SharedAudioDeviceManager.h"
 #include "SourceSepMIDIRenderingThread.h"
 

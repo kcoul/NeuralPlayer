@@ -19,8 +19,7 @@ enum class FolderSelectResult
 };
 
 class PlayerComponent : public juce::Component,
-                        public juce::Thread::Listener,
-                        public juce::Timer
+                        public juce::Thread::Listener
 {
 public:
     PlayerComponent();
@@ -28,14 +27,14 @@ public:
     void paint(juce::Graphics&) override;
     void resized() override;
     void exitSignalSent() override;
-    void timerCallback() override;
     void setLumi(roli::Block::Ptr lumi) { neuralPlayer.lumi = lumi; };
 
     std::unique_ptr<SourceSepMIDIRenderingThread> renderingThread;
     double renderingProgress = 0.0;
 private:
     Player neuralPlayer;
-
+    std::function<void(String)> textToPost;
+    std::function<void(double)> progressUpdate;
     juce::TextButton loadNewFolderButton {"Load New"};
     juce::TextButton haltButton { "Halt" };
     juce::TextButton loadExistingPlaylistButton {"Load Existing"};

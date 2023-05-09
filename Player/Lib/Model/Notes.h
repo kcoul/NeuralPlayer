@@ -42,7 +42,7 @@ public:
     typedef struct ConvertParams
     {
         /* Note segmentation (0.05 - 0.95, Split-Merge Notes) */
-        float onsetThreshold = 0.3;
+        float onsetThreshold = 0.3f;
         /* Confidence threshold (0.05 to 0.95, More-Less notes) */
         float frameThreshold = 0.5;
         /* Minimum note length in number of frames */

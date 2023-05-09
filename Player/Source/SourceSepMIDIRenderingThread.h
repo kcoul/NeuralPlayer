@@ -2,7 +2,6 @@
 
 #include <JuceHeader.h>
 #include "Converters.h"
-#include "DataStructures.h"
 
 #include "BasicPitch.h"
 #include "DownSampler.h"
@@ -12,7 +11,10 @@
 class SourceSepMIDIRenderingThread : public juce::Thread
 {
 public:
-    SourceSepMIDIRenderingThread() : juce::Thread("SourceSepMIDI Rendering Thread")
+    explicit SourceSepMIDIRenderingThread(std::function<void(String)>& textToPostFn,
+                                          std::function<void(double)>& progressUpdateFn) :
+    juce::Thread("SourceSepMIDI Rendering Thread"),
+    textToPost(textToPostFn), progressUpdate(progressUpdateFn)
     {
         formatManager.registerBasicFormats();
     }
@@ -32,11 +34,15 @@ public:
     bool stopRenderingFlag = false;
     bool playlistSuccessfullyGenerated = false;
     String playlistPath = "";
-    WatchedVars threadVars;
-    double progress = 0.0;
+    std::function<void(String)>& textToPost;
+    std::function<void(double)>& progressUpdate;
+    String returnedText;
+    String currentFileName;
+    int currentFileIndex = 0;
+    int numFiles = 0;
 private:
     juce::File SpleeterRTBinFile;
-    XmlElement* playlist;
+    XmlElement* playlist = nullptr;
 
     static juce::File walkDebugDirectoryToSpleeterRTBin()
     {
@@ -73,7 +79,7 @@ private:
     {
         auto files = inputFolder.findChildFiles(File::TypesOfFileToFind::findFiles,
                                                 false, "*.wav");
-        threadVars.numFiles = files.size();
+        numFiles = files.size();
 
         playlist = new XmlElement("TABLEDATA");
         writePlaylistHeader(*playlist);
@@ -83,8 +89,7 @@ private:
 
         for (auto inputFile : files)
         {
-            threadVars.currentFileName = inputFile.getFileName();
-            threadVars.currentFileIndex++;
+            currentFileName = inputFile.getFileName();
             if (renderSingleFile(bin, inputFile, *data))
             {
                 playlistContainsAtLeastOneEntry = true;
@@ -92,11 +97,13 @@ private:
             }
             else
             {
-                threadVars.returnedText = "Render failed for " + inputFile.getFileName();
+                returnedText = "Render failed for " + inputFile.getFileName();
+                textToPost(returnedText);
                 if (stopRenderingFlag) break;
             }
+            progressUpdate((double)currentFileIndex / numFiles);
         }
-        threadVars.currentFileIndex = 0; //Reset counter in case we decide to keep thread alive indefinitely
+        currentFileIndex = 0; //Reset counter in case we decide to keep thread alive indefinitely
 
         if (playlistContainsAtLeastOneEntry)
         {
@@ -157,16 +164,30 @@ private:
         arguments.add("2"); //numStems (seems to ignore 4 and maxes at 3, SpleeterRTPlug does 4)
         arguments.add(inputPath);
 
+        currentFileIndex++;
+        returnedText =  "Processing file " + String(currentFileIndex) + " of " +
+                                                            String(numFiles) + ", " +
+                                                            currentFileName;
+        textToPost(returnedText);
         ChildProcess p;
         p.start(arguments);
-        threadVars.returnedText = p.readAllProcessOutput();
-
+        auto start = std::chrono::high_resolution_clock::now();
+        returnedText = p.readAllProcessOutput();
+        if (returnedText.isNotEmpty())
+            textToPost(returnedText);
+        auto stop = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+        auto seconds = (int)duration.count() / 1000;
+        auto milliseconds = duration.count() % 1000;
+        returnedText = "Source Separation took " + (String)seconds + "." + (String)milliseconds + " seconds";
+        textToPost(returnedText);
         //Make dual-mono inputFile from original and extracted vocal for ABing
         auto pwd = File::getCurrentWorkingDirectory();
         auto possibleVocalFile = File(pwd.getChildFile(inputFilenameWithoutExtension + "_Vocal.wav"));
         if (!possibleVocalFile.existsAsFile())
         {
-            threadVars.returnedText = "Vocal extraction operation failed.";
+            returnedText = "Vocal extraction operation failed.";
+            textToPost(returnedText);
             return false;
         }
 
@@ -240,10 +261,15 @@ private:
         basicPitch.setParameters(0.7,
                                  0.5,
                                  125);
-
+        auto start = std::chrono::high_resolution_clock::now();
         basicPitch.transcribeToMIDI(mAudioBufferForMIDITranscription.getWritePointer(0),
                                     mAudioBufferForMIDITranscription.getNumSamples());
-
+        auto stop = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+        auto seconds = (int)duration.count() / 1000;
+        auto milliseconds = duration.count() % 1000;
+        returnedText = "Vocal MIDI transcription took " + (String)seconds + "." + (String)milliseconds + " seconds\n";
+        textToPost(returnedText);
         auto noteEvents = basicPitch.getNoteEvents();
 
         //Write MIDI to debug output folder to be able to load it alongside DualMono file in AudioFilePlayerPlugin
@@ -253,7 +279,8 @@ private:
         if (!midiFileWriter.writeMidiFile(noteEvents, debugMidiOutputFilePath, 120) ||
             !midiFileWriter.writeMidiFile(noteEvents, releaseMidiOutputFilePath, 120))
         {
-            threadVars.returnedText = "MIDI write operation failed.";
+            returnedText = "MIDI write operation failed.";
+            textToPost(returnedText);
             return false;
         }
 

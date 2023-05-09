@@ -12,7 +12,9 @@ PlayerComponent::PlayerComponent() :
         readAheadThread("transport read ahead"),
         keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
-    renderingThread = std::make_unique<SourceSepMIDIRenderingThread>();
+    renderingThread = std::make_unique<SourceSepMIDIRenderingThread>(textToPost, progressUpdate);
+    textToPost = [this] (String text) { softwareConsoleComponent.insertText(text, true); };
+    progressUpdate = [this] (double p) { renderingProgress = p; };
     renderingThread->addListener(this);
     formatManager.registerBasicFormats();
     readAheadThread.startThread();
@@ -52,7 +54,6 @@ PlayerComponent::PlayerComponent() :
             renderingThread->setInputFolder(inputFolder);
             renderingThread->setDebugOutputFolder(File(inputFolder.getFullPathName() + "/debug"));
             renderingThread->startThread();
-            startTimer (30);
         };
     };
     addAndMakeVisible(loadNewFolderButton);
@@ -316,31 +317,9 @@ void PlayerComponent::exitSignalSent()
             currentPlaylistDirectory = File(path).getParentDirectory();
             renderingProgress = 0.0;
             processingIndex = 0;
-            stopTimer();
         });
     }
 
     renderingThread->playlistPath = "";
     renderingThread->playlistSuccessfullyGenerated = false;
-}
-
-void PlayerComponent::timerCallback()
-{
-    if (renderingThread->threadVars.currentFileIndex > 0 &&
-        processingIndex != renderingThread->threadVars.currentFileIndex)
-    {
-        processingIndex = renderingThread->threadVars.currentFileIndex;
-        renderingProgress = (processingIndex-1.0) / renderingThread->threadVars.numFiles;
-
-        auto textToPost = "Now processing file " + String(processingIndex) + " of " +
-                          String(renderingThread->threadVars.numFiles) + ", " +
-                          renderingThread->threadVars.currentFileName;
-        softwareConsoleComponent.insertText(textToPost, true);
-    }
-
-    if (lastDisplayedString != renderingThread->threadVars.returnedText)
-    {
-        lastDisplayedString = renderingThread->threadVars.returnedText;
-        softwareConsoleComponent.insertText(lastDisplayedString, true);
-    }
 }

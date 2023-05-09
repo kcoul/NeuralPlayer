@@ -6,8 +6,6 @@
 #include "PlayerComponent.h"
 #include "SettingsComponent.h"
 
-#include "DataStructures.h"
-
 #include "ConsoleViewComponent.h"
 #include "SharedAudioDeviceManager.h"
 
@@ -18,7 +16,6 @@ public:
     ~MainViewComponent() override;
     void paint(juce::Graphics&) override;
     void resized() override;
-    std::function<void(WatchedVars)> resetThreadVars;
 private:
     juce::TabbedComponent tabComponent;
 

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "DataStructures.h"
 
 class ConsoleViewComponent : public juce::Component
 {
