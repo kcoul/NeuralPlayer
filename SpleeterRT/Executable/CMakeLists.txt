@@ -2,10 +2,12 @@ set(TargetName "SpleeterRTBin")
 
 project(${TargetName} VERSION 0.0.1)
 
-execute_process(
-        COMMAND ${CMAKE_COMMAND} -E tar xf ${CMAKE_CURRENT_LIST_DIR}/model.7z
-        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-)
+if(NOT EXISTS ${CMAKE_CURRENT_LIST_DIR}/model.c)
+    execute_process(
+            COMMAND ${CMAKE_COMMAND} -E tar xf ${CMAKE_CURRENT_LIST_DIR}/model.7z
+            WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+    )
+endif()
 
 add_executable(${TargetName}
         codelet.c
