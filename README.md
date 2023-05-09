@@ -38,4 +38,4 @@ Example: macOS (Intel):
 ``` ./build.sh --config RelWithDebInfo --build_shared_lib --parallel --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=x86_64 ```
 
 3. Thereafter CMake should be able to rebuild onnxruntime anytime it changes, unless the Debug build directory is wiped
-4. Anytime main CMake build config is changed, SpleeterRTBin should be compiled for that build type (i.e. Debug, Release, RelWithDebInfo)
+4. Anytime new CMake build config is set up, SpleeterRTBin should be compiled for that build type (i.e. Debug, Release, RelWithDebInfo) before NeuralPlayer is run with that config
