@@ -25,10 +25,10 @@ apt install python3
 https://www.python.org/downloads/windows/
 
 ## Build-time Dependencies 
-1. Clone NeuralPlayer once and run CMake once using ```cmake-build-debug``` as build directory (CLion does this automatically)
-2. Build onnxruntime manually once to generate CMake Cache (see https://onnxruntime.ai/docs/build/inferencing.html):
+1. Clone NeuralPlayer and configure CMake once using ```cmake-build-debug``` as build directory (CLion does this automatically)
+2. Build onnxruntime manually once to generate sub-build CMake Cache (see https://onnxruntime.ai/docs/build/inferencing.html):
 
-``` cd <path-to-NeuralPlayer/cmake-build-debug/_deps/onnxruntime-src ```
+``` cd <path-to-NeuralPlayer>/cmake-build-debug/_deps/onnxruntime-src ```
 
 Example: macOS (Intel): 
 
