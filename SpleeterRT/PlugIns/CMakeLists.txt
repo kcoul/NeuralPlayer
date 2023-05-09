@@ -78,6 +78,17 @@ set(SourceFiles
         Source/stb_image_write.h)
 target_sources("${TargetName}" PRIVATE ${SourceFiles})
 
+#Resources
+set(resource_source_path "https://github.com/james34602/SpleeterRT/releases/download/v0.2-alpha/coefficients.7z")
+file(DOWNLOAD
+        ${resource_source_path}
+        $ENV{HOME}/coefficients.7z
+        SHOW_PROGRESS
+        )
+execute_process(
+        COMMAND ${CMAKE_COMMAND} -E tar xf $ENV{HOME}/coefficients.7z
+        WORKING_DIRECTORY $ENV{HOME}
+)
 
 # We don't want our source buried in extra nested folders
 set_target_properties("${TargetName}" PROPERTIES FOLDER "")

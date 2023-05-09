@@ -2,12 +2,10 @@ set(TargetName "SpleeterRTBin")
 
 project(${TargetName} VERSION 0.0.1)
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    execute_process(
-            COMMAND ${CMAKE_COMMAND} -E tar xf ${CMAKE_CURRENT_LIST_DIR}/model.7z
-            WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-    )
-endif()
+execute_process(
+        COMMAND ${CMAKE_COMMAND} -E tar xf ${CMAKE_CURRENT_LIST_DIR}/model.7z
+        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+)
 
 add_executable(${TargetName}
         codelet.c
