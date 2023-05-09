@@ -2,7 +2,7 @@ project (Player VERSION 0.0.1)
 set(TargetName ${PROJECT_NAME})
 
 juce_add_gui_app(${TargetName}
-        PRODUCT_NAME "AudioMIDIPlayer"
+        PRODUCT_NAME "NeuralPlayer"
         VERSION 0.1
         ICON_BIG "${CMAKE_SOURCE_DIR}/Player/Resources/NP3_HiQ.png"
         ICON_SMALL "${CMAKE_SOURCE_DIR}/Player/Resources/NP3_HiQ.png")
@@ -17,16 +17,10 @@ find_package(OnnxRuntime)
 add_library(onnxruntime SHARED IMPORTED)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    #TODO: Recompile onnxruntime in true Release mode and use that unless you need to debug into it
+    #TODO: Compile onnxruntime in Release mode instead and use that unless you need to debug into it
+    #NOTE: Looking for libonnxruntime.dylib in the most likely location, change path if your use-case is different
     set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
-            ${OnnxRuntime_SOURCE_DIR}/../../../cmake-build-release/_deps/onnxruntime-src/build/MacOS/RelWithDebInfo/libonnxruntime.dylib)
-    #if(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") #libonnxruntime can't seem to build in this configuration, ironically
-    #    set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
-    #            ${OnnxRuntime_SOURCE_DIR}/../../../cmake-build-debug/_deps/onnxruntime-src/build/MacOS/RelWithDebInfo/libonnxruntime.dylib)
-    #else()
-    #    set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
-    #            ${OnnxRuntime_SOURCE_DIR}/build/MacOS/RelWithDebInfo/libonnxruntime.dylib)
-    #endif()
+            ${CMAKE_SOURCE_DIR}/cmake-build-debug/_deps/onnxruntime-src/build/MacOS/RelWithDebInfo/libonnxruntime.dylib)
 endif()
 
 #Binary data
@@ -43,7 +37,7 @@ target_include_directories(Player-BasicPitchCNN PRIVATE "${RTNeural_SOURCE_DIR}"
 target_link_libraries(Player-BasicPitchCNN PUBLIC RTNeural Player-Assets)
 
 target_include_directories(${TargetName} PRIVATE
-        ${OnnxRuntime_SOURCE_DIR}/include/onnxruntime/core/session
+        ${CMAKE_SOURCE_DIR}/cmake-build-debug/_deps/onnxruntime-src/include/onnxruntime/core/session
         ${CMAKE_CURRENT_LIST_DIR}/Lib/DSP
         ${CMAKE_CURRENT_LIST_DIR}/Lib/MidiFile
         ${CMAKE_CURRENT_LIST_DIR}/Lib/MidiPostProcessing
@@ -82,11 +76,11 @@ target_compile_definitions(${TargetName} PRIVATE
         JUCE_APPLICATION_NAME_STRING="$<TARGET_PROPERTY:${TargetName},JUCE_PROJECT_NAME>"
         JUCE_APPLICATION_VERSION_STRING="$<TARGET_PROPERTY:${TargetName},JUCE_VERSION>"
         JUCE_DISPLAY_SPLASH_SCREEN=0
-        JUCE_BUNDLE_ID="com.kcoul.AudioMIDIPlayer"
+        JUCE_BUNDLE_ID="com.kcoul.NeuralPlayer"
         )
 
 if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
-    set_xcode_property(${TargetName} PRODUCT_BUNDLE_IDENTIFIER "com.kcoul.AudioMIDIPlayer" All)
+    set_xcode_property(${TargetName} PRODUCT_BUNDLE_IDENTIFIER "com.kcoul.NeuralPlayer" All)
 endif()
 
 target_link_libraries(${TargetName}
