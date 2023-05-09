@@ -4,3 +4,4 @@
 /cmake-build-*
 /Builds
 /JuceLibraryCode
+/SpleeterRT/Executable/model.c
