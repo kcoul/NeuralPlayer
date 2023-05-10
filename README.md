@@ -1,5 +1,7 @@
 # NeuralPlayer
 
+# Building From Source
+
 ## Prerequisites
 1. Download Intel OneAPI's Online Installer:
  
