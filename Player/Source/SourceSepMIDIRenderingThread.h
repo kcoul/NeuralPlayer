@@ -173,7 +173,7 @@ private:
         if (!writeWavOutputs(inputFile, vocalFile, inputFilenameWithoutExtension, extractedVocalMonoBuffer, duration))
             return false;
         if (stopRenderingFlag) return false;
-        if (!generateAndWriteMIDIFiles(extractedVocalMonoBuffer, inputFilenameWithoutExtension))
+        if (!generateAndWriteMIDIFiles(extractedVocalMonoBuffer, vocalFile, inputFilenameWithoutExtension))
             return false;
         if (stopRenderingFlag) return false;
 
@@ -220,9 +220,9 @@ private:
         p.start(arguments);
         auto start = std::chrono::high_resolution_clock::now();
         auto returnedText = p.readAllProcessOutput();
+        auto stop = std::chrono::high_resolution_clock::now();
         if (returnedText.isNotEmpty())
             postText(returnedText);
-        auto stop = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
         auto seconds = (int)duration.count() / 1000;
         auto milliseconds = duration.count() % 1000;
@@ -270,8 +270,11 @@ private:
         delete reader;
 
         //Delete temp files
-        if (vocalFile.existsAsFile())
-            vocalFile.deleteFile();
+        if (!useStockBasicPitch) //We need vocalFile on disk a little longer if using stock basic-pitch
+        {
+            if (vocalFile.existsAsFile())
+                vocalFile.deleteFile();
+        }
 
         File possibleAccompanimentFile;
         if (useStockSpleeter)
@@ -327,43 +330,80 @@ private:
     }
 
     bool generateAndWriteMIDIFiles(const AudioSampleBuffer& extractedVocalMonoBuffer,
+                                   const juce::File& vocalFile,
                                    const juce::String& inputFilenameWithoutExtension)
     {
-        //MIDI Processing
-        //Resample from 44100 to 22050 all in one shot per file for now
-        AudioSampleBuffer mAudioBufferForMIDITranscription;
-        mAudioBufferForMIDITranscription.setSize(1, extractedVocalMonoBuffer.getNumSamples()/2);
-        downSampler.prepareToPlay(44100, extractedVocalMonoBuffer.getNumSamples());
-        downSampler.processBlock(
-                extractedVocalMonoBuffer,
-                mAudioBufferForMIDITranscription.getWritePointer(0),
-                extractedVocalMonoBuffer.getNumSamples());
-
-        basicPitch.setParameters(0.7,
-                                 0.5,
-                                 125);
-        auto start = std::chrono::high_resolution_clock::now();
-        basicPitch.transcribeToMIDI(mAudioBufferForMIDITranscription.getWritePointer(0),
-                                    mAudioBufferForMIDITranscription.getNumSamples());
-        auto stop = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-        auto seconds = (int)duration.count() / 1000;
-        auto milliseconds = duration.count() % 1000;
-        postText("Vocal MIDI transcription took " + (String)seconds + "." + (String)milliseconds + " seconds\n");
-
-        auto noteEvents = basicPitch.getNoteEvents();
-
-        //Write MIDI to debug output folder to be able to load it alongside DualMono file in AudioFilePlayerPlugin
-        auto debugMidiOutputFilePath = debugOutputFolder.getChildFile(inputFilenameWithoutExtension + "_DualMono.mid");
-        //Also write MIDI to input folder to be able to load it as part of Playlist.xml
-        auto releaseMidiOutputFilePath = inputFolder.getChildFile(inputFilenameWithoutExtension + ".mid");
-        if (!midiFileWriter.writeMidiFile(noteEvents, debugMidiOutputFilePath, 120) ||
-            !midiFileWriter.writeMidiFile(noteEvents, releaseMidiOutputFilePath, 120))
+        if (useStockBasicPitch)
         {
-            postText("MIDI write operation failed.");
-            return false;
-        }
+            StringArray arguments;
+            arguments.add("/usr/local/bin/basic-pitch");
+            arguments.add(inputFolder.getFullPathName());
+            arguments.add(vocalFile.getFullPathName());
 
+            ChildProcess p;
+            p.start(arguments);
+            auto start = std::chrono::high_resolution_clock::now();
+            auto returnedText = p.readAllProcessOutput();
+            auto stop = std::chrono::high_resolution_clock::now();
+            if (returnedText.isNotEmpty())
+                postText(returnedText);
+            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+            auto seconds = (int)duration.count() / 1000;
+            auto milliseconds = duration.count() % 1000;
+            postText("Vocal MIDI transcription took " + (String)seconds + "." + (String)milliseconds + " seconds");
+
+            auto midiOutput = inputFolder.getChildFile(inputFilenameWithoutExtension + "_Vocal_basic_pitch.mid");
+            if (midiOutput.existsAsFile())
+            {
+                auto midiDebugOutput = inputFolder.getFullPathName() + "/debug/" + inputFilenameWithoutExtension + "_Vocal_basic_pitch.mid";
+                midiOutput.copyFileTo(File(midiDebugOutput));
+                midiOutput.deleteFile();
+                vocalFile.deleteFile();
+                return true;
+            }
+            else
+            {
+                vocalFile.deleteFile();
+                return false;
+            }
+        }
+        else
+        {
+            //MIDI Processing
+            //Resample from 44100 to 22050 all in one shot per file for now
+            AudioSampleBuffer mAudioBufferForMIDITranscription;
+            mAudioBufferForMIDITranscription.setSize(1, extractedVocalMonoBuffer.getNumSamples()/2);
+            downSampler.prepareToPlay(44100, extractedVocalMonoBuffer.getNumSamples());
+            downSampler.processBlock(
+                    extractedVocalMonoBuffer,
+                    mAudioBufferForMIDITranscription.getWritePointer(0),
+                    extractedVocalMonoBuffer.getNumSamples());
+
+            basicPitch.setParameters(0.7,
+                                     0.5,
+                                     125);
+            auto start = std::chrono::high_resolution_clock::now();
+            basicPitch.transcribeToMIDI(mAudioBufferForMIDITranscription.getWritePointer(0),
+                                        mAudioBufferForMIDITranscription.getNumSamples());
+            auto stop = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+            auto seconds = (int)duration.count() / 1000;
+            auto milliseconds = duration.count() % 1000;
+            postText("Vocal MIDI transcription took " + (String)seconds + "." + (String)milliseconds + " seconds\n");
+
+            auto noteEvents = basicPitch.getNoteEvents();
+
+            //Write MIDI to debug output folder to be able to load it alongside DualMono file in AudioFilePlayerPlugin
+            auto debugMidiOutputFilePath = debugOutputFolder.getChildFile(inputFilenameWithoutExtension + "_DualMono.mid");
+            //Also write MIDI to input folder to be able to load it as part of Playlist.xml
+            auto releaseMidiOutputFilePath = inputFolder.getChildFile(inputFilenameWithoutExtension + ".mid");
+            if (!midiFileWriter.writeMidiFile(noteEvents, debugMidiOutputFilePath, 120) ||
+                !midiFileWriter.writeMidiFile(noteEvents, releaseMidiOutputFilePath, 120))
+            {
+                postText("MIDI write operation failed.");
+                return false;
+            }
+        }
         return true;
     }
 
