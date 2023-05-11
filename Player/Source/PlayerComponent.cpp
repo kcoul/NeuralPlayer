@@ -85,6 +85,11 @@ PlayerComponent::PlayerComponent() :
     openSidePanelButton.onClick = [this] { softwareConsoleComponentPanel.showOrHide(true); };
     addAndMakeVisible(openSidePanelButton);
 
+    stockSpleeterButton.onClick = [this] {renderingThread->stockSpleeterFlag = stockSpleeterButton.getToggleState();};
+    addAndMakeVisible(stockSpleeterButton);
+    stockBasicPitchButton.onClick = [this] {renderingThread->stockBasicPitchFlag = stockBasicPitchButton.getToggleState();};
+    addAndMakeVisible(stockBasicPitchButton);
+
     playbackProgressLabel.setJustificationType(Justification::right);
     addAndMakeVisible(playbackProgressLabel);
 
@@ -188,6 +193,11 @@ void PlayerComponent::resized()
 
     openSidePanelButton.setBounds(halfVUnitSlot.removeFromLeft(halfVUnit));
     playbackProgressLabel.setBounds(halfVUnitSlot.removeFromRight(vUnit));
+
+    halfVUnitSlot.removeFromLeft(halfVUnit * 3);
+    stockSpleeterButton.setBounds(halfVUnitSlot.removeFromLeft(vUnit * 2));
+    halfVUnitSlot.removeFromLeft(vUnit);
+    stockBasicPitchButton.setBounds(halfVUnitSlot);
 
     area.removeFromTop(4);
 

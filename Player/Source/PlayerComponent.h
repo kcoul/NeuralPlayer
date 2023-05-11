@@ -35,6 +35,10 @@ private:
     Player neuralPlayer;
     std::function<void(String)> textToPost;
     std::function<void(double)> progressUpdate;
+
+    juce::ToggleButton stockSpleeterButton {"Stock Spleeter"};
+    juce::ToggleButton stockBasicPitchButton {"Stock BasicPitch"};
+
     juce::TextButton loadNewFolderButton {"Load New"};
     juce::TextButton haltButton { "Halt" };
     juce::TextButton loadExistingPlaylistButton {"Load Existing"};
