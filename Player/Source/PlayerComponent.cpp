@@ -6,7 +6,7 @@ PlayerComponent::PlayerComponent() :
         neuralPlayer(latestMIDIBufferFn, latestPlaybackLocationFn),
         progressBar(renderingProgress),
         sidePanelHeader("Software Debug Console"),
-        softwareConsoleComponentPanel("Software Debug Console Panel", 700, true, nullptr, false),
+        softwareConsoleComponentPanel("Software Debug Console Panel", 700, false, nullptr, false),
         playlistComponent(trackSelected),
         thumbnailCache(1),
         readAheadThread("transport read ahead"),
@@ -88,7 +88,7 @@ PlayerComponent::PlayerComponent() :
     playbackProgressLabel.setJustificationType(Justification::right);
     addAndMakeVisible(playbackProgressLabel);
 
-    sidePanelHeader.setHomeButtonClicked([this] {softwareConsoleComponent.clear();});
+    sidePanelHeader.setHomeButtonClicked([this] { softwareConsoleComponent.clear(); });
     softwareConsoleComponentPanel.setTitleBarComponent(&sidePanelHeader, true, false);
     softwareConsoleComponentPanel.setContent(&softwareConsoleComponent, false);
     addAndMakeVisible(softwareConsoleComponentPanel);

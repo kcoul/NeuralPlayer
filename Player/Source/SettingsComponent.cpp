@@ -13,11 +13,6 @@ lumiCallback(lumiCallbackFn)
                                                                          true,
                                                                          false);
 
-    //settingsLaf.setColour (Label::textColourId, Colours::white);
-    //settingsLaf.setColour (TextButton::buttonColourId, Colours::white);
-    //settingsLaf.setColour (TextButton::textColourOffId, Colours::black);
-    //audioMIDISettings->setLookAndFeel (&settingsLaf);
-
     addAndMakeVisible(*audioMIDISettings);
 
     lumiDetectedButton.setInterceptsMouseClicks(false, false);
@@ -39,7 +34,7 @@ lumiCallback(lumiCallbackFn)
 
 SettingsComponent::~SettingsComponent()
 {
-    //audioMIDISettings->setLookAndFeel (nullptr);
+
 }
 
 void SettingsComponent::paint(juce::Graphics& g)
