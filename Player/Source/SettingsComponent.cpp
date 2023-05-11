@@ -24,63 +24,11 @@ lumiCallback(lumiCallbackFn)
     addAndMakeVisible(lumiDetectedButton);
 
     xmlWriteTestButton.setButtonText("Write debug XML");
-    xmlWriteTestButton.onClick = [this]
-    {
-        XmlElement playlist ("TABLEDATA");
-        XmlElement* headers = new XmlElement("HEADERS");
-
-        for (int i = 1; i <= 3; ++i)
-        {
-            XmlElement* column = new XmlElement("COLUMN");
-
-            column->setAttribute("columnId", i);
-            if (i == 1)
-            {
-                column->setAttribute("name", "Title");
-                column->setAttribute("width", 320);
-            }
-            else if (i == 2)
-            {
-                column->setAttribute("name", "Author");
-                column->setAttribute("width", 100);
-            }
-            else if (i == 3)
-            {
-                column->setAttribute("name", "Duration");
-                column->setAttribute("width", 100);
-            }
-
-            headers->addChildElement(column);
-        }
-        playlist.addChildElement(headers);
-
-        XmlElement* data = new XmlElement("DATA");
-
-        for (int i = 1; i <= 2; ++i)
-        {
-            XmlElement* item = new XmlElement("ITEM");
-            if (i == 1)
-            {
-                item->setAttribute("Title", "TrueSurvivor");
-                item->setAttribute("Author", "Super MadNES");
-                item->setAttribute("Duration", "02:57");
-            }
-            else if (i == 2)
-            {
-                item->setAttribute("Title", "Yee");
-                item->setAttribute("Author", "");
-                item->setAttribute("Duration", "00:09");
-            }
-
-            data->addChildElement(item);
-        }
-        playlist.addChildElement(data);
-
-        playlist.writeTo(
-                juce::File::getSpecialLocation(juce::File::userDesktopDirectory)
-                                .getChildFile("Playlist.xml"), XmlElement::TextFormat());
-    };
+    xmlWriteTestButton.onClick = [this]{ xmlWriteTest(); };
     addAndMakeVisible(xmlWriteTestButton);
+
+    consoleViewLabel.setJustificationType(Justification::centred);
+    addAndMakeVisible(consoleViewLabel);
 
     consoleViewComponent = std::make_unique<ConsoleViewComponent>();
     addAndMakeVisible(*consoleViewComponent);
@@ -106,17 +54,21 @@ void SettingsComponent::resized()
     area.removeFromTop(30);
 #endif
 
-    auto vUnit = area.getHeight()/4;
+    auto vUnit = area.getHeight()/12;
     auto halfVUnit = vUnit/2;
 
-    lumiDetectedButton.setBounds(area.removeFromTop(halfVUnit));
-    //xmlWriteTestButton.setBounds(area.removeFromTop(halfVUnit));
-
-    if(audioMIDISettings)
-        audioMIDISettings->setBounds(area.removeFromTop(vUnit));
+    consoleViewLabel.setBounds(area.removeFromTop(halfVUnit));
 
     if(consoleViewComponent)
-        consoleViewComponent->setBounds(area);
+        consoleViewComponent->setBounds(area.removeFromTop(vUnit * 7));
+
+    lumiDetectedButton.setBounds(area.removeFromTop(halfVUnit * 3));
+    //xmlWriteTestButton.setBounds(area.removeFromTop(halfVUnit * 3));
+
+    if(audioMIDISettings)
+        audioMIDISettings->setBounds(area.removeFromTop(vUnit * 3));
+
+
 }
 
 void SettingsComponent::topologyChanged()
@@ -170,4 +122,61 @@ void SettingsComponent::topologyChanged()
         };
         consoleViewComponent->insertText("", true);
     }
+}
+
+void SettingsComponent::xmlWriteTest()
+{
+    XmlElement playlist ("TABLEDATA");
+    XmlElement* headers = new XmlElement("HEADERS");
+
+    for (int i = 1; i <= 3; ++i)
+    {
+        XmlElement* column = new XmlElement("COLUMN");
+
+        column->setAttribute("columnId", i);
+        if (i == 1)
+        {
+            column->setAttribute("name", "Title");
+            column->setAttribute("width", 320);
+        }
+        else if (i == 2)
+        {
+            column->setAttribute("name", "Author");
+            column->setAttribute("width", 100);
+        }
+        else if (i == 3)
+        {
+            column->setAttribute("name", "Duration");
+            column->setAttribute("width", 100);
+        }
+
+        headers->addChildElement(column);
+    }
+    playlist.addChildElement(headers);
+
+    XmlElement* data = new XmlElement("DATA");
+
+    for (int i = 1; i <= 2; ++i)
+    {
+        XmlElement* item = new XmlElement("ITEM");
+        if (i == 1)
+        {
+            item->setAttribute("Title", "TrueSurvivor");
+            item->setAttribute("Author", "Super MadNES");
+            item->setAttribute("Duration", "02:57");
+        }
+        else if (i == 2)
+        {
+            item->setAttribute("Title", "Yee");
+            item->setAttribute("Author", "");
+            item->setAttribute("Duration", "00:09");
+        }
+
+        data->addChildElement(item);
+    }
+    playlist.addChildElement(data);
+
+    playlist.writeTo(
+            juce::File::getSpecialLocation(juce::File::userDesktopDirectory)
+                    .getChildFile("Playlist.xml"), XmlElement::TextFormat());
 }

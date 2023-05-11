@@ -19,15 +19,19 @@ public:
 private:
     std::function<void(roli::Block::Ptr)>& lumiCallback;
     juce::AudioDeviceManager& audioDeviceManager { getSharedAudioDeviceManager(0, 2) };
-    std::unique_ptr<ConsoleViewComponent> consoleViewComponent;
     std::unique_ptr<juce::AudioDeviceSelectorComponent> audioMIDISettings;
     //LookAndFeel_V4 settingsLaf;
+
+    juce::Label consoleViewLabel {"", "Hardware Debug Console"};
+    std::unique_ptr<ConsoleViewComponent> consoleViewComponent;
 
     // The PhysicalTopologySource member variable which reports BLOCKS changes.
     roli::PhysicalTopologySource pts;
 
     juce::ToggleButton lumiDetectedButton {"Lumi Detected"};
     juce::TextButton xmlWriteTestButton;
+
+    void xmlWriteTest();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SettingsComponent)
 };
