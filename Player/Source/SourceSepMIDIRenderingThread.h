@@ -17,14 +17,26 @@ public:
     textToPost(textToPostFn), progressUpdate(progressUpdateFn)
     {
         formatManager.registerBasicFormats();
+        SpleeterRTBinFile = walkDebugDirectoryToSpleeterRTBin();
     }
     void run() override
     {
-        SpleeterRTBinFile = walkDebugDirectoryToSpleeterRTBin();
         stopRenderingFlag = false;
-        if (renderFiles(SpleeterRTBinFile))
-            playlistSuccessfullyGenerated = true;
 
+        //Capture GUI state once at beginning of render only
+        useStockSpleeter = stockSpleeterFlag;
+        useStockBasicPitch = stockBasicPitchFlag;
+
+        if (useStockSpleeter)
+        {
+            if (renderFiles(juce::File("/usr/local/bin/spleeter")))
+                playlistSuccessfullyGenerated = true;
+        }
+        else
+        {
+            if (renderFiles(SpleeterRTBinFile))
+                playlistSuccessfullyGenerated = true;
+        }
         signalThreadShouldExit();
     }
 
@@ -87,10 +99,6 @@ private:
 
     bool renderFiles(juce::File bin)
     {
-        //Capture GUI state once at beginning of render only
-        useStockSpleeter = stockSpleeterFlag;
-        useStockBasicPitch = stockBasicPitchFlag;
-
         auto files = inputFolder.findChildFiles(File::TypesOfFileToFind::findFiles,
                                                 false, "*.wav");
         numFiles = files.size();
@@ -150,7 +158,15 @@ private:
 
         //Make dual-mono inputFile from original and extracted vocal for ABing
         auto pwd = File::getCurrentWorkingDirectory(); //SpleeterRTBin saves files next to ParentProcess, aka this
-        auto vocalFile = File(pwd.getChildFile(inputFilenameWithoutExtension + "_Vocal.wav"));
+        File vocalFile;
+        if (useStockSpleeter)
+        {
+            vocalFile = File(pwd.getChildFile(inputFilenameWithoutExtension).getChildFile("vocals.wav"));
+        }
+        else
+        {
+            vocalFile = File(pwd.getChildFile(inputFilenameWithoutExtension + "_Vocal.wav"));
+        }
         AudioSampleBuffer extractedVocalMonoBuffer; //TODO: Keep this around for streaming into visualizer
         double duration;
 
@@ -171,17 +187,35 @@ private:
     {
         StringArray arguments;
         arguments.add(binPath);
-        arguments.add("3"); //spawnNthreads
-        arguments.add("512"); //timeStep
-        arguments.add("1024"); //analyseBinLimit
-        arguments.add("2"); //numStems (seems to ignore 4 and maxes at 3, SpleeterRTPlug does 4)
-        arguments.add(inputPath);
-
+        if (useStockSpleeter)
+        {
+            arguments.add("separate");
+            arguments.add("-o");
+            arguments.add(File::getCurrentWorkingDirectory().getFullPathName());
+            //arguments.add(" -p");
+            //arguments.add("spleeter:2stems-16kHz"); //':' character seems to be breaking p.start()... luckily -p is optional
+            arguments.add(inputPath);
+        }
+        else
+        {
+            arguments.add("3"); //spawnNthreads
+            arguments.add("512"); //timeStep
+            arguments.add("1024"); //analyseBinLimit
+            arguments.add("2"); //numStems (seems to ignore 4 and maxes at 3, SpleeterRTPlug does 4)
+            arguments.add(inputPath);
+        }
         currentFileIndex++;
+#if DEBUG
+        String argsConcat;
+        for (auto arg : arguments)
+            argsConcat += arg + " ";
+
+        postText(argsConcat);
+#else
         postText("Processing file " + String(currentFileIndex) + " of " +
                                                             String(numFiles) + ", " +
                                                             currentFileName);
-
+#endif
         ChildProcess p;
         p.start(arguments);
         auto start = std::chrono::high_resolution_clock::now();
@@ -196,13 +230,24 @@ private:
 
         //Make dual-mono inputFile from original and extracted vocal for ABing
         auto pwd = File::getCurrentWorkingDirectory();
-        auto possibleVocalFile = File(pwd.getChildFile(inputFilenameWithoutExtension + "_Vocal.wav"));
-        if (!possibleVocalFile.existsAsFile())
+        if (useStockSpleeter)
         {
-            postText("Vocal extraction operation failed.");
-            return false;
+            auto possibleVocalFile = File(pwd.getChildFile(inputFilenameWithoutExtension).getChildFile("vocals.wav"));
+            if (!possibleVocalFile.existsAsFile())
+            {
+                postText("Vocal extraction operation failed.");
+                return false;
+            }
         }
-
+        else
+        {
+            auto possibleVocalFile = File(pwd.getChildFile(inputFilenameWithoutExtension + "_Vocal.wav"));
+            if (!possibleVocalFile.existsAsFile())
+            {
+                postText("Vocal extraction operation failed.");
+                return false;
+            }
+        }
         return true;
     }
 
@@ -227,9 +272,26 @@ private:
         //Delete temp files
         if (vocalFile.existsAsFile())
             vocalFile.deleteFile();
-        auto possibleAccompanimentFile = vocalFile.getParentDirectory().getChildFile(inputFilenameWithoutExtension + "_Accompaniment.wav");
+
+        File possibleAccompanimentFile;
+        if (useStockSpleeter)
+        {
+            possibleAccompanimentFile = vocalFile.getParentDirectory().getChildFile("accompaniment.wav");
+        }
+        else
+        {
+            possibleAccompanimentFile = vocalFile.getParentDirectory().getChildFile(inputFilenameWithoutExtension + "_Accompaniment.wav");
+        }
+
         if (possibleAccompanimentFile.existsAsFile())
             possibleAccompanimentFile.deleteFile();
+
+        if (useStockSpleeter)
+        {
+            auto dir = vocalFile.getParentDirectory();
+            if (dir.exists())
+                dir.deleteFile();
+        }
 
         AudioSampleBuffer dualMonoBuffer;
         dualMonoBuffer.setSize(2, vocalNumSamples);
