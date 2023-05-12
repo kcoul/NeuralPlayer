@@ -26,7 +26,7 @@ https://www.python.org/downloads/windows/
 
 https://cmake.org/download/
 
-## Additional Pre-requisites for workbenching
+## Additional Prerequisites for workbenching
 
 1. Stock ```spleeter``` and ```basic-pitch```, which combined require python <= 3.10 and tensorflow <= 2.11
 2. You may need to uninstall python@3.11. 
