@@ -27,7 +27,6 @@ public:
     std::function<void()> streamFinishedCallback;
     void sendAllNotesOff();
 
-
     std::function<void(juce::MidiBuffer)>& latestMIDIBufferCallback;
     juce::MidiBuffer latestMIDIBuffer;
     std::function<void(double)>& latestPlaybackLocationFn;
@@ -42,7 +41,6 @@ private:
 
     MidiDeviceInfo deviceInfo;
     std::unique_ptr<MidiOutput> outDevice;
-    bool streamWasPlaying = false;
 };
 
 

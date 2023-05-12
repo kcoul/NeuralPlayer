@@ -89,11 +89,13 @@ void Player::audioDeviceIOCallbackWithContext(const float* const* inputChannelDa
     }
     else if (transportSource.positionableSource != nullptr && transportSource.hasStreamFinished())
     {
+        for(int i = 0; i < numOutputChannels; ++i)
+            FloatVectorOperations::clear(outputChannelData[i], numSamples);
+
         juce::MessageManager::callAsync([this]
         {
             streamFinishedCallback();
         });
-        streamWasPlaying = false;
     }
     else
     {

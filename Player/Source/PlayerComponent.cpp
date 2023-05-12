@@ -10,7 +10,7 @@ PlayerComponent::PlayerComponent() :
         playlistComponent(trackSelected),
         thumbnailCache(1),
         readAheadThread("transport read ahead"),
-        keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
+        keyboardComponent(keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
     renderingThread = std::make_unique<SourceSepMIDIRenderingThread>(textToPost, progressUpdate);
     textToPost = [this] (String text) { softwareConsoleComponent.insertText(text, true); };

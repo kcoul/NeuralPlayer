@@ -6,6 +6,7 @@
 #include "AudioThumbnailComponent.h"
 #include "ConsoleViewComponent.h"
 #include "Converters.h"
+#include "CustomMidiKeyboardComponent.h"
 #include "Player.h"
 #include "PlaylistComponent.h"
 #include "SidePanelHeader.h"
@@ -93,7 +94,7 @@ private:
     juce::TextButton startStopButton;
 
     juce::MidiKeyboardState keyboardState;
-    juce::MidiKeyboardComponent keyboardComponent;
+    CustomMidiKeyboardComponent keyboardComponent;
 
     double processingIndex = 0;
 
