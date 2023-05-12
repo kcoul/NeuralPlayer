@@ -333,11 +333,12 @@ private:
                                    const juce::File& vocalFile,
                                    const juce::String& inputFilenameWithoutExtension)
     {
-        if (useStockBasicPitch)
+        if (useStockBasicPitch) //Write to debug folder only, stock basic-pitch MIDI is not used in this app
         {
             StringArray arguments;
             arguments.add("/usr/local/bin/basic-pitch");
-            arguments.add(inputFolder.getFullPathName());
+            auto debugFolder = inputFolder.getFullPathName() + "/debug";
+            arguments.add(debugFolder);
             arguments.add(vocalFile.getFullPathName());
 
             ChildProcess p;
@@ -350,9 +351,9 @@ private:
             auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
             auto seconds = (int)duration.count() / 1000;
             auto milliseconds = duration.count() % 1000;
-            postText("Vocal MIDI transcription took " + (String)seconds + "." + (String)milliseconds + " seconds");
+            postText("Vocal MIDI transcription took " + (String)seconds + "." + (String)milliseconds + " seconds\n");
 
-            auto midiOutput = inputFolder.getChildFile(inputFilenameWithoutExtension + "_Vocal_basic_pitch.mid");
+            auto midiOutput = File(debugFolder).getChildFile("vocals_basic_pitch.mid");
             if (midiOutput.existsAsFile())
             {
                 auto midiDebugOutput = inputFolder.getFullPathName() + "/debug/" + inputFilenameWithoutExtension + "_Vocal_basic_pitch.mid";
