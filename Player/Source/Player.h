@@ -21,7 +21,7 @@ public:
                                           int numSamples,
                                           const AudioIODeviceCallbackContext& context) override;
 
-    roli::Block::Ptr lumi;
+    std::vector<roli::Block::Ptr> lumi;
     AudioTransportSource transportSource;
     juce::MidiFile MIDIFile;
     std::function<void()> streamFinishedCallback;

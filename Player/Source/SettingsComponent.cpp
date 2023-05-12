@@ -1,6 +1,6 @@
 #include "SettingsComponent.h"
 
-SettingsComponent::SettingsComponent(std::function<void(roli::Block::Ptr)>& lumiCallbackFn) :
+SettingsComponent::SettingsComponent(std::function<void(std::vector<roli::Block::Ptr>)>& lumiCallbackFn) :
 lumiCallback(lumiCallbackFn)
 {
     audioMIDISettings = std::make_unique<juce::AudioDeviceSelectorComponent>(audioDeviceManager,
@@ -15,6 +15,8 @@ lumiCallback(lumiCallbackFn)
 
     addAndMakeVisible(*audioMIDISettings);
 
+    lumiDetectedLabel.setJustificationType(Justification::right);
+    addAndMakeVisible(lumiDetectedLabel);
     lumiDetectedButton.setInterceptsMouseClicks(false, false);
     addAndMakeVisible(lumiDetectedButton);
 
@@ -57,13 +59,18 @@ void SettingsComponent::resized()
     if(consoleViewComponent)
         consoleViewComponent->setBounds(area.removeFromTop(vUnit * 7));
 
-    lumiDetectedButton.setBounds(area.removeFromTop(halfVUnit * 3));
-    //xmlWriteTestButton.setBounds(area.removeFromTop(halfVUnit * 3));
+    auto onePointFiveVUnitSlot = area.removeFromTop(halfVUnit * 3);
+#if SHOW_XML_WRITE_TEXT_BUTTON
+    xmlWriteTestButton.setBounds(onePointFiveVUnitSlot);
+#else
+    auto leftPad = 15;
+    onePointFiveVUnitSlot.removeFromLeft(leftPad);
+    lumiDetectedLabel.setBounds(onePointFiveVUnitSlot.removeFromLeft(onePointFiveVUnitSlot.getWidth() / 3));
+    lumiDetectedButton.setBounds(onePointFiveVUnitSlot);
+#endif
 
     if(audioMIDISettings)
         audioMIDISettings->setBounds(area.removeFromTop(vUnit * 3));
-
-
 }
 
 void SettingsComponent::topologyChanged()
@@ -78,7 +85,7 @@ void SettingsComponent::topologyChanged()
     consoleViewComponent->insertText("Detected " +
                                      String (currentTopology.blocks.size()) +
                                      " blocks:", true);
-
+    std::vector<roli::Block::Ptr> blocks;
     for (auto& block : currentTopology.blocks)
     {
         consoleViewComponent->insertText("    Description:   " + block->getDeviceDescription(), true);
@@ -111,12 +118,13 @@ void SettingsComponent::topologyChanged()
                 break;
             case roli::Block::lumiKeysBlock:
                 consoleViewComponent->insertText("    Type:          lumiKeysBlock", true);
-                lumiCallback(block);
+                blocks.emplace_back(block);
                 lumiDetectedButton.setToggleState(true, juce::dontSendNotification);
                 break;
         };
         consoleViewComponent->insertText("", true);
     }
+    lumiCallback(blocks);
 }
 
 void SettingsComponent::xmlWriteTest()

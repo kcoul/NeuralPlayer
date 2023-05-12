@@ -104,8 +104,8 @@ void Player::audioDeviceIOCallbackWithContext(const float* const* inputChannelDa
 
 void Player::lumiMIDIEvent(const void* message, size_t size)
 {
-    if (lumi)
-        lumi->sendMessage(message, size);
+    for (auto l : lumi)
+        l->sendMessage(message, size);
 }
 
 void Player::sendAllNotesOff()

@@ -21,7 +21,7 @@ private:
 
     std::unique_ptr<PlayerComponent> playerComponent;
     std::unique_ptr<SettingsComponent> settingsComponent;
-    std::function<void(roli::Block::Ptr)> lumiCallback;
+    std::function<void(std::vector<roli::Block::Ptr>)> lumiCallback;
 
     std::unique_ptr<ConsoleViewComponent> consoleViewComponent;
     std::unique_ptr<juce::AudioDeviceSelectorComponent> audioSettings;
