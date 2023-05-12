@@ -9,28 +9,27 @@ https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-down
 
 2. Run it, and select Custom Installation. De-select all components except Intel OneAPI Math Kernel Library.
 3. Allow for the installation to complete.
-4. It is recommended to set up a Python venv for workbenching (stock spleeter and basic-pitch require python <= 3.10, tensorflow <= 2.11, etc.).
-5. If using homebrew on macOS, you may need to uninstall python@3.11. 
 
 ### macOS (homebrew)
 ```
 brew install python@3.10
 brew install cmake
-pip install basic-pitch
-pip install spleeter==2.3
 ```
 
 ### Linux
 ```
 apt install python@3.10
 apt install cmake
-pip install basic-pitch
-pip install spleeter==2.3
 ```
 ### Windows
 https://www.python.org/downloads/windows/
 
 https://cmake.org/download/
+
+## Additional Pre-requisites for workbenching
+
+1. Stock ```spleeter``` and ```basic-pitch```, which combined require python <= 3.10 and tensorflow <= 2.11
+2. You may need to uninstall python@3.11. 
 
 ```
 pip install basic-pitch
