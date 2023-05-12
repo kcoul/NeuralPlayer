@@ -28,8 +28,8 @@ https://cmake.org/download/
 
 ## Additional Prerequisites for workbenching (Use workbench2+ branch)
 
-1. Stock ```spleeter``` and ```basic-pitch```, which combined require python <= 3.10 and tensorflow <= 2.11
-2. You may need to uninstall python@3.11. 
+1. Stock ```spleeter``` and ```basic-pitch```, which combined require python@3.10 and tensorflow@2.11
+2. You may need to uninstall python@3.11 and/or downgrade tensorflow. 
 
 ```
 pip install basic-pitch
