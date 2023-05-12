@@ -21,12 +21,11 @@ public:
                                           int numSamples,
                                           const AudioIODeviceCallbackContext& context) override;
 
-    roli::Block::Ptr lumi;
+    std::vector<roli::Block::Ptr> lumi;
     AudioTransportSource transportSource;
     juce::MidiFile MIDIFile;
     std::function<void()> streamFinishedCallback;
     void sendAllNotesOff();
-
 
     std::function<void(juce::MidiBuffer)>& latestMIDIBufferCallback;
     juce::MidiBuffer latestMIDIBuffer;
@@ -42,7 +41,6 @@ private:
 
     MidiDeviceInfo deviceInfo;
     std::unique_ptr<MidiOutput> outDevice;
-    bool streamWasPlaying = false;
 };
 
 

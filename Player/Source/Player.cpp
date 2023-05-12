@@ -89,11 +89,13 @@ void Player::audioDeviceIOCallbackWithContext(const float* const* inputChannelDa
     }
     else if (transportSource.positionableSource != nullptr && transportSource.hasStreamFinished())
     {
+        for(int i = 0; i < numOutputChannels; ++i)
+            FloatVectorOperations::clear(outputChannelData[i], numSamples);
+
         juce::MessageManager::callAsync([this]
         {
             streamFinishedCallback();
         });
-        streamWasPlaying = false;
     }
     else
     {
@@ -104,8 +106,8 @@ void Player::audioDeviceIOCallbackWithContext(const float* const* inputChannelDa
 
 void Player::lumiMIDIEvent(const void* message, size_t size)
 {
-    if (lumi)
-        lumi->sendMessage(message, size);
+    for (auto l : lumi)
+        l->sendMessage(message, size);
 }
 
 void Player::sendAllNotesOff()

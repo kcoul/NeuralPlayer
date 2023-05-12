@@ -4,7 +4,7 @@ MainViewComponent::MainViewComponent() : tabComponent(juce::TabbedButtonBar::Tab
 {
     playerComponent = std::make_unique<PlayerComponent>();
 
-    lumiCallback = [this] (roli::Block::Ptr p){ playerComponent->setLumi(p); };
+    lumiCallback = [this] (std::vector<roli::Block::Ptr> p){ playerComponent->setLumi(p); };
 
     settingsComponent = std::make_unique<SettingsComponent>(lumiCallback);
 

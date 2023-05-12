@@ -6,6 +6,7 @@
 #include "AudioThumbnailComponent.h"
 #include "ConsoleViewComponent.h"
 #include "Converters.h"
+#include "CustomMidiKeyboardComponent.h"
 #include "Player.h"
 #include "PlaylistComponent.h"
 #include "SidePanelHeader.h"
@@ -27,7 +28,7 @@ public:
     void paint(juce::Graphics&) override;
     void resized() override;
     void exitSignalSent() override;
-    void setLumi(roli::Block::Ptr lumi) { neuralPlayer.lumi = lumi; };
+    void setLumi(std::vector<roli::Block::Ptr> lumi) { neuralPlayer.lumi = lumi; };
 
     std::unique_ptr<SourceSepMIDIRenderingThread> renderingThread;
     double renderingProgress = 0.0;
@@ -93,7 +94,7 @@ private:
     juce::TextButton startStopButton;
 
     juce::MidiKeyboardState keyboardState;
-    juce::MidiKeyboardComponent keyboardComponent;
+    CustomMidiKeyboardComponent keyboardComponent;
 
     double processingIndex = 0;
 
