@@ -1,0 +1,39 @@
+name: Ubuntu Linux (x86_64)
+
+on: [ push, pull_request ]
+
+jobs:
+  build:
+    name: Static libprojectM
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Install Build Dependencies
+        run: |
+          sudo apt update
+          sudo apt install build-essential libgl1-mesa-dev mesa-common-dev libsdl2-dev libpoco-dev ninja-build
+
+      - name: Checkout libprojectM Sources
+        uses: actions/checkout@v3
+        with:
+          repository: projectM-visualizer/projectm
+          path: projectm
+
+      - name: Build/Install libprojectM
+        run: |
+          mkdir cmake-build-libprojectm
+          cmake -G Ninja -S projectm -B cmake-build-libprojectm -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install-libprojectm
+          cmake --build cmake-build-libprojectm --parallel --target install
+
+      - name: Checkout frontend-sdl2 Sources
+        uses: actions/checkout@v3
+        with:
+          path: frontend-sdl2
+          submodules: recursive
+
+      - name: Build frontend-sdl2
+        run: |
+          mkdir cmake-build-frontend-sdl2
+          cmake -G Ninja -S frontend-sdl2 -B cmake-build-frontend-sdl2 -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${GITHUB_WORKSPACE}/install-libprojectm -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install-frontend-sdl2
+          cmake --build cmake-build-frontend-sdl2 --parallel
