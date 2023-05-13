@@ -1,6 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "Paths.h"
 
 class PlaylistComponent    : public juce::Component,
                                   public juce::TableListBoxModel
@@ -296,18 +297,7 @@ private:
 
     void debugPlaylistLoading()
     {
-        auto pwd = File::getCurrentWorkingDirectory();
-        while (true) //Ascend to build inputFolder
-        {
-            pwd = pwd.getParentDirectory();
-            if (pwd.getFileName().endsWith("cmake-build-debug") ||
-                pwd.getFileName().endsWith("cmake-build-release") ||
-                pwd.getFileName().endsWith("cmake-build-relwithdebinfo"))
-                break;
-        }
-
-        pwd = pwd.getParentDirectory();
-        pwd = pwd.getChildFile("Player/Resources/Playlist.xml");
+        auto pwd = walkDebugDirectoryToExamplePlaylistXML();
 
         if(pwd.existsAsFile())
         {
