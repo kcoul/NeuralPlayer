@@ -139,6 +139,13 @@ PlayerComponent::PlayerComponent() :
         threadPool.addJob(transportStopJob);
         startStopButton.setButtonText("Play");
         keyboardState.allNotesOff(1);
+
+        auto selectedRow = playlistComponent.getSelectedRow();
+        if (selectedRow < playlistComponent.getNumRows() - 1)
+        {
+            playlistComponent.table.selectRow(selectedRow + 1);
+            startStopButton.triggerClick();
+        }
     };
 
     latestMIDIBufferFn = [this] (juce::MidiBuffer latestBuffer)
