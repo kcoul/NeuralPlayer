@@ -86,9 +86,9 @@ PlayerComponent::PlayerComponent() :
     addAndMakeVisible(openSidePanelButton);
 
     stockSpleeterButton.onClick = [this] {renderingThread->stockSpleeterFlag = stockSpleeterButton.getToggleState();};
-    addAndMakeVisible(stockSpleeterButton);
+    //addAndMakeVisible(stockSpleeterButton);
     stockBasicPitchButton.onClick = [this] {renderingThread->stockBasicPitchFlag = stockBasicPitchButton.getToggleState();};
-    addAndMakeVisible(stockBasicPitchButton);
+    //addAndMakeVisible(stockBasicPitchButton);
 
     playbackProgressLabel.setJustificationType(Justification::right);
     addAndMakeVisible(playbackProgressLabel);
@@ -139,6 +139,13 @@ PlayerComponent::PlayerComponent() :
         threadPool.addJob(transportStopJob);
         startStopButton.setButtonText("Play");
         keyboardState.allNotesOff(1);
+
+        auto selectedRow = playlistComponent.getSelectedRow();
+        if (selectedRow < playlistComponent.getNumRows() - 1)
+        {
+            playlistComponent.table.selectRow(selectedRow + 1);
+            startStopButton.triggerClick();
+        }
     };
 
     latestMIDIBufferFn = [this] (juce::MidiBuffer latestBuffer)

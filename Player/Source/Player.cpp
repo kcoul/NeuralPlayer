@@ -43,6 +43,7 @@ void Player::audioDeviceIOCallbackWithContext(const float* const* inputChannelDa
 
     if (transportSource.isPlaying())
     {
+        wasJustPlaying = true;
         AudioSampleBuffer buffer;
         buffer.setDataToReferTo(outputChannelData, numOutputChannels, numSamples);
         transportSource.getNextAudioBlock(AudioSourceChannelInfo(buffer));
@@ -87,7 +88,7 @@ void Player::audioDeviceIOCallbackWithContext(const float* const* inputChannelDa
         }
         latestPlaybackLocationFn(transportSource.getCurrentPosition());
     }
-    else if (transportSource.positionableSource != nullptr && transportSource.hasStreamFinished())
+    else if (transportSource.positionableSource != nullptr && transportSource.hasStreamFinished() && wasJustPlaying)
     {
         for(int i = 0; i < numOutputChannels; ++i)
             FloatVectorOperations::clear(outputChannelData[i], numSamples);
@@ -96,6 +97,7 @@ void Player::audioDeviceIOCallbackWithContext(const float* const* inputChannelDa
         {
             streamFinishedCallback();
         });
+        wasJustPlaying = false;
     }
     else
     {

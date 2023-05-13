@@ -22,6 +22,11 @@ public:
         return numRows;
     }
 
+    int getSelectedRow()
+    {
+        return selectedRow;
+    }
+
     void paintRowBackground (juce::Graphics& g, int rowNumber, int /*width*/, int /*height*/, bool rowIsSelected) override
     {
         auto alternateColour = getLookAndFeel().findColour (juce::ListBox::backgroundColourId)
@@ -66,6 +71,7 @@ public:
         if (isRowSelected)
         {
             auto title = dataList->getChildElement(rowNumber)->getStringAttribute ("Title");
+            selectedRow = rowNumber;
             trackSelected(title);
         }
 
@@ -173,15 +179,15 @@ public:
         resized();
     }
 
-private:
     juce::TableListBox table  { {}, this };
+private:
     juce::Font font           { 14.0f };
 
     std::unique_ptr<juce::XmlElement> playlistData;
     juce::XmlElement* columnList = nullptr;
     juce::XmlElement* dataList = nullptr;
     int numRows = 0;
-
+    int selectedRow = -1;
     std::function<void(String)>& trackSelected;
 
     //==============================================================================

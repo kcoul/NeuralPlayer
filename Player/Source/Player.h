@@ -41,6 +41,8 @@ private:
 
     MidiDeviceInfo deviceInfo;
     std::unique_ptr<MidiOutput> outDevice;
+
+    bool wasJustPlaying = false;
 };
 
 

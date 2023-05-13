@@ -216,6 +216,14 @@ private:
                                                             String(numFiles) + ", " +
                                                             currentFileName);
 #endif
+
+        auto exe = arguments[0].unquoted();
+        if (!File::getCurrentWorkingDirectory().getChildFile (exe).existsAsFile())
+        {
+            postText(exe + " does not exist. Did you forget to build (or install) it?");
+            return false;
+        }
+
         ChildProcess p;
         p.start(arguments);
         auto start = std::chrono::high_resolution_clock::now();
@@ -340,6 +348,13 @@ private:
             auto debugFolder = inputFolder.getFullPathName() + "/debug";
             arguments.add(debugFolder);
             arguments.add(vocalFile.getFullPathName());
+
+            auto exe = arguments[0].unquoted();
+            if (!File::getCurrentWorkingDirectory().getChildFile (exe).existsAsFile())
+            {
+                postText(exe + " does not exist. Did you forget to build (or install) it?");
+                return false;
+            }
 
             ChildProcess p;
             p.start(arguments);
