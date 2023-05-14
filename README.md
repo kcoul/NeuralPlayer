@@ -26,16 +26,6 @@ https://www.python.org/downloads/windows/
 
 https://cmake.org/download/
 
-## Additional Prerequisites for workbenching (Use workbench2+ branch)
-
-1. Stock ```spleeter``` and ```basic-pitch```, which combined require python@3.10 and tensorflow@2.11
-2. You may need to uninstall python@3.11 and/or downgrade tensorflow. 
-
-```
-pip install basic-pitch
-pip install spleeter==2.3
-```
-
 ## Build-time Dependencies 
 1. Clone NeuralPlayer and configure CMake in Debug mode once using ```cmake-build-debug``` as build directory (CLion does this automatically)
 2. Build onnxruntime manually once to generate sub-build CMake Cache (see https://onnxruntime.ai/docs/build/inferencing.html):
@@ -56,3 +46,21 @@ Example: macOS (M1+):
 ## Run-time Limitations
 1. Only tested on Intel macOS so far
 2. Currently only supports 44.1kHz .wav format input
+
+## Additional Prerequisites for workbenching (Use workbench2 branch)
+
+1. Stock ```spleeter``` and ```basic-pitch```, which combined require python@3.10 and tensorflow@2.11
+2. You may need to uninstall python@3.11 and/or downgrade tensorflow. 
+
+```
+pip install basic-pitch
+pip install spleeter==2.3
+```
+
+## Additional Prerequisites for visuals (Use visualizer1 branch)
+
+```
+brew install sdl2
+brew install poco
+brew install boost
+```
