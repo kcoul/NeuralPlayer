@@ -20,7 +20,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     #NOTE: Recompile onnxruntime in Debug or RelWithDebInfo mode if you need to debug into it
     #NOTE: Looking for libonnxruntime.dylib in our most likely location, change path if your use-case is different
     set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
-            ${CMAKE_SOURCE_DIR}/cmake-build-debug/_deps/onnxruntime-src/build/MacOS/Release/libonnxruntime.dylib)
+            ${CMAKE_SOURCE_DIR}/cmake-build-debug/_deps/onnxruntime-src/build/MacOS/Release/libonnxruntime.1.14.1.dylib)
 endif()
 
 #Binary data
