@@ -21,7 +21,6 @@ public:
 private:
     std::function<void(std::vector<roli::Block::Ptr>)>& lumiCallback;
     juce::AudioDeviceManager& audioDeviceManager { getSharedAudioDeviceManager(0, 2) };
-    std::unique_ptr<juce::AudioDeviceSelectorComponent> audioMIDISettings;
 
     juce::Label consoleViewLabel {"", "Hardware Debug Console"};
     std::unique_ptr<ConsoleViewComponent> consoleViewComponent;
@@ -32,8 +31,9 @@ private:
     juce::Label lumiDetectedLabel { "", "Lumi Detected:" };
     juce::ToggleButton lumiDetectedButton {""};
     juce::TextButton xmlWriteTestButton;
-
     void xmlWriteTest();
+
+    std::unique_ptr<juce::AudioDeviceSelectorComponent> audioMIDISettings;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SettingsComponent)
 };

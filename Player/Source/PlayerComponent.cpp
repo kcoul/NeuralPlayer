@@ -94,9 +94,9 @@ PlayerComponent::PlayerComponent() :
     addAndMakeVisible(openSidePanelButton);
 
     stockSpleeterButton.onClick = [this] {renderingThread->stockSpleeterFlag = stockSpleeterButton.getToggleState();};
-    //addAndMakeVisible(stockSpleeterButton);
+    addAndMakeVisible(stockSpleeterButton);
     stockBasicPitchButton.onClick = [this] {renderingThread->stockBasicPitchFlag = stockBasicPitchButton.getToggleState();};
-    //addAndMakeVisible(stockBasicPitchButton);
+    addAndMakeVisible(stockBasicPitchButton);
 
     playbackProgressLabel.setJustificationType(Justification::right);
     addAndMakeVisible(playbackProgressLabel);

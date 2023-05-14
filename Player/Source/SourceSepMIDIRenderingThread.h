@@ -101,8 +101,13 @@ private:
             }
             else
             {
-                postText("Render failed for " + inputFile.getFileName());
-                if (stopRenderingFlag) break;
+                if (stopRenderingFlag)
+                {
+                    postText("Render aborted for " + inputFile.getFileName());
+                    break;
+                }
+                else
+                    postText("Render failed for " + inputFile.getFileName());
             }
             progressUpdate((double)currentFileIndex / numFiles);
         }
