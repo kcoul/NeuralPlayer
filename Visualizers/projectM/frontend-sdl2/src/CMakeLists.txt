@@ -53,14 +53,32 @@ target_compile_definitions(projectMSDL
         PROJECTMSDL_VERSION="${PROJECT_VERSION}"
         )
 
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 set_property(TARGET libprojectM::projectM PROPERTY
-        #IMPORTED_LOCATION "/usr/local/lib/libprojectM-4.dylib"
         IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/Visualizers/projectM/projectm-4.0.0/src/libprojectM/libprojectM-4d.0.0.1.dylib"
         )
 set_property(TARGET libprojectM::playlist PROPERTY
-        #IMPORTED_LOCATION "/usr/local/lib/libprojectM-4-playlist.4.dylib"
         IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/Visualizers/projectM/projectm-4.0.0/src/playlist/libprojectM-4-playlistd.0.0.1.dylib"
         )
+elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
+    set_property(TARGET libprojectM::projectM PROPERTY
+            #IMPORTED_LOCATION "/usr/local/lib/libprojectM-4.dylib"
+            IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/Visualizers/projectM/projectm-4.0.0/src/libprojectM/libprojectM-4.0.0.1.dylib"
+            )
+    set_property(TARGET libprojectM::playlist PROPERTY
+            #IMPORTED_LOCATION "/usr/local/lib/libprojectM-4-playlist.4.dylib"
+            IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/Visualizers/projectM/projectm-4.0.0/src/playlist/libprojectM-4-playlist.0.0.1.dylib"
+            )
+elseif (CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    set_property(TARGET libprojectM::projectM PROPERTY
+            #IMPORTED_LOCATION "/usr/local/lib/libprojectM-4.dylib"
+            IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/Visualizers/projectM/projectm-4.0.0/src/libprojectM/libprojectM-4.0.0.1.dylib"
+            )
+    set_property(TARGET libprojectM::playlist PROPERTY
+            #IMPORTED_LOCATION "/usr/local/lib/libprojectM-4-playlist.4.dylib"
+            IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/Visualizers/projectM/projectm-4.0.0/src/playlist/libprojectM-4-playlist.0.0.1.dylib"
+            )
+endif()
 
 target_link_libraries(projectMSDL
         PRIVATE
