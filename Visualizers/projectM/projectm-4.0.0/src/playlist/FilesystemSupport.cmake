@@ -29,7 +29,7 @@ if(NOT ENABLE_BOOST_FILESYSTEM AND STD_FILESYSTEM_EXISTS)
             )
 else()
     message(STATUS "Compiler does not support std::filesystem, reverting to boost::filesystem.")
-    find_package(Boost REQUIRED COMPONENTS Filesystem)
+    find_package(Boost REQUIRED COMPONENTS filesystem)
 
     target_compile_definitions(projectM_playlist_main
             PRIVATE
