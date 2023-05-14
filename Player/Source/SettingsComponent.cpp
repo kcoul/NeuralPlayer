@@ -3,18 +3,6 @@
 SettingsComponent::SettingsComponent(std::function<void(std::vector<roli::Block::Ptr>)>& lumiCallbackFn) :
 lumiCallback(lumiCallbackFn)
 {
-    audioMIDISettings = std::make_unique<juce::AudioDeviceSelectorComponent>(audioDeviceManager,
-                                                                         0,
-                                                                         0,
-                                                                         2,
-                                                                         2,
-                                                                         false,
-                                                                         true,
-                                                                         true,
-                                                                         false);
-
-    addAndMakeVisible(*audioMIDISettings);
-
     lumiDetectedLabel.setJustificationType(Justification::right);
     addAndMakeVisible(lumiDetectedLabel);
     lumiDetectedButton.setInterceptsMouseClicks(false, false);
@@ -29,6 +17,18 @@ lumiCallback(lumiCallbackFn)
 
     consoleViewComponent = std::make_unique<ConsoleViewComponent>();
     addAndMakeVisible(*consoleViewComponent);
+
+    audioMIDISettings = std::make_unique<juce::AudioDeviceSelectorComponent>(audioDeviceManager,
+                                                                             0,
+                                                                             0,
+                                                                             2,
+                                                                             2,
+                                                                             false,
+                                                                             true,
+                                                                             true,
+                                                                             false);
+
+    addAndMakeVisible(*audioMIDISettings);
 
     // Register to receive topologyChanged() callbacks from pts.
     pts.addListener (this);
@@ -57,7 +57,7 @@ void SettingsComponent::resized()
     consoleViewLabel.setBounds(area.removeFromTop(halfVUnit));
 
     if(consoleViewComponent)
-        consoleViewComponent->setBounds(area.removeFromTop(vUnit * 7));
+        consoleViewComponent->setBounds(area.removeFromTop(vUnit * 5));
 
     auto onePointFiveVUnitSlot = area.removeFromTop(halfVUnit * 3);
 #if SHOW_XML_WRITE_TEXT_BUTTON
@@ -70,7 +70,7 @@ void SettingsComponent::resized()
 #endif
 
     if(audioMIDISettings)
-        audioMIDISettings->setBounds(area.removeFromTop(vUnit * 3));
+        audioMIDISettings->setBounds(area.removeFromTop(vUnit * 5));
 }
 
 void SettingsComponent::topologyChanged()
