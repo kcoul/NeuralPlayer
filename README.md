@@ -50,7 +50,11 @@ apt install poco
 apt install boost
 ```
 
-## APPENDIX A: Building OnnxRuntime from Source
+# APPENDIX A: Building OnnxRuntime from Source
+
+Prebuilt binaries of OnnxRuntime (v1.14.1) are provided for all platforms. You should only build OnnxRuntime from source if necessary.
+
+## Prerequisites
 
 ### macOS (homebrew)
 ```
@@ -68,6 +72,8 @@ apt install cmake
 https://www.python.org/downloads/windows/
 
 https://cmake.org/download/
+
+## Instructions
 
 1. Clone NeuralPlayer and configure CMake in Debug mode once using ```cmake-build-debug``` as build directory (CLion does this automatically)
 2. Add ```-DBUILD_ONNXRUNTIME_FROM_SOURCE=1``` to your CMake build flags
