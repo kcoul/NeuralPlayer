@@ -50,7 +50,7 @@ apt install poco
 apt install boost
 ```
 
-# APPENDIX A: Building OnnxRuntime from Source
+## APPENDIX A: Building OnnxRuntime from Source
 
 Prebuilt binaries of OnnxRuntime (v1.14.1) are provided for all platforms. You should only build OnnxRuntime from source if necessary.
 
