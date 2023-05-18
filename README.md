@@ -91,6 +91,6 @@ Example: Windows 10/11:
 
 ``` .\build.bat --config RelWithDebInfo --build_shared_lib --parallel ```
 
-3. Thereafter CMake should be able to rebuild onnxruntime anytime it changes, unless the Debug build directory is wiped
+Thereafter CMake should be able to rebuild onnxruntime anytime it changes, unless the Debug build directory is wiped
 
 
