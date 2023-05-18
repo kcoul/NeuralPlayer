@@ -10,7 +10,8 @@ https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-down
 2. Run it, and select Custom Installation. De-select all components except Intel OneAPI Math Kernel Library.
 3. Allow for the installation to complete.
 
-###Linux
+### Linux
+
 Additional JUCE dependencies listed here: https://github.com/kcoul/JUCE4Pi
 
 ### Windows
