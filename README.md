@@ -26,9 +26,10 @@ https://www.python.org/downloads/windows/
 
 https://cmake.org/download/
 
-## Build-time Dependencies 
+## Building OnnxRuntime from Source
 1. Clone NeuralPlayer and configure CMake in Debug mode once using ```cmake-build-debug``` as build directory (CLion does this automatically)
-2. Build onnxruntime manually once (CMake 3.24 or higher is required) to generate sub-build CMake Cache (see https://onnxruntime.ai/docs/build/inferencing.html):
+2. Add "-DBUILDONNXRUNTIMEFROM_SOURCE=1" to your CMake build flags
+3. Build onnxruntime manually once (CMake 3.24 or higher is required) to generate sub-build CMake Cache (see https://onnxruntime.ai/docs/build/inferencing.html):
 
 ``` cd ~/repos/NeuralPlayer/cmake-build-debug/_deps/onnxruntime-src ```
 
