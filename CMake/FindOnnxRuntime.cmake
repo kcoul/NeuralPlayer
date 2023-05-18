@@ -40,7 +40,7 @@ if(${BUILD_ONNXRUNTIME_FROM_SOURCE})
                 ${CMAKE_SOURCE_DIR}/cmake-build-debug/_deps/onnxruntime-src/build/MacOS/RelWithDebInfo/libonnxruntime.1.14.1.dylib)
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
-                ${CMAKE_SOURCE_DIR}/cmake-build-debug/_deps/onnxruntime-src/build/Linux/RelWithDebInfo/libonnxruntime.1.14.1.so)
+                ${CMAKE_SOURCE_DIR}/cmake-build-debug/_deps/onnxruntime-src/build/Linux/RelWithDebInfo/libonnxruntime.so)
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
                 ${CMAKE_SOURCE_DIR}/cmake-build-debug/_deps/onnxruntime-src/build/Windows/RelWithDebInfo/onnxruntime.dll)
@@ -68,7 +68,7 @@ else()
         endif()
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
-                ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Linux/x64/Release/libonnxruntime.1.14.1.so)
+                ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Linux/x64/Release/libonnxruntime.so)
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
                 ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Windows/x64/Release/onnxruntime.dll)

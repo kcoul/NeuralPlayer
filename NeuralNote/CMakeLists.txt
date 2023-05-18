@@ -113,10 +113,9 @@ target_compile_definitions(${BaseTargetName}
 
 add_library(onnxruntime STATIC IMPORTED)
 
-if (APPLE)
+if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION ${CMAKE_CURRENT_LIST_DIR}/ThirdParty/onnxruntime/lib/libonnxruntime.a)
-
-elseif (WIN32)
+elseif (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set_property(TARGET onnxruntime APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 
     set_target_properties(onnxruntime PROPERTIES
@@ -128,6 +127,9 @@ elseif (WIN32)
             MAP_IMPORTED_CONFIG_MINSIZEREL Release
             MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
             )
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    #Dummy location, this is same as macOS. TODO: Migrate NeuralNote fork over to dynamic library builds of onnxruntime
+    set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION ${CMAKE_CURRENT_LIST_DIR}/ThirdParty/onnxruntime/lib/libonnxruntime.a)
 endif ()
 
 
