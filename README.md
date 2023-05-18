@@ -14,7 +14,43 @@ https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-down
 
 Additional JUCE dependencies listed here: https://github.com/kcoul/JUCE4Pi
 
-## Building OnnxRuntime from Source
+## SpleeterRT Notes
+
+1. Anytime new CMake build config is set up, SpleeterRTBin should be compiled for that build type (i.e. Debug, Release, RelWithDebInfo) before NeuralPlayer is run with that config
+2. You should set a "HOME" user environment variable on Windows for SpleeterRT resource management
+
+## Run-time Limitations
+
+1. Currently only supports 44.1kHz ```.wav``` format input, more formats and sample rates will be added over time
+
+## Additional Prerequisites for workbenching (Use workbench2 branch)
+
+1. Stock ```spleeter``` and ```basic-pitch```, which combined require python@3.10 and tensorflow@2.11
+2. You may need to uninstall python@3.11 and/or downgrade tensorflow. 
+
+```
+pip install basic-pitch
+pip install spleeter==2.3
+```
+
+## Additional Prerequisites for visuals (Use visualizer1 branch)
+
+### macOS (homebrew)
+```
+brew install sdl2
+brew install poco
+brew install boost
+```
+
+### Linux
+
+```
+apt install sdl2
+apt install poco
+apt install boost
+```
+
+## APPENDIX A: Building OnnxRuntime from Source
 
 ### macOS (homebrew)
 ```
@@ -56,27 +92,5 @@ Example: Windows 10/11:
 ``` .\build.bat --config RelWithDebInfo --build_shared_lib --parallel ```
 
 3. Thereafter CMake should be able to rebuild onnxruntime anytime it changes, unless the Debug build directory is wiped
-4. Anytime new CMake build config is set up, SpleeterRTBin should be compiled for that build type (i.e. Debug, Release, RelWithDebInfo) before NeuralPlayer is run with that config
-5. You should set a "HOME" user environment variable on Windows for SpleeterRT resource management
 
-## Run-time Limitations
-1. Only tested on Intel macOS so far
-2. Currently only supports 44.1kHz .wav format input
 
-## Additional Prerequisites for workbenching (Use workbench2 branch)
-
-1. Stock ```spleeter``` and ```basic-pitch```, which combined require python@3.10 and tensorflow@2.11
-2. You may need to uninstall python@3.11 and/or downgrade tensorflow. 
-
-```
-pip install basic-pitch
-pip install spleeter==2.3
-```
-
-## Additional Prerequisites for visuals (Use visualizer1 branch)
-
-```
-brew install sdl2
-brew install poco
-brew install boost
-```
