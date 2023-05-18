@@ -10,6 +10,16 @@ https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-down
 2. Run it, and select Custom Installation. De-select all components except Intel OneAPI Math Kernel Library.
 3. Allow for the installation to complete.
 
+###Linux
+Additional JUCE dependencies listed here: https://github.com/kcoul/JUCE4Pi
+
+### Windows
+https://www.python.org/downloads/windows/
+
+https://cmake.org/download/
+
+## Building OnnxRuntime from Source
+
 ### macOS (homebrew)
 ```
 brew install python@3.10
@@ -21,31 +31,28 @@ brew install cmake
 apt install python@3.10
 apt install cmake 
 ```
-Additional JUCE dependencies listed here: https://github.com/kcoul/JUCE4Pi
 
-### Windows
-https://www.python.org/downloads/windows/
-
-https://cmake.org/download/
-
-## Building OnnxRuntime from Source
 1. Clone NeuralPlayer and configure CMake in Debug mode once using ```cmake-build-debug``` as build directory (CLion does this automatically)
 2. Add ```-DBUILD_ONNXRUNTIME_FROM_SOURCE=1``` to your CMake build flags
-3. Build onnxruntime manually once (CMake 3.24 or higher is required) to generate sub-build CMake Cache (see https://onnxruntime.ai/docs/build/inferencing.html):
+3. Build onnxruntime manually once (CMake 3.24 or higher is required, use ```snap``` on Linux) to generate sub-build CMake Cache (see https://onnxruntime.ai/docs/build/inferencing.html):
 
 ``` cd ~/repos/NeuralPlayer/cmake-build-debug/_deps/onnxruntime-src ```
 
 Example: macOS (Intel): 
 
-``` ./build.sh --config Release --build_shared_lib --parallel --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=x86_64 ```
+``` ./build.sh --config RelWithDebInfo --build_shared_lib --parallel --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=x86_64 ```
 
 Example: macOS (M1+): 
 
-``` ./build.sh --config Release --build_shared_lib --parallel --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=arm64 ```
+``` ./build.sh --config RelWithDebInfo --build_shared_lib --parallel --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=arm64 ```
+
+Example: Linux:
+
+``` ./build.sh --config RelWithDebInfo --build_shared_lib --parallel ```
 
 Example: Windows 10/11:
 
-``` .\build.bat --config Release --build_shared_lib --parallel ```
+``` .\build.bat --config RelWithDebInfo --build_shared_lib --parallel ```
 
 3. Thereafter CMake should be able to rebuild onnxruntime anytime it changes, unless the Debug build directory is wiped
 4. Anytime new CMake build config is set up, SpleeterRTBin should be compiled for that build type (i.e. Debug, Release, RelWithDebInfo) before NeuralPlayer is run with that config
