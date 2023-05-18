@@ -14,11 +14,6 @@ https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-down
 
 Additional JUCE dependencies listed here: https://github.com/kcoul/JUCE4Pi
 
-### Windows
-https://www.python.org/downloads/windows/
-
-https://cmake.org/download/
-
 ## Building OnnxRuntime from Source
 
 ### macOS (homebrew)
@@ -32,6 +27,11 @@ brew install cmake
 apt install python@3.10
 apt install cmake 
 ```
+
+### Windows
+https://www.python.org/downloads/windows/
+
+https://cmake.org/download/
 
 1. Clone NeuralPlayer and configure CMake in Debug mode once using ```cmake-build-debug``` as build directory (CLion does this automatically)
 2. Add ```-DBUILD_ONNXRUNTIME_FROM_SOURCE=1``` to your CMake build flags
