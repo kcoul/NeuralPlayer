@@ -37,7 +37,7 @@ add_library(onnxruntime SHARED IMPORTED)
 if(${BUILD_ONNXRUNTIME_FROM_SOURCE})
     if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
         set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
-                ${CMAKE_SOURCE_DIR}/cmake-build-debug/_deps/onnxruntime-src/build/MacOS/RelWithDebInfo/libonnxruntime.1.14.1.dylib)
+                ${CMAKE_SOURCE_DIR}/cmake-build-debug/_deps/onnxruntime-src/build/MacOS/RelWithDebInfo/libonnxruntime.dylib)
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
                 ${CMAKE_SOURCE_DIR}/cmake-build-debug/_deps/onnxruntime-src/build/Linux/RelWithDebInfo/libonnxruntime.so)
@@ -61,24 +61,30 @@ else()
     if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
         if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64")
             set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
-                    ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Darwin/x64/Release/libonnxruntime.1.14.1.dylib)
+                    ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Darwin/x64/Release/libonnxruntime.dylib)
         elseif(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
             set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
-                    ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Darwin/arm64/Release/libonnxruntime.1.14.1.dylib)
+                    ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Darwin/arm64/Release/libonnxruntime.dylib)
         endif()
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
                 ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Linux/x64/Release/libonnxruntime.so)
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
-                ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Windows/x64/Release/onnxruntime.dll)
-        set_property(TARGET onnxruntime PROPERTY IMPORTED_IMPLIB
-                ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Windows/x64/Release/onnxruntime.lib)
-
+        if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+            set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
+                    ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Windows/x64/Release/onnxruntime.dll)
+            set_property(TARGET onnxruntime PROPERTY IMPORTED_IMPLIB
+                    ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Windows/x64/Release/onnxruntime.lib)
+        elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+            set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
+                    ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Windows/x86/Release/onnxruntime.dll)
+            set_property(TARGET onnxruntime PROPERTY IMPORTED_IMPLIB
+                    ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Windows/x86/Release/onnxruntime.lib)
+        endif()
         #Copy onnxruntime .dll to Player build folder
-        if(CMAKE_SIZEOF_VOID_P EQUAL 8) #x64
+        if(CMAKE_SIZEOF_VOID_P EQUAL 8)
             set(LIBRARY_FILE "${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Windows/x64/Release/onnxruntime.dll")
-        elseif(CMAKE_SIZEOF_VOID_P EQUAL 4) #x86
+        elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
             set(LIBRARY_FILE "${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Windows/x86/Release/onnxruntime.dll")
         endif()
 
