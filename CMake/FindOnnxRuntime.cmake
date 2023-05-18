@@ -18,6 +18,10 @@ if(${BUILD_ONNXRUNTIME_FROM_SOURCE})
                         --build --build_shared_lib --parallel --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=arm64
                         WORKING_DIRECTORY ${OnnxRuntime_SOURCE_DIR})
             endif()
+        elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+            execute_process(COMMAND ./build.sh --config RelWithDebInfo
+                    --build --build_shared_lib --parallel
+                    WORKING_DIRECTORY ${OnnxRuntime_SOURCE_DIR})
         elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
             execute_process(COMMAND ./build.bat --config RelWithDebInfo
                     --build --build_shared_lib --parallel
@@ -28,12 +32,15 @@ endif()
 
 add_library(onnxruntime SHARED IMPORTED)
 
+#NOTE: Recompile onnxruntime in Debug mode if you need to debug into it with accurate Debugger stepping
+#NOTE: Looking for libonnxruntime.dylib in our most likely location, change path if your use-case is different
 if(${BUILD_ONNXRUNTIME_FROM_SOURCE})
     if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-        #NOTE: Recompile onnxruntime in Debug mode if you need to debug into it with accurate Debugger stepping
-        #NOTE: Looking for libonnxruntime.dylib in our most likely location, change path if your use-case is different
         set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
                 ${CMAKE_SOURCE_DIR}/cmake-build-debug/_deps/onnxruntime-src/build/MacOS/RelWithDebInfo/libonnxruntime.1.14.1.dylib)
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
+                ${CMAKE_SOURCE_DIR}/cmake-build-debug/_deps/onnxruntime-src/build/Linux/RelWithDebInfo/libonnxruntime.1.14.1.so)
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
                 ${CMAKE_SOURCE_DIR}/cmake-build-debug/_deps/onnxruntime-src/build/Windows/RelWithDebInfo/onnxruntime.dll)
@@ -59,6 +66,9 @@ else()
             set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
                     ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Darwin/arm64/Release/libonnxruntime.1.14.1.dylib)
         endif()
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
+                ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Linux/x64/Release/libonnxruntime.1.14.1.so)
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
                 ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Windows/x64/Release/onnxruntime.dll)

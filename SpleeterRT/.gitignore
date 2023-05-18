@@ -11,6 +11,6 @@
 /Executable/model.c
 /Executable/x64
 /JuceLibraryCode
-/PlugIns/cmake-build-*
-/PlugIns/Builds
-/PlugIns/JuceLibraryCode
+/Plugins/cmake-build-*
+/Plugins/Builds
+/Plugins/JuceLibraryCode
