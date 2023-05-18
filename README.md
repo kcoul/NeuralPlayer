@@ -28,7 +28,7 @@ https://cmake.org/download/
 
 ## Build-time Dependencies 
 1. Clone NeuralPlayer and configure CMake in Debug mode once using ```cmake-build-debug``` as build directory (CLion does this automatically)
-2. Build onnxruntime manually once to generate sub-build CMake Cache (see https://onnxruntime.ai/docs/build/inferencing.html):
+2. Build onnxruntime manually once (CMake 3.24 or higher is required) to generate sub-build CMake Cache (see https://onnxruntime.ai/docs/build/inferencing.html):
 
 ``` cd ~/repos/NeuralPlayer/cmake-build-debug/_deps/onnxruntime-src ```
 
@@ -40,8 +40,13 @@ Example: macOS (M1+):
 
 ``` ./build.sh --config Release --build_shared_lib --parallel --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=arm64 ```
 
+Example: Windows 10/11:
+
+``` .\build.bat --config Release --build_shared_lib --parallel ```
+
 3. Thereafter CMake should be able to rebuild onnxruntime anytime it changes, unless the Debug build directory is wiped
 4. Anytime new CMake build config is set up, SpleeterRTBin should be compiled for that build type (i.e. Debug, Release, RelWithDebInfo) before NeuralPlayer is run with that config
+5. You should set a "HOME" user environment variable on Windows for SpleeterRT resource management
 
 ## Run-time Limitations
 1. Only tested on Intel macOS so far
