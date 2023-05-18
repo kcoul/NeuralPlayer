@@ -19,8 +19,10 @@ brew install cmake
 ### Linux
 ```
 apt install python@3.10
-apt install cmake
+apt install cmake 
 ```
+Additional JUCE dependencies listed here: https://github.com/kcoul/JUCE4Pi
+
 ### Windows
 https://www.python.org/downloads/windows/
 
