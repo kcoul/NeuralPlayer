@@ -14,15 +14,6 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake)
 find_package(RTNeural)
 find_package(OnnxRuntime)
 
-add_library(onnxruntime SHARED IMPORTED Source/Converters.h)
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    #NOTE: Recompile onnxruntime in Debug or RelWithDebInfo mode if you need to debug into it
-    #NOTE: Looking for libonnxruntime.dylib in our most likely location, change path if your use-case is different
-    set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
-            ${CMAKE_SOURCE_DIR}/cmake-build-debug/_deps/onnxruntime-src/build/MacOS/Release/libonnxruntime.1.14.1.dylib)
-endif()
-
 #Binary data
 file(GLOB RESOURCES_FILES
         ${CMAKE_CURRENT_LIST_DIR}/Lib/ModelData/*.json
@@ -36,13 +27,22 @@ target_include_directories(Player-BasicPitchCNN PRIVATE "${RTNeural_SOURCE_DIR}"
 target_link_libraries(Player-BasicPitchCNN PUBLIC RTNeural Player-Assets)
 
 target_include_directories(${TargetName} PRIVATE
-        ${CMAKE_SOURCE_DIR}/cmake-build-debug/_deps/onnxruntime-src/include/onnxruntime/core/session
         ${CMAKE_CURRENT_LIST_DIR}/Lib/DSP
         ${CMAKE_CURRENT_LIST_DIR}/Lib/MidiFile
         ${CMAKE_CURRENT_LIST_DIR}/Lib/MidiPostProcessing
         ${CMAKE_CURRENT_LIST_DIR}/Lib/Model
         ${CMAKE_CURRENT_LIST_DIR}/Lib/Utils
         )
+
+if(${BUILD_ONNXRUNTIME_FROM_SOURCE})
+    target_include_directories(${TargetName} PRIVATE
+            ${CMAKE_SOURCE_DIR}/cmake-build-debug/_deps/onnxruntime-src/include/onnxruntime/core/session
+            )
+else()
+    target_include_directories(${TargetName} PRIVATE
+            ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/include/core/session
+            )
+endif()
 
 target_sources(${TargetName} PRIVATE
         Lib/DSP/DownSampler.cpp
