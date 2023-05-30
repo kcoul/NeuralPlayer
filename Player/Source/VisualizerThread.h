@@ -21,9 +21,21 @@ public:
         {
             StringArray arguments;
             arguments.add(vizPath.getFullPathName());
+            arguments.add("--presetPath");
+            arguments.add(walkSourceDirectoryToProjectMSDL_NP_Presets());
+            arguments.add("--texturePath");
+            arguments.add(walkSourceDirectoryToProjectMSDL_NP_Textures());
             arguments.add("&"); //Don't block this app when opening project M
             ChildProcess p;
             p.start(arguments);
+
+#if DEBUG
+            String argsConcat;
+            for (auto arg : arguments)
+                argsConcat += arg + " ";
+
+            postText(argsConcat);
+#endif
 
             //readAllProcessOutput cannot work in this kind of situation since childProcess is perpetually running
             //TODO: Try reading from projectM-SDL console output periodically using readProcessOutput()
