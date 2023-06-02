@@ -12,7 +12,8 @@ https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-down
 
 ### Linux
 
-1. Build OpenBLAS and move libraries to ~/OpenBLAS/lib": https://github.com/xianyi/OpenBLAS
+1. Build OpenBLAS and move all output libraries and symlinks to ~/OpenBLAS/lib": https://github.com/xianyi/OpenBLAS. 
+This should result in there being valid libopenblas.a and libopenblas.so symlinks available at that location for SpleeterRT to link to.
 
 2. Install JUCE dependencies listed here: https://github.com/kcoul/JUCE4Pi
 
