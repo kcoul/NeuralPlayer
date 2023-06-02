@@ -12,7 +12,9 @@ https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-down
 
 ### Linux
 
-Additional JUCE dependencies listed here: https://github.com/kcoul/JUCE4Pi
+1. Build OpenBLAS and move libraries to ~/OpenBLAS/lib": https://github.com/xianyi/OpenBLAS
+
+2. Install JUCE dependencies listed here: https://github.com/kcoul/JUCE4Pi
 
 ## SpleeterRT Notes
 
