@@ -34,6 +34,16 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Windows")
             "C:\\Program Files (x86)\\Intel\\oneAPI\\mkl\\latest\\lib\\intel64")
 endif()
 
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    target_compile_definitions(${TargetName} PUBLIC NP_DEBUG=1)
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    target_compile_definitions(${TargetName} PUBLIC NP_RELEASE=1)
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
+    target_compile_definitions(${TargetName} PUBLIC NP_RELWITHDEBINFO=1)
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel")
+    target_compile_definitions(${TargetName} PUBLIC NP_MINSIZEREL=1)
+endif()
+
 target_link_libraries(${TargetName} PUBLIC
         #Linking order matters! Alphabetic often will not work here.
         mkl_intel_lp64 #Depends on mkl_core
