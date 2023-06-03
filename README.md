@@ -15,12 +15,24 @@ https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-down
 1. Build OpenBLAS and move all output libraries and symlinks to ~/OpenBLAS/lib": https://github.com/xianyi/OpenBLAS. 
 This should result in there being valid libopenblas.a and libopenblas.so symlinks available at that location for SpleeterRT to link to.
 
+```bash
+git clone https://github.com/xianyi/OpenBLAS.git
+cd OpenBLAS
+make
+mkdir -p ~/OpenBLAS/lib
+cp *.a *.so *.so.0 ~/OpenBLAS/lib
+```
+
 2. Install JUCE dependencies listed here: https://github.com/kcoul/JUCE4Pi
 
 ## SpleeterRT Notes
 
 1. Anytime new CMake build config is set up, SpleeterRTBin should be compiled for that build type (i.e. Debug, Release, RelWithDebInfo) before NeuralPlayer is run with that config
 2. You should set a "HOME" user environment variable on Windows for SpleeterRT resource management
+3. To get separated audio by Spleeter, run `SpleeterRTBin` build configuration with _program arguments_
+`spawnNthreads timeStep analyseBinLimit stems audioFile`, e.g. by clicking _Run_ -> _Edit Configuration_ -> choosing _SpleeterRTBin_ and under _Program arguments_ inserting `3 512 1024 3 ../../../Player/Resources/TrueSurvivor.wav`.
+After running it, you get separated audio channels in `cmake-build-debug/SpleeterRT/Executable/` folder.
+
 
 ## Run-time Limitations
 
