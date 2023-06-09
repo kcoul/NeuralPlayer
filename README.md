@@ -50,6 +50,9 @@ apt install poco
 apt install boost
 ```
 
+### Windows
+1. Install GLEW, SDL2, Poco, and Boost using vcpkg in CLion
+
 ## How To Pass Arguments to ProjectM / MDSL2 via NeuralPlayer
 1. Determine which arguments are applicable to your usage (see below)
 2. Extend the ```arguments``` StringArray at L.22 of VisualizerThread.h accordingly
