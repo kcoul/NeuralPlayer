@@ -53,30 +53,50 @@ target_compile_definitions(projectMSDL
         PROJECTMSDL_VERSION="${PROJECT_VERSION}"
         )
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-set_property(TARGET libprojectM::projectM PROPERTY
-        IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/Visualizers/projectM/projectm-4.0.0/src/libprojectM/libprojectM-4d.0.0.1.dylib"
-        )
-set_property(TARGET libprojectM::playlist PROPERTY
-        IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/Visualizers/projectM/projectm-4.0.0/src/playlist/libprojectM-4-playlistd.0.0.1.dylib"
-        )
-elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set_property(TARGET libprojectM::projectM PROPERTY
+                IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/Visualizers/projectM/projectm-4.0.0/src/libprojectM/libprojectM-4d.0.0.1.dylib"
+                )
+        set_property(TARGET libprojectM::playlist PROPERTY
+                IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/Visualizers/projectM/projectm-4.0.0/src/playlist/libprojectM-4-playlistd.0.0.1.dylib"
+                )
+    elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
+        set_property(TARGET libprojectM::projectM PROPERTY
+                IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/Visualizers/projectM/projectm-4.0.0/src/libprojectM/libprojectM-4.0.0.1.dylib"
+                )
+        set_property(TARGET libprojectM::playlist PROPERTY
+                IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/Visualizers/projectM/projectm-4.0.0/src/playlist/libprojectM-4-playlist.0.0.1.dylib"
+                )
+    elseif (CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+        set_property(TARGET libprojectM::projectM PROPERTY
+                IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/Visualizers/projectM/projectm-4.0.0/src/libprojectM/libprojectM-4.0.0.1.dylib"
+                )
+        set_property(TARGET libprojectM::playlist PROPERTY
+                IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/Visualizers/projectM/projectm-4.0.0/src/playlist/libprojectM-4-playlist.0.0.1.dylib"
+                )
+    elseif (CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+        set_property(TARGET libprojectM::projectM PROPERTY
+                IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/Visualizers/projectM/projectm-4.0.0/src/libprojectM/libprojectM-4.0.0.1.dylib"
+                )
+        set_property(TARGET libprojectM::playlist PROPERTY
+                IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/Visualizers/projectM/projectm-4.0.0/src/playlist/libprojectM-4-playlist.0.0.1.dylib"
+                )
+    endif()
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    message("[NEURALPLAYER] Trying to find Windows libprojectM::projectM and libprojectM:playlist library paths")
+
     set_property(TARGET libprojectM::projectM PROPERTY
-            #IMPORTED_LOCATION "/usr/local/lib/libprojectM-4.dylib"
-            IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/Visualizers/projectM/projectm-4.0.0/src/libprojectM/libprojectM-4.0.0.1.dylib"
+            IMPORTED_LOCATION "${CMAKE_BINARY_DIR}\\Visualizers\\projectM\\projectm-4.0.0\\src\\libprojectM\\projectM-4d.0.0.1.dll"
+            )
+    set_property(TARGET libprojectM::projectM PROPERTY
+            IMPORTED_IMPLIB "${CMAKE_BINARY_DIR}\\Visualizers\\projectM\\projectm-4.0.0\\src\\libprojectM\\projectM-4d.0.0.1.lib"
             )
     set_property(TARGET libprojectM::playlist PROPERTY
-            #IMPORTED_LOCATION "/usr/local/lib/libprojectM-4-playlist.4.dylib"
-            IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/Visualizers/projectM/projectm-4.0.0/src/playlist/libprojectM-4-playlist.0.0.1.dylib"
-            )
-elseif (CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-    set_property(TARGET libprojectM::projectM PROPERTY
-            #IMPORTED_LOCATION "/usr/local/lib/libprojectM-4.dylib"
-            IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/Visualizers/projectM/projectm-4.0.0/src/libprojectM/libprojectM-4.0.0.1.dylib"
+            IMPORTED_LOCATION "${CMAKE_BINARY_DIR}\\Visualizers\\projectM\\projectm-4.0.0\\src\\playlist\\projectM-4-playlistd.0.0.1.dll"
             )
     set_property(TARGET libprojectM::playlist PROPERTY
-            #IMPORTED_LOCATION "/usr/local/lib/libprojectM-4-playlist.4.dylib"
-            IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/Visualizers/projectM/projectm-4.0.0/src/playlist/libprojectM-4-playlist.0.0.1.dylib"
+            IMPORTED_IMPLIB "${CMAKE_BINARY_DIR}\\Visualizers\\projectM\\projectm-4.0.0\\src\\playlist\\projectM-4-playlistd.0.0.1.lib"
             )
 endif()
 
