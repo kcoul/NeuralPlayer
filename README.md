@@ -50,6 +50,11 @@ sudo apt install libpoco-dev
 sudo apt install libboost-all-dev
 ```
 
+### Windows
+
+1. Install GLEW, SDL2, Poco, and Boost using vcpkg in CLion
+
+
 ## Building OnnxRuntime from Source
 
 Prebuilt binaries of OnnxRuntime (v1.14.1) are provided for all platforms. You should only build OnnxRuntime from source if necessary.
