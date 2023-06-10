@@ -108,6 +108,8 @@ target_include_directories(projectM
         "$<INSTALL_INTERFACE:${PROJECTM_INCLUDE_DIR}>"
         )
 
+include_directories(${CMAKE_SOURCE_DIR}/Visualizers/projectM/projectm-4.0.0/src)
+
 target_link_libraries(projectM
         PUBLIC
         ${PROJECTM_OPENGL_LIBRARIES}

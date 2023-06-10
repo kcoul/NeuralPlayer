@@ -62,8 +62,14 @@ add_library(libprojectM::projectM SHARED IMPORTED)
 
 set_target_properties(libprojectM::projectM PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/Visualizers/projectM/projectm-4.0.0/src/api/include"
-  INTERFACE_LINK_LIBRARIES "OpenGL::GL;libprojectM::API;-framework CoreFoundation"
+  INTERFACE_LINK_LIBRARIES "OpenGL::GL;libprojectM::API"
 )
+
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+  set_target_properties(libprojectM::projectM PROPERTIES
+          INTERFACE_LINK_LIBRARIES "-framework CoreFoundation"
+          )
+endif()
 
 if(CMAKE_VERSION VERSION_LESS 3.0.0)
   message(FATAL_ERROR "This file relies on consumers using CMake 3.0.0 or greater.")
