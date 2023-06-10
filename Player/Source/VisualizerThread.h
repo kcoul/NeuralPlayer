@@ -21,10 +21,12 @@ public:
         {
             StringArray arguments;
             arguments.add(vizPath.getFullPathName());
+#if (JUCE_MAC || JUCE_LINUX)
             arguments.add("--presetPath");
             arguments.add(walkSourceDirectoryToProjectMSDL_NP_Presets());
             arguments.add("--texturePath");
             arguments.add(walkSourceDirectoryToProjectMSDL_NP_Textures());
+#endif
             arguments.add("&"); //Don't block this app when opening project M
             ChildProcess p;
             p.start(arguments);

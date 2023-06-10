@@ -53,7 +53,7 @@ static juce::File walkDebugDirectoryToProjectMSDL()
     }
 
     //Descend to ProjectM-SDL location
-#if JUCE_MAC
+#if (JUCE_MAC || JUCE_LINUX)
     pwd = pwd.getChildFile("Visualizers/projectM/frontend-sdl2/src/projectMSDL");
 #elif JUCE_WINDOWS
     pwd = pwd.getChildFile("Visualizers/projectM/frontend-sdl2/src/projectMSDL.exe");
@@ -216,6 +216,8 @@ static juce::String walkSourceDirectoryToProjectMSDL_NP_Presets()
     //Descend to ProjectM-SDL location
     pwd = pwd.getChildFile("Visualizers/projectM/frontend-sdl2/neuralplayertesting_20230529/Presets");
 
+    auto str = pwd.getFullPathName();
+
     return pwd.getFullPathName();
 }
 
@@ -236,6 +238,8 @@ static juce::String walkSourceDirectoryToProjectMSDL_NP_Textures()
 
     //Descend to ProjectM-SDL location
     pwd = pwd.getChildFile("Visualizers/projectM/frontend-sdl2/neuralplayertesting_20230529/Textures");
+
+    auto str = pwd.getFullPathName();
 
     return pwd.getFullPathName();
 }
