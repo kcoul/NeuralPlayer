@@ -87,16 +87,16 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     message("[NEURALPLAYER] Trying to find Windows libprojectM::projectM and libprojectM:playlist library paths")
 
     set_property(TARGET libprojectM::projectM PROPERTY
-            IMPORTED_LOCATION "${CMAKE_BINARY_DIR}\\Visualizers\\projectM\\projectm-4.0.0\\src\\libprojectM\\Debug\\projectM-4d.dll"
+            IMPORTED_LOCATION "${CMAKE_BINARY_DIR}\\Visualizers\\projectM\\projectm-4.0.0\\src\\libprojectM\\projectM-4d.dll"
             )
     set_property(TARGET libprojectM::projectM PROPERTY
-            IMPORTED_IMPLIB "${CMAKE_BINARY_DIR}\\Visualizers\\projectM\\projectm-4.0.0\\src\\libprojectM\\Debug\\projectM-4d.lib"
+            IMPORTED_IMPLIB "${CMAKE_BINARY_DIR}\\Visualizers\\projectM\\projectm-4.0.0\\src\\libprojectM\\projectM-4d.lib"
             )
     set_property(TARGET libprojectM::playlist PROPERTY
-            IMPORTED_LOCATION "${CMAKE_BINARY_DIR}\\Visualizers\\projectM\\projectm-4.0.0\\src\\playlist\\Debug\\projectM-4-playlistd.dll"
+            IMPORTED_LOCATION "${CMAKE_BINARY_DIR}\\Visualizers\\projectM\\projectm-4.0.0\\src\\playlist\\projectM-4-playlistd.dll"
             )
     set_property(TARGET libprojectM::playlist PROPERTY
-            IMPORTED_IMPLIB "${CMAKE_BINARY_DIR}\\Visualizers\\projectM\\projectm-4.0.0\\src\\playlist\\Debug\\projectM-4-playlistd.lib"
+            IMPORTED_IMPLIB "${CMAKE_BINARY_DIR}\\Visualizers\\projectM\\projectm-4.0.0\\src\\playlist\\projectM-4-playlistd.lib"
             )
 endif()
 

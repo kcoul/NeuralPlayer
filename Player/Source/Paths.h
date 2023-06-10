@@ -56,7 +56,7 @@ static juce::File walkDebugDirectoryToProjectMSDL()
 #if JUCE_MAC
     pwd = pwd.getChildFile("Visualizers/projectM/frontend-sdl2/src/projectMSDL");
 #elif JUCE_WINDOWS
-    pwd = pwd.getChildFile("Visualizers/projectM/frontend-sdl2/src/Debug/projectMSDL.exe");
+    pwd = pwd.getChildFile("Visualizers/projectM/frontend-sdl2/src/projectMSDL.exe");
 #endif
 
 
