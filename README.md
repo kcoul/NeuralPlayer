@@ -45,9 +45,9 @@ brew install boost
 ### Linux
 
 ```
-apt install sdl2
-apt install poco
-apt install boost
+sudo apt install libsdl2-dev
+sudo apt install libpoco-dev
+sudo apt install libboost-all-dev
 ```
 
 ## Building OnnxRuntime from Source
