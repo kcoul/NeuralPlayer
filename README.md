@@ -12,10 +12,7 @@ https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-down
 
 ### Linux
 
-1. Build OpenBLAS and move all output libraries and symlinks to ~/OpenBLAS/lib": https://github.com/xianyi/OpenBLAS. 
-This should result in there being valid libopenblas.a and libopenblas.so symlinks available at that location for SpleeterRT to link to.
-
-2. Install JUCE dependencies listed here: https://github.com/kcoul/JUCE4Pi
+Additional JUCE dependencies listed here: https://github.com/kcoul/JUCE4Pi
 
 ## SpleeterRT Notes
 
@@ -48,10 +45,15 @@ brew install boost
 ### Linux
 
 ```
-apt install sdl2
-apt install poco
-apt install boost
+sudo apt install libsdl2-dev
+sudo apt install libpoco-dev
+sudo apt install libboost-all-dev
 ```
+
+### Windows
+
+1. Install GLEW, SDL2, Poco, and Boost using vcpkg in CLion
+
 
 ## Building OnnxRuntime from Source
 
