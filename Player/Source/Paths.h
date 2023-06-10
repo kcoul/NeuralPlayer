@@ -53,7 +53,13 @@ static juce::File walkDebugDirectoryToProjectMSDL()
     }
 
     //Descend to ProjectM-SDL location
+#if JUCE_MAC
     pwd = pwd.getChildFile("Visualizers/projectM/frontend-sdl2/src/projectMSDL");
+#elif JUCE_WINDOWS
+    pwd = pwd.getChildFile("Visualizers/projectM/frontend-sdl2/src/Debug/projectMSDL.exe");
+#endif
+
+
 
     return pwd;
 }
