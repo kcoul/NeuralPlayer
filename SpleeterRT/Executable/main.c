@@ -701,7 +701,7 @@ int main(int argc, char *argv[])
 	char *backendInfo = "Using OpenBLAS GEMM backend";
 	openblas_set_num_threads(1);
 #endif
-#if DEBUG
+#if NP_DEBUG
 	printf("Computation pipeline written by James Fung\n%s\nFLAC, WAV, MP3 loading supported\n", backendInfo);
 #endif
 	double startTimer = get_wall_time();
