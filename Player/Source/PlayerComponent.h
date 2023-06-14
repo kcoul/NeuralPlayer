@@ -12,6 +12,7 @@
 #include "SidePanelHeader.h"
 #include "SourceSepMIDIRenderingThread.h"
 #include "VectorPathData.h"
+#include "VisualizerThread.h"
 
 enum class FolderSelectResult
 {
@@ -31,6 +32,7 @@ public:
     void setLumi(std::vector<roli::Block::Ptr> lumi) { neuralPlayer.lumi = lumi; };
 
     std::unique_ptr<SourceSepMIDIRenderingThread> renderingThread;
+    std::unique_ptr<VisualizerThread> visualizerThread;
     double renderingProgress = 0.0;
 private:
     Player neuralPlayer;
@@ -41,7 +43,8 @@ private:
     juce::ToggleButton stockBasicPitchButton {"Stock BasicPitch"};
 
     juce::TextButton loadNewFolderButton {"Load New"};
-    juce::TextButton haltButton { "Halt" };
+    //juce::TextButton haltButton { "Halt" };
+    juce::TextButton visualsButton { "Open Visuals" };
     juce::TextButton loadExistingPlaylistButton {"Load Existing"};
 
     std::unique_ptr<juce::FileChooser> loadChooser;

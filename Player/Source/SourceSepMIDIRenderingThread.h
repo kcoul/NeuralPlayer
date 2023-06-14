@@ -7,6 +7,7 @@
 #include "DownSampler.h"
 #include "NoteOptions.h"
 #include "MidiFileWriter.h"
+#include "Paths.h"
 
 class SourceSepMIDIRenderingThread : public juce::Thread
 {
@@ -65,25 +66,6 @@ private:
     XmlElement* playlist = nullptr;
     bool useStockSpleeter = false;
     bool useStockBasicPitch = false;
-
-    static juce::File walkDebugDirectoryToSpleeterRTBin()
-    {
-        auto pwd = File::getCurrentWorkingDirectory();
-
-        while (true) //Ascend to build inputFolder
-        {
-            pwd = pwd.getParentDirectory();
-            if (pwd.getFileName().endsWith("cmake-build-debug") ||
-                pwd.getFileName().endsWith("cmake-build-release") ||
-                pwd.getFileName().endsWith("cmake-build-relwithdebinfo"))
-                break;
-        }
-
-        //Descend to SpleeterRTBin location
-        pwd = pwd.getChildFile("SpleeterRT/Executable/SpleeterRTBin");
-
-        return pwd;
-    }
 
     AudioFormatManager formatManager;
 
