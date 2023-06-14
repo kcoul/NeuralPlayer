@@ -51,9 +51,60 @@ sudo apt install libboost-all-dev
 ```
 
 ### Windows
-
 1. Install GLEW, SDL2, Poco, and Boost using vcpkg in CLion
 
+## How To Pass Arguments to ProjectM / MDSL2 via NeuralPlayer
+1. Determine which arguments are applicable to your usage (see below)
+2. Extend the ```arguments``` StringArray at L.22 of VisualizerThread.h accordingly
+```
+    "help", "h", "Display this help text and exit."
+
+    "listAudioDevices", "l", "Output a list of available audio recording devices on startup."
+
+    "audioDevice", "d", "Select an audio device to record from initially. Can be the numerical ID or the full device name. If the device is not found, the default device will be used instead."
+
+    "presetPath", "p", "Base directory to search for presets."
+
+    "texturePath", "", "Additional path with textures/images."
+
+    "enableSplash", "s", "If true, initially displays the built-in projectM logo preset."
+
+    "fullscreen", "f", "Start in fullscreen mode."
+
+    "exclusive", "e", "Use exclusive fullscreen mode. If true, this will change display resolution on most platforms to best match the window resolution."
+
+    "monitor", "", "Displays the window on the given monitor. 0 uses OS default window position, 1 is the primary display and so on."
+
+    "vsync", "", "If true, waits for vertical sync to avoid tearing, but limits max FPS to the vsync interval."
+
+    "width", "", "Initial window width."
+
+    "height", "", "Initial window height."
+
+    "fullscreenWidth", "", "Fullscreen horizontal resolution."
+
+    "fullscreenHeight", "", "Fullscreen vertical resolution."
+
+    "left", "", "Initial window X position."
+
+    "top", "", "Initial window Y position."
+
+    "fps", "", "Target frames per second rate."
+
+    "shuffleEnabled", "", "Shuffle enabled."
+
+    "presetDuration", "", "Preset duration. Any number > 1, default 30."
+
+    "transitionDuration", "", "Transition duration. Any number >= 0, default 3."
+
+    "hardCutsEnabled", "", "Hard cuts enabled."
+
+    "hardCutDuration", "", "Hard cut duration. Any number > 1, default 20."
+
+    "hardCutSensitivity", "", "Hard cut sensitivity. Between 0.0 and 5.0. Default 1.0."
+
+    "beatSensitivity", "", "Beat sensitivity. Between 0.0 and 5.0. Default 1.0."
+```
 
 ## Building OnnxRuntime from Source
 

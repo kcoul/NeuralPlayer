@@ -1,0 +1,1 @@
+lipo -create ./arm64/Release/libonnxruntime.1.14.1.dylib ./x64/Release/libonnxruntime.1.14.1.dylib -output ./Universal/Release/libonnxruntime.1.14.1.dylib

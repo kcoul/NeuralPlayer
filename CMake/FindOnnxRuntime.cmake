@@ -66,6 +66,8 @@ else()
             set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
                     ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Darwin/arm64/Release/libonnxruntime.dylib)
         endif()
+        #set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
+        #            ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Darwin/Universal/Release/libonnxruntime.dylib)
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
                 ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Linux/x64/Release/libonnxruntime.so)

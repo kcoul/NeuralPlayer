@@ -13,6 +13,7 @@ PlayerComponent::PlayerComponent() :
         keyboardComponent(keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
     renderingThread = std::make_unique<SourceSepMIDIRenderingThread>(textToPost, progressUpdate);
+    visualizerThread = std::make_unique<VisualizerThread>(textToPost);
     textToPost = [this] (String text) { softwareConsoleComponent.insertText(text, true); };
     progressUpdate = [this] (double p) { renderingProgress = p; };
     renderingThread->addListener(this);
@@ -58,11 +59,18 @@ PlayerComponent::PlayerComponent() :
     };
     addAndMakeVisible(loadNewFolderButton);
 
-    haltButton.onClick = [this]
+    //haltButton.onClick = [this]
+    //{
+    //    renderingThread->stopRenderingFlag = true;
+    //};
+    //addAndMakeVisible(haltButton);
+
+    visualsButton.onClick = [this]
     {
-        renderingThread->stopRenderingFlag = true;
+        visualizerThread->startThread();
     };
-    addAndMakeVisible(haltButton);
+    addAndMakeVisible(visualsButton);
+
 
     loadExistingPlaylistButton.onClick = [this]
     {
@@ -210,7 +218,8 @@ void PlayerComponent::resized()
 
     auto vUnitSlot = area.removeFromTop(vUnit);
     loadNewFolderButton.setBounds(vUnitSlot.removeFromLeft(vUnitSlot.getWidth()/3).reduced(2, 0));
-    haltButton.setBounds(vUnitSlot.removeFromLeft(vUnitSlot.getWidth()/2).reduced(2, 0));
+    //haltButton.setBounds(vUnitSlot.removeFromLeft(vUnitSlot.getWidth()/2).reduced(2, 0));
+    visualsButton.setBounds(vUnitSlot.removeFromLeft(vUnitSlot.getWidth()/2).reduced(2, 0));
     loadExistingPlaylistButton.setBounds(vUnitSlot.reduced(2, 0));
 
     area.removeFromTop(4);
