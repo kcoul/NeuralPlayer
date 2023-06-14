@@ -48,9 +48,10 @@ pip install basic-pitch
 pip install spleeter==2.3
 ```
 
-## Additional Prerequisites for visuals (Use visualizer1 branch)
+## Additional Prerequisites for Visualizers (Milkdrop) 
 
 ### macOS (homebrew)
+
 ```
 brew install sdl2
 brew install poco
@@ -68,7 +69,7 @@ sudo apt install libboost-all-dev
 ### Windows
 1. Install GLEW, SDL2, Poco, and Boost using vcpkg in CLion
 
-## How To Pass Arguments to ProjectM / MDSL2 via NeuralPlayer
+## How To Pass Arguments to ProjectM / MSDL2 via NeuralPlayer
 1. Determine which arguments are applicable to your usage (see below)
 2. Extend the ```arguments``` StringArray at L.22 of VisualizerThread.h accordingly
 ```
@@ -121,7 +122,7 @@ sudo apt install libboost-all-dev
     "beatSensitivity", "", "Beat sensitivity. Between 0.0 and 5.0. Default 1.0."
 ```
 
-## Building OnnxRuntime from Source
+## (Optional) Building OnnxRuntime from Source
 
 Prebuilt binaries of OnnxRuntime (v1.14.1) are provided for all platforms. You should only build OnnxRuntime from source if necessary.
 
