@@ -38,7 +38,7 @@ After running it, you get separated audio channels in `cmake-build-debug/Spleete
 
 1. Currently only supports 44.1kHz ```.wav``` format input, more formats and sample rates will be added over time
 
-## Additional Prerequisites for workbenching (Use workbench2 branch)
+## Additional Prerequisites for workbenching
 
 1. Stock ```spleeter``` and ```basic-pitch```, which combined require python@3.10 and tensorflow@2.11
 2. You may need to uninstall python@3.11 and/or downgrade tensorflow. 
