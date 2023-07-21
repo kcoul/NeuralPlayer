@@ -26,8 +26,10 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
             "~/intel/oneapi/mkl/latest/lib/intel64"
             "~/OpenBLAS/lib")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    target_include_directories(${TargetName} PUBLIC "/opt/intel/oneapi/mkl/latest/include")
-    target_link_directories(${TargetName} PUBLIC "/opt/intel/oneapi/mkl/latest/lib")
+    if (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+        target_include_directories(${TargetName} PUBLIC "/opt/intel/oneapi/mkl/latest/include")
+        target_link_directories(${TargetName} PUBLIC "/opt/intel/oneapi/mkl/latest/lib")
+    endif()
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_include_directories(${TargetName} PUBLIC "C:\\Program Files (x86)\\Intel\\oneAPI\\mkl\\latest\\include")
     target_link_directories(${TargetName} PUBLIC
@@ -44,11 +46,16 @@ elseif(${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel")
     target_compile_definitions(${TargetName} PUBLIC NP_MINSIZEREL=1)
 endif()
 
-target_link_libraries(${TargetName} PUBLIC
-        #Linking order matters! Alphabetic often will not work here.
-        mkl_intel_lp64 #Depends on mkl_core
-        mkl_core
-        mkl_sequential)
+if (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+    target_link_libraries(${TargetName} PUBLIC
+            #Linking order matters! Alphabetic often will not work here.
+            mkl_intel_lp64 #Depends on mkl_core
+            mkl_core
+            mkl_sequential)
+else()
+    target_link_libraries(${TargetName} PUBLIC
+            "-framework Accelerate")
+endif()
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     target_link_libraries(${TargetName} PUBLIC

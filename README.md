@@ -2,7 +2,7 @@
 
 # Building From Source
 
-## Prerequisites
+## Prerequisites (all platforms except Apple Silicon)
 1. Download Intel OneAPI's Online Installer:
  
 https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-download.html
@@ -10,7 +10,7 @@ https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-down
 2. Run it, and select Custom Installation. De-select all components except Intel OneAPI Math Kernel Library.
 3. Allow for the installation to complete.
 
-### Linux
+### Linux / Apple Silicon Additional Prerequisites
 
 1. Build OpenBLAS and move all output libraries and symlinks to ~/OpenBLAS/lib": https://github.com/xianyi/OpenBLAS. 
 This should result in there being valid libopenblas.a and libopenblas.so symlinks available at that location for SpleeterRT to link to.
@@ -23,7 +23,32 @@ mkdir -p ~/OpenBLAS/lib
 cp *.a *.so *.so.0 ~/OpenBLAS/lib
 ```
 
+### Linux Only Prerequisites
+
 2. Install JUCE dependencies listed here: https://github.com/kcoul/JUCE4Pi
+
+
+## Additional Prerequisites for Visualizers (Milkdrop) 
+
+### macOS (homebrew)
+
+```
+brew install sdl2
+brew install poco
+brew install boost
+```
+
+### Linux
+
+```
+sudo apt install libsdl2-dev
+sudo apt install libpoco-dev
+sudo apt install libboost-all-dev
+```
+
+### Windows
+1. Install GLEW, SDL2, Poco, and Boost using vcpkg in CLion
+
 
 ## SpleeterRT Notes
 
@@ -48,26 +73,7 @@ pip install basic-pitch
 pip install spleeter==2.3
 ```
 
-## Additional Prerequisites for Visualizers (Milkdrop) 
-
-### macOS (homebrew)
-
-```
-brew install sdl2
-brew install poco
-brew install boost
-```
-
-### Linux
-
-```
-sudo apt install libsdl2-dev
-sudo apt install libpoco-dev
-sudo apt install libboost-all-dev
-```
-
-### Windows
-1. Install GLEW, SDL2, Poco, and Boost using vcpkg in CLion
+### Using Visualizer
 
 ## How To Pass Arguments to ProjectM / MSDL2 via NeuralPlayer
 1. Determine which arguments are applicable to your usage (see below)
