@@ -139,6 +139,10 @@ target_link_libraries(projectMSDL
         Boost::filesystem
         )
 
+target_link_libraries(projectMSDL
+        PUBLIC
+        "-framework OpenGL")
+
 if(MSVC)
     set_target_properties(projectMSDL
             PROPERTIES
