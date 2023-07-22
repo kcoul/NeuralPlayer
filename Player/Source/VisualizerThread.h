@@ -23,7 +23,11 @@ public:
             arguments.add(vizPath.getFullPathName());
 #if (JUCE_MAC || JUCE_LINUX)
             arguments.add("--presetPath");
-            arguments.add(walkSourceDirectoryToProjectMSDL_NP_Presets());
+            arguments.add(walkSourceDirectoryToProjectMSDL_COTC_Presets());
+            //arguments.add(walkSourceDirectoryToProjectMSDL_Isosceles_Presets());
+            //arguments.add(walkSourceDirectoryToProjectMSDL_Tryptonaut_Presets());
+            //arguments.add(walkSourceDirectoryToProjectMSDL_NP_Presets());
+            //arguments.add(walkSourceDirectoryToProjectMSDL_NPX_Presets());
             arguments.add("--texturePath");
             arguments.add(walkSourceDirectoryToProjectMSDL_NP_Textures());
 #endif
