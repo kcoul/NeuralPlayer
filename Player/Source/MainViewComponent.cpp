@@ -23,7 +23,7 @@ MainViewComponent::~MainViewComponent()
 
 void MainViewComponent::paint(juce::Graphics& g)
 {
-
+    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
 }
 
 void MainViewComponent::resized()
