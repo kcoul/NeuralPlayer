@@ -1,6 +1,19 @@
 # Real time monaural source separation base on fully convolutional neural network operates on time-frequency domain
 AI Source separator written in C running a U-Net model trained by Deezer, separate your audio input to Drum, Bass, Accompaniment and Vocal/Speech with Spleeter model.
 
+## Runtime Notes 
+
+### Plugins/SpleeterRTPlug
+- Single GUI Slider with range {0, 3} controls number of stems output (TODO: verify all settings)
+- Remember "VBAD" for plugin output at max numStems == slider = 3: (4x Stereo = 8 channels):
+- Vocals (1, 2)
+- Bass (3, 4)
+- Accompaniment (5, 6)
+- Drums (7, 8)
+
+### Executable/SpleeterRTBin
+- Invocation arguments:
+- 3 512 1024 3 musicFile.flac
 
 ## Build Instructions
 
