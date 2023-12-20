@@ -59,15 +59,15 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Windows")
             mkl_core
             mkl_sequential)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    if (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-        target_link_libraries(${TargetName} PUBLIC
-                mkl_intel_lp64 #Depends on mkl_core
-                mkl_core
-                mkl_sequential)
-    else() #Apple Silicon
+    #if (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64") #Could use either Accelerate or MKL, TODO: make into options
+    #    target_link_libraries(${TargetName} PUBLIC
+    #            mkl_intel_lp64 #Depends on mkl_core
+    #            mkl_core
+    #            mkl_sequential)
+    #else() #Apple Silicon, requires using Accelerate for gemm instead of MKL
         target_link_libraries(${TargetName} PUBLIC
                 "-framework Accelerate")
-    endif()
+    #endif()
 endif()
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux")

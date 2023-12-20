@@ -57,9 +57,14 @@ void gemm_tt(int M, int N, int K, float ALPHA, float *A, int lda, float *B, int 
 		}
 	}
 }
-#define MKL
-#ifdef MKL
-#include <mkl.h>
+#if __ANDROID__ == 1
+#include <include/cblas.h>
+#elif __APPLE__ == 1
+#include <Accelerate/Accelerate.h>
+#elif CPU_GEMM == 1
+//No include necessary
+#else
+  #include <mkl.h>
 #endif
 void gemm_cpu(int TA, int TB, int M, int N, int K, float ALPHA, float *A, int lda, float *B, int ldb, float BETA, float *C, int ldc)
 {

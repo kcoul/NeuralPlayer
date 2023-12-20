@@ -94,6 +94,11 @@ if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Resources/accompaniment4stems.dat OR
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Resources
     )
 endif()
+execute_process(
+        COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMAKE_CURRENT_SOURCE_DIR}/Resources/coefficients.7z
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Resources
+)
+
 # We don't want our source buried in extra nested folders
 set_target_properties("${TargetName}" PROPERTIES FOLDER "")
 
@@ -146,15 +151,20 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     target_link_directories(${TargetName} PUBLIC
             "~/intel/oneapi/mkl/latest/lib/intel64"
             "~/OpenBLAS/lib")
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    target_include_directories(${TargetName} PUBLIC "/opt/intel/oneapi/mkl/latest/include")
-    target_link_directories(${TargetName} PUBLIC "/opt/intel/oneapi/mkl/latest/lib")
+#elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+#    target_include_directories(${TargetName} PUBLIC "/opt/intel/oneapi/mkl/latest/include")
+#    target_link_directories(${TargetName} PUBLIC "/opt/intel/oneapi/mkl/latest/lib")
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_include_directories(${TargetName} PUBLIC "C:\\Program Files (x86)\\Intel\\oneAPI\\mkl\\latest\\include")
     target_link_directories(${TargetName} PUBLIC
             "C:\\Program Files (x86)\\Intel\\oneAPI\\mkl\\latest\\lib\\intel64"
             "C:\\Program Files (x86)\\Intel\\oneAPI\\mkl\\latest\\lib")
 endif()
+
+set(COEFFICIENT_RESOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Resources")
+
+target_compile_definitions("${TargetName}" PUBLIC
+        "COEFFICIENT_RESOURCE_PATH=\"${COEFFICIENT_RESOURCE_PATH}\"")
 
 target_link_libraries("${TargetName}"
         PRIVATE
@@ -164,18 +174,24 @@ target_link_libraries("${TargetName}"
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags
-        #Linking order matters! Alphabetic often will not work here.
-        mkl_intel_lp64 #Depends on mkl_core
-        mkl_core
-        mkl_sequential
         )
 
-if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+if (CMAKE_SYSTEM_NAME STREQUAL "Linux") #TODO: OpenBLAS and MKL should be options
     target_link_libraries(${TargetName} PUBLIC
-            openblas)
+            openblas
+            #Linking order matters! Alphabetic often will not work here.
+            mkl_intel_lp64 #Depends on mkl_core
+            mkl_core
+            mkl_sequential)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_link_libraries(${TargetName} PUBLIC
-            userenv)
+            userenv
+            mkl_intel_lp64 #Depends on mkl_core
+            mkl_core
+            mkl_sequential)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    target_link_libraries(${TargetName} PUBLIC
+            "-framework Accelerate")
 endif()
 
 # BUILD_TESTING is ON by default

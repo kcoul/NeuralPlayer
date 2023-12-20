@@ -1,8 +1,10 @@
 # NeuralPlayer
 
-# Building From Source
+# Alpha Build Notes
 
-## Prerequisites (all platforms except Apple Silicon)
+## Installing Back Ends
+ 
+### Intel MKL
 1. Download Intel OneAPI's Online Installer:
  
 https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-download.html
@@ -10,7 +12,7 @@ https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-down
 2. Run it, and select Custom Installation. De-select all components except Intel OneAPI Math Kernel Library.
 3. Allow for the installation to complete.
 
-### Linux / Apple Silicon Additional Prerequisites
+### OpenBLAS
 
 1. Build OpenBLAS and move all output libraries and symlinks to ~/OpenBLAS/lib": https://github.com/xianyi/OpenBLAS. 
 This should result in there being valid libopenblas.a and libopenblas.so symlinks available at that location for SpleeterRT to link to.
@@ -23,14 +25,19 @@ mkdir -p ~/OpenBLAS/lib
 cp *.a *.so *.so.0 ~/OpenBLAS/lib
 ```
 
-### Linux Only Prerequisites
+### Linux JUCE Prerequisites
 
-2. Install JUCE dependencies listed here: https://github.com/kcoul/JUCE4Pi
+2. Install dependencies listed here: https://github.com/kcoul/JUCE4Pi
 
 
-## Additional Prerequisites for Visualizers (Milkdrop) 
+# Visualizer Prerequisites 
 
-### macOS (homebrew)
+## ProjectM-SDL2 
+
+### Required (Windows), Recommended (All Platforms)
+1. Install GLEW, SDL2, Poco, and Boost using vcpkg in CLion
+
+### macOS System-Wide Alternative (homebrew)
 
 ```
 brew install sdl2
@@ -38,7 +45,7 @@ brew install poco
 brew install boost
 ```
 
-### Linux
+### Linux System-Wide Alternative
 
 ```
 sudo apt install libsdl2-dev
@@ -46,11 +53,9 @@ sudo apt install libpoco-dev
 sudo apt install libboost-all-dev
 ```
 
-### Windows
-1. Install GLEW, SDL2, Poco, and Boost using vcpkg in CLion
+# Alpha Dev Notes
 
-
-## SpleeterRT Notes
+## Using SpleeterRT
 
 1. Anytime new CMake build config is set up, SpleeterRTBin should be compiled for that build type (i.e. Debug, Release, RelWithDebInfo) before NeuralPlayer is run with that config
 2. You should set a "HOME" user environment variable on Windows for SpleeterRT resource management
@@ -73,9 +78,9 @@ pip install basic-pitch
 pip install spleeter==2.3
 ```
 
-### Using Visualizer
+## Using Visualizer
 
-## How To Pass Arguments to ProjectM / MSDL2 via NeuralPlayer
+### How To Pass Arguments to ProjectM / MSDL2 via NeuralPlayer
 1. Determine which arguments are applicable to your usage (see below)
 2. Extend the ```arguments``` StringArray at L.22 of VisualizerThread.h accordingly
 ```
@@ -128,7 +133,7 @@ pip install spleeter==2.3
     "beatSensitivity", "", "Beat sensitivity. Between 0.0 and 5.0. Default 1.0."
 ```
 
-## (Optional) Building OnnxRuntime from Source
+## Building OnnxRuntime from Source
 
 Prebuilt binaries of OnnxRuntime (v1.14.1) are provided for all platforms. You should only build OnnxRuntime from source if necessary.
 

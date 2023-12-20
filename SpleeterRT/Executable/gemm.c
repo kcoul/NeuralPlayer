@@ -58,12 +58,13 @@ void gemm_tt(int M, int N, int K, float ALPHA, float *A, int lda, float *B, int 
 	}
 }
 #if __ANDROID__ == 1
-#include <include/cblas.h>
+  #include <include/cblas.h>
 #elif __APPLE__ == 1
-#include <Accelerate/Accelerate.h>
+  #include <Accelerate/Accelerate.h>
 #elif CPU_GEMM == 1
+  //No include necessary
 #else
-#include <mkl.h>
+  #include <mkl.h>
 #endif
 void gemm_cpu(int TA, int TB, int M, int N, int K, float ALPHA, float *A, int lda, float *B, int ldb, float BETA, float *C, int ldc)
 {
@@ -78,7 +79,7 @@ void gemm_cpu(int TA, int TB, int M, int N, int K, float ALPHA, float *A, int ld
 		gemm_nt(M, N, K, ALPHA, A, lda, B, ldb, C, ldc);
 	else
 		gemm_tt(M, N, K, ALPHA, A, lda, B, ldb, C, ldc);
-#else
+#else //All back ends should have cblas_sgemm available
 	if (!TA && !TB)
 		cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, M, N, K, ALPHA, A, lda, B, ldb, BETA, C, ldc);
 	else if (TA && !TB)
