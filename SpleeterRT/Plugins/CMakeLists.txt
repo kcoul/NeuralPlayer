@@ -79,19 +79,19 @@ set(SourceFiles
 target_sources("${TargetName}" PRIVATE ${SourceFiles})
 
 #Resources
-if(NOT EXISTS $ENV{HOME}/accompaniment4stems.dat OR
-   NOT EXISTS $ENV{HOME}/bass4stems.dat OR
-   NOT EXISTS $ENV{HOME}/drum4stems.dat OR
-   NOT EXISTS $ENV{HOME}/vocal4stems.dat)
+if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Resources/accompaniment4stems.dat OR
+   NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Resources/bass4stems.dat OR
+   NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Resources/drum4stems.dat OR
+   NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Resources/vocal4stems.dat)
     set(resource_source_path "https://github.com/james34602/SpleeterRT/releases/download/v0.2-alpha/coefficients.7z")
     file(DOWNLOAD
             ${resource_source_path}
-            $ENV{HOME}/coefficients.7z
+            ${CMAKE_CURRENT_SOURCE_DIR}/Resources/coefficients.7z
             SHOW_PROGRESS
             )
     execute_process(
-            COMMAND ${CMAKE_COMMAND} -E tar xf $ENV{HOME}/coefficients.7z
-            WORKING_DIRECTORY $ENV{HOME}
+            COMMAND ${CMAKE_COMMAND} -E tar xf ${CMAKE_CURRENT_SOURCE_DIR}/Resources/coefficients.7z
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Resources
     )
 endif()
 # We don't want our source buried in extra nested folders

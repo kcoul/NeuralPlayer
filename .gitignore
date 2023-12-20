@@ -1,3 +1,5 @@
+*.dat
+*.7z
 /.idea
 /.vs
 .DS_Store
