@@ -152,7 +152,8 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_include_directories(${TargetName} PUBLIC "C:\\Program Files (x86)\\Intel\\oneAPI\\mkl\\latest\\include")
     target_link_directories(${TargetName} PUBLIC
-            "C:\\Program Files (x86)\\Intel\\oneAPI\\mkl\\latest\\lib\\intel64")
+            "C:\\Program Files (x86)\\Intel\\oneAPI\\mkl\\latest\\lib\\intel64"
+            "C:\\Program Files (x86)\\Intel\\oneAPI\\mkl\\latest\\lib")
 endif()
 
 target_link_libraries("${TargetName}"
