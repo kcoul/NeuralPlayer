@@ -139,9 +139,11 @@ target_link_libraries(projectMSDL
         Boost::filesystem
         )
 
-target_link_libraries(projectMSDL
-        PUBLIC
-        "-framework OpenGL")
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+    target_link_libraries(projectMSDL
+            PUBLIC
+            "-framework OpenGL")
+endif()
 
 if(MSVC)
     set_target_properties(projectMSDL
