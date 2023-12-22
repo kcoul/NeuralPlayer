@@ -12,22 +12,24 @@ if(NOT TARGET SDL2::SDL2)
     string(REPLACE "-lSDL2 " "" SDL2_EXTRA_LINK_FLAGS_STATIC " -Wl,--no-undefined -lm -ldl  -lasound -lm -ldl -lpthread -lpulse-simple -lpulse  -lX11 -lXext -lXcursor -lXinerama -lXi -lXrandr -lXss -lXxf86vm -lpthread -lrt ")
     string(STRIP "${SDL2_EXTRA_LINK_FLAGS_STATIC}" SDL2_EXTRA_LINK_FLAGS_STATIC)
 
-    find_library(SDL2_LIBRARY SDL2)
+
+    find_library(SDL2_LIBRARY SDL2 PATHS "${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2/iOS-static")
     if(NOT SDL2_LIBRARY)
         message(FATAL_ERROR "Could not determine the location of the SDL2 library.")
     endif()
 
-    add_library(SDL2::SDL2 SHARED IMPORTED)
+    add_library(SDL2::SDL2 STATIC IMPORTED)
     set_target_properties(SDL2::SDL2 PROPERTIES
             INTERFACE_INCLUDE_DIRECTORIES "${SDL2_INCLUDE_DIRS}"
             IMPORTED_LINK_INTERFACE_LANGUAGES "C"
             IMPORTED_LOCATION "${SDL2_LIBRARY}"
             INTERFACE_LINK_LIBRARIES "${SDL2_EXTRA_LINK_FLAGS}")
 
-    find_library(SDL2MAIN_LIBRARY SDL2main)
-    if(NOT SDL2MAIN_LIBRARY)
-        message(FATAL_ERROR "Could not determine the location of the SDL2main library.")
-    endif()
+    #Can't link to dynamic lib or framework without workarounds due to location of main(), use static
+    #find_library(SDL2MAIN_LIBRARY SDL2main PATHS "${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2/iOS-static")
+    #if(NOT SDL2MAIN_LIBRARY)
+    #    message(FATAL_ERROR "Could not determine the location of the SDL2main library.")
+    #endif()
 
     add_library(SDL2::SDL2main STATIC IMPORTED)
     set_target_properties(SDL2::SDL2main PROPERTIES

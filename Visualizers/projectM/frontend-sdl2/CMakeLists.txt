@@ -25,13 +25,15 @@ if(NOT SDL2_LINKAGE STREQUAL "shared" AND NOT SDL2_LINKAGE STREQUAL "static")
 endif()
 set(projectM4_DIR "${CMAKE_SOURCE_DIR}/Visualizers/projectM/frontend-sdl2/cmake")
 find_package(projectM4 REQUIRED COMPONENTS Playlist)
-find_package(SDL2 REQUIRED)
-find_package(Poco REQUIRED COMPONENTS Util)
-find_package(Boost COMPONENTS system filesystem REQUIRED)
-
+if(NOT CMAKE_SYSTEM_NAME STREQUAL iOS) # Use pre-built libs for iOS
+    find_package(SDL2 REQUIRED)
+    find_package(Poco REQUIRED COMPONENTS Util)
+    find_package(Boost COMPONENTS system filesystem REQUIRED)
+endif()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/Visualizers/projectM/frontend-sdl2/cmake")
+
 include(SDL2Target)
-include(dependencies_check.cmake)
+#include(dependencies_check.cmake)
 
 add_subdirectory(src)
 

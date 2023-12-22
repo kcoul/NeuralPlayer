@@ -33,7 +33,9 @@ if(NOT "OFF") # ENABLE_EMSCRIPTEN
         list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
         find_dependency(OpenGL COMPONENTS GLES3)
     else()
-        find_dependency(OpenGL)
+        if(NOT CMAKE_SYSTEM_NAME STREQUAL iOS)
+            find_dependency(OpenGL)
+        endif()
     endif()
 endif()
 if("OFF") # ENABLE_LLVM
