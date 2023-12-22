@@ -68,6 +68,13 @@ else()
         endif()
         #set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
         #            ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Darwin/Universal/Release/libonnxruntime.dylib)
+    elseif (CMAKE_SYSTEM_NAME STREQUAL "iOS")
+        #Multi-config needed, one for each scheme
+        set_target_properties(onnxruntime PROPERTIES
+                IMPORTED_LOCATION_DEBUG "${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/iOS/arm64/Release/libonnxruntime.dylib"
+                IMPORTED_LOCATION_RELEASE "${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/iOS/arm64/Release/libonnxruntime.dylib"
+                IMPORTED_LOCATION_RELWITHDEBINFO "${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/iOS/arm64/Release/libonnxruntime.dylib"
+                IMPORTED_LOCATION_MINSIZEREL "${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/iOS/arm64/Release/libonnxruntime.dylib")
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION
                 ${CMAKE_SOURCE_DIR}/Player/Lib/onnxruntime/Linux/x64/Release/libonnxruntime.so)

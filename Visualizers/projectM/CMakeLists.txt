@@ -1,3 +1,3 @@
 add_subdirectory(frontend-sdl2)
-add_subdirectory(projectm-dev)
+# add_subdirectory(projectm-dev) #Use prebuilt
 

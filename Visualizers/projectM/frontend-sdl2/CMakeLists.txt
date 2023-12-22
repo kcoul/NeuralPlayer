@@ -25,12 +25,21 @@ if(NOT SDL2_LINKAGE STREQUAL "shared" AND NOT SDL2_LINKAGE STREQUAL "static")
 endif()
 set(projectM4_DIR "${CMAKE_SOURCE_DIR}/Visualizers/projectM/frontend-sdl2/cmake")
 find_package(projectM4 REQUIRED COMPONENTS Playlist)
-if(NOT CMAKE_SYSTEM_NAME STREQUAL iOS) # Use pre-built libs for iOS
-    find_package(SDL2 REQUIRED)
-    find_package(Poco REQUIRED COMPONENTS Util)
-    find_package(Boost COMPONENTS system filesystem REQUIRED)
-endif()
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/Visualizers/projectM/frontend-sdl2/cmake")
+
+find_package(SDL2 REQUIRED)
+find_package(Poco REQUIRED COMPONENTS Util)
+find_package(Boost COMPONENTS system filesystem REQUIRED)
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS")
+    set_property(TARGET Poco PROPERTY
+            IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/Visualizers/projectM/frontend-sdl2/libs/Poco/iOS-static/libPoco.a")
+    set_property(TARGET SDL2 PROPERTY
+            IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/Visualizers/projectM/frontend-sdl2/libs/Poco/iOS-static/libSDL2.a")
+    set_property(TARGET Boost PROPERTY
+            IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/Visualizers/projectM/frontend-sdl2/libs/Poco/iOS-static/libboost.a")
+endif()
 
 include(SDL2Target)
 #include(dependencies_check.cmake)
@@ -41,7 +50,7 @@ if(ENABLE_TESTING)
     add_subdirectory(test)
 endif()
 
-include(install.cmake)
+#include(install.cmake)
 include(packaging.cmake)
 
 message(STATUS "SDL version: ${SDL2_VERSION}")

@@ -128,21 +128,44 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     set_property(TARGET libprojectM::playlist PROPERTY
             IMPORTED_IMPLIB "${CMAKE_BINARY_DIR}\\Visualizers\\projectM\\projectm-4.0.0\\src\\playlist\\projectM-4-playlistd.lib"
             )
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "iOS")
+    set_property(TARGET libprojectM::projectM PROPERTY
+            IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/Visualizers/projectM/frontend-sdl2/libs/ProjectM/iOS-dynamic/Release-iphoneos/libprojectM-4.4.0.0.dylib"
+    )
+    set_property(TARGET libprojectM::playlist PROPERTY
+            IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}//Visualizers/projectM/frontend-sdl2/libs/ProjectM-Playlist/iOS-static/Release-iphoneos/libprojectM-4-playlist.4.0.0.dylib"
+    )
 endif()
 
 target_link_libraries(projectMSDL
         PRIVATE
         libprojectM::playlist
-        Poco::Util
         SDL2::SDL2$<$<STREQUAL:${SDL2_LINKAGE},static>:-static>
         SDL2::SDL2main
-        Boost::filesystem
         )
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS") # Link to full libs for now
+    target_link_libraries(projectMSDL
+            PRIVATE
+            #Poco::Util
+            #Boost::filesystem
+    )
+else()
+    target_link_libraries(projectMSDL
+            PRIVATE
+            Poco::Util
+            Boost::filesystem
+    )
+endif()
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     target_link_libraries(projectMSDL
             PUBLIC
             "-framework OpenGL")
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "iOS")
+    target_link_libraries(projectMSDL
+            PUBLIC
+            "-framework OpenGLES")
 endif()
 
 if(MSVC)

@@ -55,7 +55,7 @@ add_library(libprojectM::playlist SHARED IMPORTED)
 
 set_target_properties(libprojectM::playlist PROPERTIES
   #INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
-  INTERFACE_LINK_LIBRARIES "libprojectM::projectM;Boost::filesystem"
+  INTERFACE_LINK_LIBRARIES "libprojectM::projectM"
 )
 
 if(CMAKE_VERSION VERSION_LESS 2.8.12)

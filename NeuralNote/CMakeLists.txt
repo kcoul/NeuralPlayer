@@ -115,6 +115,13 @@ add_library(onnxruntime STATIC IMPORTED)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     set_property(TARGET onnxruntime PROPERTY IMPORTED_LOCATION ${CMAKE_CURRENT_LIST_DIR}/ThirdParty/onnxruntime/lib/libonnxruntime.a)
+elseif (CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    #Multi-config needed, one for each scheme
+    set_target_properties(onnxruntime PROPERTIES
+            IMPORTED_LOCATION_DEBUG "${CMAKE_CURRENT_LIST_DIR}/ThirdParty/onnxruntime/lib/libonnxruntime.a"
+            IMPORTED_LOCATION_RELEASE "${CMAKE_CURRENT_LIST_DIR}/ThirdParty/onnxruntime/lib/libonnxruntime.a"
+            IMPORTED_LOCATION_RELWITHDEBINFO "${CMAKE_CURRENT_LIST_DIR}/ThirdParty/onnxruntime/lib/libonnxruntime.a"
+            IMPORTED_LOCATION_MINSIZEREL "${CMAKE_CURRENT_LIST_DIR}/ThirdParty/onnxruntime/lib/libonnxruntime.a")
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set_property(TARGET onnxruntime APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 

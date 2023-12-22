@@ -1,0 +1,6 @@
+add_library(SDL2 STATIC IMPORTED)
+
+message("${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2/iOS-static/libSDL2.a")
+
+set_property(TARGET SDL2 PROPERTY
+        IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2/iOS-static/libSDL2.a")

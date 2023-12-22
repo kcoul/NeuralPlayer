@@ -60,10 +60,26 @@ set_target_properties(libprojectM::API PROPERTIES
 # Create imported target libprojectM::projectM
 add_library(libprojectM::projectM SHARED IMPORTED)
 
-set_target_properties(libprojectM::projectM PROPERTIES
-  INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/Visualizers/projectM/projectm-4.0.0/src/api/include"
-  INTERFACE_LINK_LIBRARIES "OpenGL::GL;libprojectM::API"
-)
+if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS")
+  find_library(OpenGLES3 OpenGLES) # other platform-specific names omitted
+  #if(APPLE AND ${OPENGLES3_LIBRARY} MATCHES "\\.framework$")
+    add_library(OpenGLES3::OpenGLES3 INTERFACE IMPORTED)
+    set_property(TARGET OpenGLES3::OpenGLES3 APPEND PROPERTY INTERFACE_LINK_LIBRARIES ${OPENGLES3_LIBRARY})
+  #else()
+  #  add_library(OpenGLES3::OpenGLES3 UNKNOWN IMPORTED)
+  #  set_property(TARGET OpenGLES3::OpenGLES3 PROPERTY IMPORTED_LOCATION ${OPENGLES3_LIBRARY})
+  #endif()
+
+  set_target_properties(libprojectM::projectM PROPERTIES
+          INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/Visualizers/projectM/projectm-4.0.0/src/api/include"
+          INTERFACE_LINK_LIBRARIES "OpenGLES3::OpenGLES3;libprojectM::API"
+  )
+else()
+  set_target_properties(libprojectM::projectM PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/Visualizers/projectM/projectm-4.0.0/src/api/include"
+    INTERFACE_LINK_LIBRARIES "OpenGL::GL;libprojectM::API"
+  )
+endif()
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
   set_target_properties(libprojectM::projectM PROPERTIES
