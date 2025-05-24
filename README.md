@@ -1,5 +1,7 @@
 # NeuralPlayer
 
+## IMPORTANT: This project is being refactored and migrated to GitLab. When the migration is complete a link will be added here. 
+
 # Alpha Build Notes
 
 ## Installing Back Ends
